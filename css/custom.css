@@ -1,0 +1,68 @@
+/* ========== Fliex Blog 首页 Subtitle 神秘感风格（优化版） ========== */
+
+#subtitle {
+  font-family: "Cinzel", "Noto Serif SC", "Source Han Serif SC", serif;
+  font-size: 1.25rem; /* 调小：≈20px，更自然 */
+  font-weight: 400;
+  color: #e6e6e6; /* 柔白，保持清晰又不刺眼 */
+  text-align: center;
+  letter-spacing: 1.5px; /* 字距略宽，营造电影感 */
+  line-height: 1.7;
+  margin-top: 0.5rem;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 1.8s ease-out forwards 1.2s; /* 淡入更柔和 */
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.08),
+    0 0 16px rgba(102, 204, 255, 0.12), 0 0 32px rgba(0, 0, 0, 0.65);
+}
+
+/* 打字机光标 */
+.typed-cursor {
+  color: #5aa0ff;
+  font-weight: 500;
+  font-size: 1.25rem;
+  animation: flicker 1.4s infinite ease-in-out;
+}
+
+/* 光标闪烁带“呼吸感” */
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* 打字文字淡入动画 */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* 打字文字淡出时平滑消失 */
+.fadeOut {
+  opacity: 0;
+  transition: opacity 0.8s ease-out;
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+  #subtitle {
+    font-size: 1.05rem; /* 手机端略小 */
+    letter-spacing: 1px;
+    line-height: 1.6;
+  }
+  .typed-cursor {
+    font-size: 1.05rem;
+  }
+}
