@@ -1,0 +1,27 @@
+/* Butterfly 冷色系 Note 覆盖 */
+.note {
+  background: rgba(15, 20, 30, 0.65);
+  border-left: 3px solid #4c6ef5;
+  color: #c9d1d9;
+  backdrop-filter: blur(6px);
+}
+
+.note.info {
+  border-left-color: #5c7cfa;
+  background: rgba(22, 30, 55, 0.55);
+}
+
+.note.tip {
+  border-left-color: #38d9a9;
+  background: rgba(18, 48, 46, 0.55);
+}
+
+.note.warning {
+  border-left-color: #fcc419;
+  background: rgba(64, 52, 22, 0.45);
+}
+
+.note.danger {
+  border-left-color: #ff6b6b;
+  background: rgba(64, 28, 32, 0.55);
+}
