@@ -1,31 +1,77 @@
-/* 🌈 Butterfly 冷色系浅色 Note（学习笔记风） */
+/* =========================================
+   🌈 Butterfly Note 冷调升级版 (含深色适配)
+   ========================================= */
+
+/* --- 1. 基础结构 & 浅色模式 (Light Mode) --- */
 .note {
-  background: linear-gradient(135deg, #f5f7ff, #f0f4ff);
-  border-left: 4px solid #748ffc;
-  color: #2f2f2f;
-  border-radius: 10px;
+  /* 基础灰色 - 默认 */
+  background: linear-gradient(135deg, #f8f9fa, #f1f3f5);
+  border-left: 4px solid #868e96;
+  color: #495057;
+  border-radius: 8px; /* 稍微圆润一点 */
+  padding: 15px; /* 增加呼吸感 */
+  margin-bottom: 1rem;
+  transition: all 0.3s ease; /* 切换模式时的过渡动画 */
 }
 
-/* ℹ️ info - 淡蓝 */
+/* ℹ️ Info - 冰川蓝 */
 .note.info {
   background: linear-gradient(135deg, #eef4ff, #f5f8ff);
   border-left-color: #5c7cfa;
+  color: #2e5c8e;
 }
 
-/* 💡 tip - 蓝绿 */
+/* 💡 Tip - 极光绿 */
 .note.tip {
   background: linear-gradient(135deg, #e6fcf5, #f1fdfb);
-  border-left-color: #38d9a9;
+  border-left-color: #20c997;
+  color: #0ca678;
 }
 
-/* ⚠️ warning - 柔和黄 */
+/* ⚠️ Warning - 月芒黄 (去燥冷黄) */
 .note.warning {
-  background: linear-gradient(135deg, #fff9db, #fffef5);
-  border-left-color: #fcc419;
+  background: linear-gradient(135deg, #fff0f6, #fff5f9);
+  border-left-color: #faa2c1;
+  color: #a61e4d;
 }
 
-/* ❌ danger - 淡粉红 */
+/* ❌ Danger - 冷莓果 (替代原本的刺眼红) */
 .note.danger {
-  background: linear-gradient(135deg, #fff0f6, #fff5f9);
+  background: linear-gradient(135deg, #fff5f5, #fff0f3);
+  border-left-color: #ff8787;
+  color: #c92a2a;
+}
+
+/* --- 2. 深色模式适配 (Dark Mode) --- */
+/* Butterfly 主题通常使用 [data-theme="dark"] 属性 */
+
+[data-theme="dark"] .note {
+  /* 基础底色变深，降低透明度，避免刺眼 */
+  background: #25262b;
+  border-left-color: #4c4f56;
+  color: #c1c2c5; /* 文字变亮灰 */
+}
+
+[data-theme="dark"] .note.info {
+  background: rgba(24, 100, 171, 0.15); /* 深蓝半透明 */
+  border-left-color: #4dabf7; /* 边框保持亮蓝 */
+  color: #d0ebff;
+}
+
+[data-theme="dark"] .note.tip {
+  background: rgba(9, 146, 104, 0.15); /* 深绿半透明 */
+  border-left-color: #38d9a9;
+  color: #c3fae8;
+}
+
+[data-theme="dark"] .note.warning {
+  background: rgba(194, 37, 92, 0.15); /* 深粉半透明 */
+  border-left-color: #fcc2d7;
+  color: #fcc2d7;
+}
+
+[data-theme="dark"] .note.danger {
+  background: rgba(224, 49, 49, 0.15); /* 深莓果半透明 */
   border-left-color: #ff6b6b;
+  color: #ffa8a8;
 }
