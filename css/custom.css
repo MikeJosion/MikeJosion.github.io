@@ -1,27 +1,31 @@
-/* Butterfly 冷色系 Note 覆盖 */
+/* 🌈 Butterfly 冷色系浅色 Note（学习笔记风） */
 .note {
-  background: rgba(15, 20, 30, 0.65);
-  border-left: 3px solid #4c6ef5;
-  color: #c9d1d9;
-  backdrop-filter: blur(6px);
+  background: linear-gradient(135deg, #f5f7ff, #f0f4ff);
+  border-left: 4px solid #748ffc;
+  color: #2f2f2f;
+  border-radius: 10px;
 }
 
+/* ℹ️ info - 淡蓝 */
 .note.info {
+  background: linear-gradient(135deg, #eef4ff, #f5f8ff);
   border-left-color: #5c7cfa;
-  background: rgba(22, 30, 55, 0.55);
 }
 
+/* 💡 tip - 蓝绿 */
 .note.tip {
+  background: linear-gradient(135deg, #e6fcf5, #f1fdfb);
   border-left-color: #38d9a9;
-  background: rgba(18, 48, 46, 0.55);
 }
 
+/* ⚠️ warning - 柔和黄 */
 .note.warning {
+  background: linear-gradient(135deg, #fff9db, #fffef5);
   border-left-color: #fcc419;
-  background: rgba(64, 52, 22, 0.45);
 }
 
+/* ❌ danger - 淡粉红 */
 .note.danger {
+  background: linear-gradient(135deg, #fff0f6, #fff5f9);
   border-left-color: #ff6b6b;
-  background: rgba(64, 28, 32, 0.55);
 }
