@@ -1,0 +1,205 @@
+/* ==========================================================================
+   ❄️ Butterfly Note 深度阅读专用版 (Deep Cold Reading v7.0)
+   核心色板: 冰蓝(#4facfe) / 靛蓝(#5352ed) / 冷灰(#ced6e0)
+   设计理念: 低亮度、低饱和、高透明度 (0.10~0.15)、无暖色干扰
+   ========================================================================== */
+
+/* ==========================================================================
+   Part 1: ☀️ 浅色模式 (Light Mode)
+   背景统一使用提供的淡灰白 #f1f3f5 混入微量主色，极度柔和
+   ========================================================================== */
+
+/* 1. 📝 Summary (总结/核心) - 靛蓝 (Indigo) 
+   [对应色]: #5352ed
+   */
+#article-container .note.primary.flat,
+#article-container .note.primary,
+.note.primary.flat,
+.note.primary {
+  /* 背景：淡灰底色 + 极微量靛蓝，不抢眼 */
+  background: rgba(83, 82, 237, 0.06) !important;
+  /* 边框：靛蓝，标识存在感 */
+  border-left-color: #5352ed !important;
+  /* 文字：使用较深的靛蓝色，保证阅读舒适 */
+  color: #4040b0 !important;
+}
+#article-container .note.primary.flat::before,
+#article-container .note.primary i,
+.note.primary::before {
+  color: #5352ed !important;
+}
+
+/* 2. ℹ️ Info (信息) - 冰蓝 (Ice Blue)
+   [对应色]: #4facfe
+   */
+#article-container .note.info.flat,
+#article-container .note.info,
+.note.info.flat,
+.note.info {
+  background: rgba(79, 172, 254, 0.06) !important;
+  border-left-color: #4facfe !important;
+  color: #357abd !important; /* 压低亮度的深蓝 */
+}
+#article-container .note.info.flat::before,
+#article-container .note.info i,
+.note.info::before {
+  color: #4facfe !important;
+}
+
+/* 3. 💡 Tip (提示) - 冷灰 (Cold Grey)
+   [对应色]: #ced6e0 / #bfc7d1
+   */
+#article-container .note.tip.flat,
+#article-container .note.tip,
+.note.tip.flat,
+.note.tip {
+  /* 背景：纯粹的淡灰冷调 */
+  background: rgba(206, 214, 224, 0.15) !important;
+  border-left-color: #bfc7d1 !important; /* 深一点的灰边框 */
+  color: #57606f !important; /* 深灰文字 */
+}
+#article-container .note.tip.flat::before,
+#article-container .note.tip i,
+.note.tip::before {
+  color: #bfc7d1 !important;
+}
+
+/* 4. ✅ Success (完成) - 柔和靛青 (Soft Indigo)
+   [对应色]: #6b6fd6 (替代绿色)
+   */
+#article-container .note.success.flat,
+#article-container .note.success,
+#article-container .note.done,
+.note.success.flat,
+.note.success,
+.note.done {
+  background: rgba(107, 111, 214, 0.06) !important;
+  border-left-color: #6b6fd6 !important;
+  color: #484c99 !important;
+}
+#article-container .note.success.flat::before,
+#article-container .note.success i,
+.note.done i {
+  color: #6b6fd6 !important;
+}
+
+/* 5. ⚠️ Warning (注意) - 雾霾蓝灰 (Haze Blue)
+   [对应色]: #8faecc (替代黄色/紫色)
+   */
+#article-container .note.warning.flat,
+#article-container .note.warning,
+.note.warning.flat,
+.note.warning {
+  background: rgba(143, 174, 204, 0.1) !important;
+  border-left-color: #8faecc !important;
+  color: #536d80 !important;
+}
+#article-container .note.warning.flat::before,
+#article-container .note.warning i,
+.note.warning::before {
+  color: #8faecc !important;
+}
+
+/* 6. ❌ Danger (警示) - 深邃靛蓝 (Deep Indigo)
+   [对应色]: #5352ed (最深的强调色，替代红色)
+   */
+#article-container .note.danger.flat,
+#article-container .note.danger,
+.note.danger.flat,
+.note.danger {
+  background: rgba(83, 82, 237, 0.1) !important;
+  border-left-color: #5352ed !important;
+  color: #2f2f80 !important;
+}
+#article-container .note.danger.flat::before,
+#article-container .note.danger i,
+.note.danger::before {
+  color: #5352ed !important;
+}
+
+/* ==========================================================================
+   Part 2: 🌑 深色模式 (Dark Mode)
+   核心策略: 背景透明度控制在 0.10~0.12，文字使用冷灰(#ced6e0)而非纯白
+   ========================================================================== */
+
+/* 通用文字颜色设置：压低亮度，使用冷灰 */
+[data-theme="dark"] .note p,
+[data-theme="dark"] .note {
+  color: #ced6e0 !important; /* 关键：不是刺眼的纯白 */
+}
+
+/* 1. Summary - 低亮度靛蓝 */
+[data-theme="dark"] #article-container .note.primary.flat,
+[data-theme="dark"] .note.primary {
+  background: rgba(83, 82, 237, 0.12) !important; /* 严格控制透明度 */
+  border-left-color: #5352ed !important;
+  color: #f1f3f5 !important; /* 标题稍微亮一点 */
+}
+[data-theme="dark"] #article-container .note.primary.flat::before,
+[data-theme="dark"] .note.primary i {
+  color: #5352ed !important;
+}
+
+/* 2. Info - 低亮度冰蓝 */
+[data-theme="dark"] #article-container .note.info.flat,
+[data-theme="dark"] .note.info {
+  /* 明亮的浅紫色背景 */
+  background: rgba(162, 155, 254, 0.15) !important;
+  /* 边框色 */
+  border-left-color: #a29bfe !important;
+  /* 文字色 */
+  color: #ede7f6 !important;
+}
+[data-theme="dark"] #article-container .note.info.flat::before,
+[data-theme="dark"] .note.info i {
+  color: #a29bfe !important;
+}
+
+/* 3. Tip - 低亮度冷灰 */
+[data-theme="dark"] #article-container .note.tip.flat,
+[data-theme="dark"] .note.tip {
+  background: rgba(206, 214, 224, 0.1) !important;
+  border-left-color: #ced6e0 !important;
+  color: #bfc7d1 !important; /* 更暗一点的灰文字 */
+}
+[data-theme="dark"] #article-container .note.tip.flat::before,
+[data-theme="dark"] .note.tip i {
+  color: #ced6e0 !important;
+}
+
+/* 4. Success - 低亮度柔蓝 */
+[data-theme="dark"] #article-container .note.success.flat,
+[data-theme="dark"] #article-container .note.done,
+[data-theme="dark"] .note.success {
+  background: rgba(107, 111, 214, 0.1) !important;
+  border-left-color: #6b6fd6 !important;
+  color: #ced6e0 !important;
+}
+[data-theme="dark"] #article-container .note.success.flat::before,
+[data-theme="dark"] .note.success i {
+  color: #6b6fd6 !important;
+}
+
+/* 5. Warning - 低亮度蓝灰 */
+[data-theme="dark"] #article-container .note.warning.flat,
+[data-theme="dark"] .note.warning {
+  background: rgba(143, 174, 204, 0.12) !important;
+  border-left-color: #8faecc !important;
+  color: #ced6e0 !important;
+}
+[data-theme="dark"] #article-container .note.warning.flat::before,
+[data-theme="dark"] .note.warning i {
+  color: #8faecc !important;
+}
+
+/* 6. Danger - 低亮度深靛 */
+[data-theme="dark"] #article-container .note.danger.flat,
+[data-theme="dark"] .note.danger {
+  background: rgba(83, 82, 237, 0.15) !important; /* 稍微高一点点提示重要性 */
+  border-left-color: #5352ed !important;
+  color: #f1f3f5 !important;
+}
+[data-theme="dark"] #article-container .note.danger.flat::before,
+[data-theme="dark"] .note.danger i {
+  color: #5352ed !important;
+}

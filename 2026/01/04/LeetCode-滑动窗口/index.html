@@ -1,0 +1,340 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>LeetCode-滑动窗口 | Fliex</title><meta name="author" content="Fliex"><meta name="copyright" content="Fliex"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#000000"><meta name="description" content="🧠 通过移动 right 和 left，始终维护一个 [left, right] 的连续区间，并根据题目条件不断扩大或缩小这个区间。 一句话结论：👉 right 进窗(for 循环控制只增不减) left 出窗(只在 while (满足条件) 时移动只增不减)注意窗口状态,遇到出现次数与不能重复联想哈希表 set(元素不能重复) 和 map(Key 不能重复，Value 可以重复)    ⭐">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LeetCode-滑动窗口">
+<meta property="og:url" content="http://example.com/2026/01/04/LeetCode-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/index.html">
+<meta property="og:site_name" content="Fliex">
+<meta property="og:description" content="🧠 通过移动 right 和 left，始终维护一个 [left, right] 的连续区间，并根据题目条件不断扩大或缩小这个区间。 一句话结论：👉 right 进窗(for 循环控制只增不减) left 出窗(只在 while (满足条件) 时移动只增不减)注意窗口状态,遇到出现次数与不能重复联想哈希表 set(元素不能重复) 和 map(Key 不能重复，Value 可以重复)    ⭐">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/img/leetcode.png">
+<meta property="article:published_time" content="2026-01-04T13:35:54.000Z">
+<meta property="article:modified_time" content="2026-01-07T06:10:09.863Z">
+<meta property="article:author" content="Fliex">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="数组">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/leetcode.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "LeetCode-滑动窗口",
+  "url": "http://example.com/2026/01/04/LeetCode-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/",
+  "image": "http://example.com/img/leetcode.png",
+  "datePublished": "2026-01-04T13:35:54.000Z",
+  "dateModified": "2026-01-07T06:10:09.863Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Fliex",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2026/01/04/LeetCode-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000000')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'LeetCode-滑动窗口',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 8.1.1"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">Loading...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    // Add timeout protection: force end after 7 seconds
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (false) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(/img/leetzong.png);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/logo1.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/shuoshuo/"><i class="fa-fw fas fa-comments"></i><span> 说说</span></a></div><div class="menus_item"><a class="site-page" href="/templates"><i class="fa-fw fas fa-file-code"></i><span> 模板</span></a></div><div class="menus_item"><span class="site-page group"><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/leetcode.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/colored-logo.png" alt="Logo"><span class="site-name">Fliex</span></a><a class="nav-page-title" href="/"><span class="site-name">LeetCode-滑动窗口</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  Back to Home</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/shuoshuo/"><i class="fa-fw fas fa-comments"></i><span> 说说</span></a></div><div class="menus_item"><a class="site-page" href="/templates"><i class="fa-fw fas fa-file-code"></i><span> 模板</span></a></div><div class="menus_item"><span class="site-page group"><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">LeetCode-滑动窗口</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2026-01-04T13:35:54.000Z" title="Created 2026-01-04 21:35:54">2026-01-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2026-01-07T06:10:09.863Z" title="Updated 2026-01-07 14:10:09">2026-01-07</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/LeetCode/">LeetCode</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/LeetCode/%E6%A8%A1%E6%9D%BF/">模板</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/LeetCode/%E6%A8%A1%E6%9D%BF/%E6%95%B0%E7%BB%84/">数组</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span class="waline-pageview-count" data-path="/2026/01/04/LeetCode-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="🧠-通过移动-right-和-left，始终维护一个-left-right-的连续区间，并根据题目条件不断扩大或缩小这个区间。"><a href="#🧠-通过移动-right-和-left，始终维护一个-left-right-的连续区间，并根据题目条件不断扩大或缩小这个区间。" class="headerlink" title="🧠 通过移动 right 和 left，始终维护一个 [left, right] 的连续区间，并根据题目条件不断扩大或缩小这个区间。"></a>🧠 通过移动 right 和 left，始终维护一个 [left, right] 的连续区间，并根据题目条件不断扩大或缩小这个区间。</h1><div class="note primary flat"><blockquote>
+<p><strong>一句话结论：</strong><br>👉 right 进窗(for 循环控制只增不减) left 出窗(只在 while (满足条件) 时移动只增不减)<br>注意窗口状态,遇到出现次数与不能重复联想哈希表 set(元素不能重复) 和 map(Key 不能重复，Value 可以重复)</p>
+</blockquote>
+</div>
+
+<div class="note info flat"><h2 id="⭐-模板"><a href="#⭐-模板" class="headerlink" title="⭐ 模板"></a>⭐ 模板</h2><ol>
+<li><p>初始化</p>
+<p>left &#x3D; 0 (窗口的左边界)<br>res &#x3D; 初始值 (代表的全局最优解,求最大值可以刚开始设为 0,最小值设为无穷大)<br>windows &#x3D; {} (初始化窗口状态[Nt4])</p>
+</li>
+<li><p>窗口内数据处理(控制窗口右边界主动向右边扩张)</p>
+<p>for(int right &#x3D; 0; right &lt; nums.length; right++){<br>&#x2F;&#x2F;1.把元素添加进窗口<br>window.add(nums[right]);</p>
+<p>&#x2F;&#x2F;2.判断窗口是否合法 【出】如果不满足条件，left 被迫移动（范围变小）<br>while(导致 left 必须右移的原因)<br>{<br>&#x2F;&#x2F;3.把元素移出窗口<br>window.remove(nums[left]);<br>left++;<br>}</p>
+<p>&#x2F;&#x2F;4.判断定长还需要检查结果 (if)<br>if(满足条件){</p>
+<p>}</p>
+<p>&#x2F;&#x2F;更新 res[Nt2]<br>}</p>
+</li>
+<li><p>返回值<br>return res;</p>
+</li>
+</ol>
+</div>
+
+<div class="note warning flat"><h2 id="Notice"><a href="#Notice" class="headerlink" title="Notice"></a>Notice</h2><blockquote>
+<ol>
+<li>控制 left 的移动只可以使用 while 不可以使用 if</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="2">
+<li>res 更新位置</li>
+</ol>
+</blockquote>
+<p>找最小 ：在 for 里面 while 里面更新,要在 left++之前更新。</p>
+<p>找最大 ：在 for 里面 while 外面更新。</p>
+<p>对于定长的滑动窗口:必须写在 “刚加进第 right 个元素” 之后，且 “还没踢掉第 left 个元素” 之前</p>
+<blockquote>
+<ol start="3">
+<li>Map 的“尸体”清理 (Remove Key)</li>
+</ol>
+</blockquote>
+<p>做计数类题目（如 904 水果成篮）时，最容易忘的一步。</p>
+<p>现象：map.get(key) 已经减到 0 了，但 map.size() 还是没变。</p>
+<p>后果：会导致 while (map.size() &gt; 2) 变成死循环，或者逻辑完全错误。</p>
+<p>口诀：“减到 0 必须 remove”。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">map.put(outVal, map.get(outVal) - <span class="number">1</span>);</span><br><span class="line"><span class="keyword">if</span> (map.get(outVal) == <span class="number">0</span>) &#123;</span><br><span class="line">    map.remove(outVal);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ol start="4">
+<li>Windows 初始化常见的四种状态</li>
+</ol>
+</blockquote>
+<p>[是字符统计就用数组 int[]；是数字统计就用 Map；只查重复就用 Set；只求数值和就用 int。]</p>
+<ol>
+<li>数组 int[] (字符串题首选)<br>适用场景：题目只包含字符（如 s 包含小写字母、ASCII 码）。</li>
+</ol>
+<p>作用：统计字符出现的频率（次数）。</p>
+<p>&#x2F;&#x2F; 覆盖所有 ASCII 字符<br>int[] window &#x3D; new int[128];<br>&#x2F;&#x2F; 或者只覆盖小写字母 (需配合 char - ‘a’ 使用)<br>int[] window &#x3D; new int[26];</p>
+<div class="note tip flat"><h4 id="Tips-数组的函数："><a href="#Tips-数组的函数：" class="headerlink" title="Tips:数组的函数："></a>Tips:数组的函数：</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">判断数组是否相同(元素,顺序,个数): Arrays.equals(arr1, arr2)</span><br><span class="line">取数组中的元素: s.charAt(i)</span><br><span class="line">转换下标: s.charAt(i) - <span class="string">&#x27;a&#x27;</span></span><br><span class="line">数组升序排序: Arrays.sort(arr)</span><br><span class="line">把“字符串”拆解成新的“字符数组”: <span class="type">char</span>[] chars = s.toCharArray();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</div>
+
+<ol start="2">
+<li>哈希表 Map (通用型)<br>适用场景：元素不是字符（比如数组里的数字），或者数字很大、很稀疏（如 [-10^9, 10^9]）。</li>
+</ol>
+<p>作用：统计元素出现的频率，或记录索引。</p>
+<p>Map&lt;Integer, Integer&gt; window &#x3D; new HashMap&lt;&gt;();</p>
+<ol start="3">
+<li>哈希集合 Set (判重型)<br>适用场景：不需要统计“出现了几次”，只需要知道“有没有重复”。</li>
+</ol>
+<p>作用：快速查找是否存在。最经典题目：无重复字符的最长子串。</p>
+<p>Set<Character> window &#x3D; new HashSet&lt;&gt;();</p>
+<ol start="4">
+<li>简单变量 int (数学型)<br>适用场景：题目考察的是数值计算，如“子数组之和”。</li>
+</ol>
+<p>作用：累加器，不需要存具体元素，只存总数。</p>
+<p>int currentSum &#x3D; 0; &#x2F;&#x2F; 记录窗口内的和</p>
+<blockquote>
+<ol start="5">
+<li>求和+滑动窗口</li>
+</ol>
+</blockquote>
+<p>要求数组里面不可以有负数,负数破坏了“越加越大”的规律，while 无法判断该缩还是该扩。</p></div>
+
+<h2 id="相关练习题"><a href="#相关练习题" class="headerlink" title="相关练习题"></a>相关练习题</h2><h3 id="1-LeetCode-904-水果成篮"><a href="#1-LeetCode-904-水果成篮" class="headerlink" title="1. LeetCode 904. 水果成篮"></a>1. <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/fruit-into-baskets/">LeetCode 904. 水果成篮</a></h3><p><strong>题意：</strong> 你正在探访一家农场，农场从左到右种植了一排果树。这些树用一个整数数组 fruits 表示，其中 fruits[i] 是第 i 棵树上的水果 种类 。</p>
+<p>你想要尽可能多地收集水果。然而，农场的主人设定了一些严格的规矩，你必须按照要求采摘水果：</p>
+<p>你只有 两个 篮子，并且每个篮子只能装 单一类型 的水果。每个篮子能够装的水果总量没有限制。<br>你可以选择任意一棵树开始采摘，你必须从 每棵 树（包括开始采摘的树）上 恰好摘一个水果 。采摘的水果应当符合篮子中的水果类型。每采摘一次，你将会向右移动到下一棵树，并继续采摘。<br>一旦你走到某棵树前，但水果不符合篮子的水果类型，那么就必须停止采摘。<br>给你一个整数数组 fruits ，返回你可以收集的水果的 最大 数目。</p>
+<div class="note tip flat"><h4 id="Tips-哈希表里的计数神器："><a href="#Tips-哈希表里的计数神器：" class="headerlink" title="Tips:哈希表里的计数神器："></a>Tips:哈希表里的计数神器：</h4><p>(哈希表里的计数神器:map.getOrDefault(key, defaultValue),key 是要查的元素,defa 是出现次数,但是他不会算上现在这一次,只查过去所以+1)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">inFruit</span> <span class="operator">=</span> fruits[right];</span><br><span class="line">map.put(inFruit, map.getOrDefault(inFruit, <span class="number">0</span>) + <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+</div>
+
+<h3 id="2-LeetCode-567-字符串的排列"><a href="#2-LeetCode-567-字符串的排列" class="headerlink" title="2. LeetCode 567. 字符串的排列"></a>2. <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/permutation-in-string/">LeetCode 567. 字符串的排列</a></h3><p><strong>题意：</strong> 给你两个字符串 s1 和 s2 ，写一个函数来判断 s2 是否包含 s1 的 排列。如果是，返回 true ；否则，返回 false 。换句话说，s1 的排列之一是 s2 的 子串 。</p>
+<div class="note tip flat"><h4 id="Tips-N-4-1"><a href="#Tips-N-4-1" class="headerlink" title="Tips: [N-4.1]"></a>Tips: [N-4.1]</h4></div>
+
+<h3 id="3-LeetCode-76-最小覆盖子串"><a href="#3-LeetCode-76-最小覆盖子串" class="headerlink" title="3. LeetCode 76. 最小覆盖子串"></a>3. <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/minimum-window-substring/">LeetCode 76. 最小覆盖子串</a></h3><p><strong>题意：</strong> 给定两个字符串 s 和 t，长度分别是 m 和 n，返回 s 中的 最短窗口 子串，使得该子串包含 t 中的每一个字符（包括重复字符）。如果没有这样的子串，返回空字符串 “”。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="http://example.com">Fliex</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="http://example.com/2026/01/04/LeetCode-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/">http://example.com/2026/01/04/LeetCode-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/%E6%95%B0%E7%BB%84/">数组</a></div><div class="post-share"><div class="social-share" data-image="/img/leetcode.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/01/06/LeetCode-%E5%89%8D%E7%BC%80%E5%92%8C/" title="LeetCode-前缀和"><img class="cover" src="/img/leetcode.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">Previous</div><div class="info-item-2">LeetCode-前缀和</div></div><div class="info-2"><div class="info-item-1">🧠 通过提前累计数组的“历史和”，将任意连续区间的求和问题，转化为两次前缀值的相减。 一句话结论：👉pre 数组要比原数组的长度多一pre[0] &#x3D; 0 是为了统一公式，避免边界特判前缀和 + 哈希: 找历史区间    ⭐ 模板前缀和 初始化int n &#x3D; nums.l...</div></div></div></a><a class="pagination-related" href="/2026/01/02/LeetCode-%E5%B7%A6%E5%8F%B3%E5%8F%8C%E6%8C%87%E9%92%88/" title="LeetCode-左右双指针"><img class="cover" src="/img/leetcode.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">Next</div><div class="info-item-2">LeetCode-左右双指针</div></div><div class="info-2"><div class="info-item-1">🧠 解决具有单调性（Monotonicity）或需要两端向中间收缩的问题。 一句话结论：👉 数组有序(前提) 结构由两端点决定 可利用左右的元素的对称关系 可以排除出界元素在 while 循环内部如果还有指针移动（如跳过空格），必须再次判断 left &lt; right，否则会发生索引越...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/01/07/LeetCode-%E5%8D%95%E8%B0%83%E6%A0%88/" title="LeetCode-单调栈"><img class="cover" src="/img/leetcode.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-07</div><div class="info-item-2">LeetCode-单调栈</div></div><div class="info-2"><div class="info-item-1">🧠 找出每个元素在某个方向上第一个满足大小关系的元素 一句话结论：👉 单调栈的目的不是排序，而是“填答案数组”,栈里存的是下标 index，不是值用一个保持有序的栈，在 O(n) 时间内找到每个元素左&#x2F;右边第一个比它大或小的元素。如果题目满足 这 3 条中的 2 条以上，基本就是...</div></div></div></a><a class="pagination-related" href="/2026/01/01/LeetCode-%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88/" title="LeetCode-快慢指针"><img class="cover" src="/img/leetcode.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-01</div><div class="info-item-2">LeetCode-快慢指针</div></div><div class="info-2"><div class="info-item-1">🧠 要求保持相对顺序原地修改,且要”删除&#x2F;筛选&#x2F;移动”元素 一句话结论：👉 四个问题:结构变不变(判断是否适用),什么情况可以保留,slow,fast快慢指针的核心不在于“删除”，而在于**“保留”**。 思路逆转：不要管哪些元素要删掉，只关心 “哪些元素应该被保留”，...</div></div></div></a><a class="pagination-related" href="/2026/01/02/LeetCode-%E5%B7%A6%E5%8F%B3%E5%8F%8C%E6%8C%87%E9%92%88/" title="LeetCode-左右双指针"><img class="cover" src="/img/leetcode.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-02</div><div class="info-item-2">LeetCode-左右双指针</div></div><div class="info-2"><div class="info-item-1">🧠 解决具有单调性（Monotonicity）或需要两端向中间收缩的问题。 一句话结论：👉 数组有序(前提) 结构由两端点决定 可利用左右的元素的对称关系 可以排除出界元素在 while 循环内部如果还有指针移动（如跳过空格），必须再次判断 left &lt; right，否则会发生索引越...</div></div></div></a><a class="pagination-related" href="/2026/01/06/LeetCode-%E5%89%8D%E7%BC%80%E5%92%8C/" title="LeetCode-前缀和"><img class="cover" src="/img/leetcode.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-06</div><div class="info-item-2">LeetCode-前缀和</div></div><div class="info-2"><div class="info-item-1">🧠 通过提前累计数组的“历史和”，将任意连续区间的求和问题，转化为两次前缀值的相减。 一句话结论：👉pre 数组要比原数组的长度多一pre[0] &#x3D; 0 是为了统一公式，避免边界特判前缀和 + 哈希: 找历史区间    ⭐ 模板前缀和 初始化int n &#x3D; nums.l...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comments</span></div></div><div class="comment-wrap"><div><div id="waline-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/logo1.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Fliex</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/MikeJosion"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/MikeJosion" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:2573999435@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%F0%9F%A7%A0-%E9%80%9A%E8%BF%87%E7%A7%BB%E5%8A%A8-right-%E5%92%8C-left%EF%BC%8C%E5%A7%8B%E7%BB%88%E7%BB%B4%E6%8A%A4%E4%B8%80%E4%B8%AA-left-right-%E7%9A%84%E8%BF%9E%E7%BB%AD%E5%8C%BA%E9%97%B4%EF%BC%8C%E5%B9%B6%E6%A0%B9%E6%8D%AE%E9%A2%98%E7%9B%AE%E6%9D%A1%E4%BB%B6%E4%B8%8D%E6%96%AD%E6%89%A9%E5%A4%A7%E6%88%96%E7%BC%A9%E5%B0%8F%E8%BF%99%E4%B8%AA%E5%8C%BA%E9%97%B4%E3%80%82"><span class="toc-number">1.</span> <span class="toc-text">🧠 通过移动 right 和 left，始终维护一个 [left, right] 的连续区间，并根据题目条件不断扩大或缩小这个区间。</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%AD%90-%E6%A8%A1%E6%9D%BF"><span class="toc-number">1.1.</span> <span class="toc-text">⭐ 模板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Notice"><span class="toc-number">1.2.</span> <span class="toc-text">Notice</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Tips-%E6%95%B0%E7%BB%84%E7%9A%84%E5%87%BD%E6%95%B0%EF%BC%9A"><span class="toc-number">1.2.1.</span> <span class="toc-text">Tips:数组的函数：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E7%BB%83%E4%B9%A0%E9%A2%98"><span class="toc-number">1.3.</span> <span class="toc-text">相关练习题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-LeetCode-904-%E6%B0%B4%E6%9E%9C%E6%88%90%E7%AF%AE"><span class="toc-number">1.3.1.</span> <span class="toc-text">1. LeetCode 904. 水果成篮</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Tips-%E5%93%88%E5%B8%8C%E8%A1%A8%E9%87%8C%E7%9A%84%E8%AE%A1%E6%95%B0%E7%A5%9E%E5%99%A8%EF%BC%9A"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">Tips:哈希表里的计数神器：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-LeetCode-567-%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E6%8E%92%E5%88%97"><span class="toc-number">1.3.2.</span> <span class="toc-text">2. LeetCode 567. 字符串的排列</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Tips-N-4-1"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">Tips: [N-4.1]</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-LeetCode-76-%E6%9C%80%E5%B0%8F%E8%A6%86%E7%9B%96%E5%AD%90%E4%B8%B2"><span class="toc-number">1.3.3.</span> <span class="toc-text">3. LeetCode 76. 最小覆盖子串</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/01/07/LeetCode-%E5%8D%95%E8%B0%83%E6%A0%88/" title="LeetCode-单调栈"><img src="/img/leetcode.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LeetCode-单调栈"/></a><div class="content"><a class="title" href="/2026/01/07/LeetCode-%E5%8D%95%E8%B0%83%E6%A0%88/" title="LeetCode-单调栈">LeetCode-单调栈</a><time datetime="2026-01-07T12:18:16.000Z" title="Created 2026-01-07 20:18:16">2026-01-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/01/06/LeetCode-%E5%89%8D%E7%BC%80%E5%92%8C/" title="LeetCode-前缀和"><img src="/img/leetcode.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LeetCode-前缀和"/></a><div class="content"><a class="title" href="/2026/01/06/LeetCode-%E5%89%8D%E7%BC%80%E5%92%8C/" title="LeetCode-前缀和">LeetCode-前缀和</a><time datetime="2026-01-06T08:24:33.000Z" title="Created 2026-01-06 16:24:33">2026-01-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/01/04/LeetCode-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/" title="LeetCode-滑动窗口"><img src="/img/leetcode.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LeetCode-滑动窗口"/></a><div class="content"><a class="title" href="/2026/01/04/LeetCode-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/" title="LeetCode-滑动窗口">LeetCode-滑动窗口</a><time datetime="2026-01-04T13:35:54.000Z" title="Created 2026-01-04 21:35:54">2026-01-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/01/02/LeetCode-%E5%B7%A6%E5%8F%B3%E5%8F%8C%E6%8C%87%E9%92%88/" title="LeetCode-左右双指针"><img src="/img/leetcode.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LeetCode-左右双指针"/></a><div class="content"><a class="title" href="/2026/01/02/LeetCode-%E5%B7%A6%E5%8F%B3%E5%8F%8C%E6%8C%87%E9%92%88/" title="LeetCode-左右双指针">LeetCode-左右双指针</a><time datetime="2026-01-02T12:03:04.000Z" title="Created 2026-01-02 20:03:04">2026-01-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/01/01/LeetCode-%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88/" title="LeetCode-快慢指针"><img src="/img/leetcode.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LeetCode-快慢指针"/></a><div class="content"><a class="title" href="/2026/01/01/LeetCode-%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88/" title="LeetCode-快慢指针">LeetCode-快慢指针</a><time datetime="2026-01-01T08:05:58.000Z" title="Created 2026-01-01 16:05:58">2026-01-01</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/top.png);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Fliex</span><span class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.1</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.3</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll to Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(() => {
+  let initFn = window.walineFn || null
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const destroyWaline = ele => ele.destroy()
+
+  const initWaline = (Fn, el = document, path = window.location.pathname) => {
+    const waline = Fn({
+      el: el.querySelector('#waline-wrap'),
+      serverURL: 'https://waline527.vercel.app',
+      pageview: true,
+      dark: 'html[data-theme="dark"]',
+      comment: false,
+      ...option,
+      path: isShuoshuo ? path : (option && option.path) || path
+    })
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyWaline = () => {
+        destroyWaline(waline)
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const loadWaline = (el, path) => {
+    if (initFn) initWaline(initFn, el, path)
+    else {
+      btf.getCSS('https://cdn.jsdelivr.net/npm/@waline/client@3.8.0/dist/waline.min.css')
+        .then(() => import('https://cdn.jsdelivr.net/npm/@waline/client@3.8.0/dist/waline.min.js'))
+        .then(({ init }) => {
+          initFn = init || Waline.init
+          initWaline(initFn, el, path)
+          window.walineFn = initFn
+        })
+    }
+  }
+
+  if (isShuoshuo) {
+    'Waline' === 'Waline'
+      ? window.shuoshuoComment = { loadComment: loadWaline } 
+      : window.loadOtherComment = loadWaline
+    return
+  }
+
+  if ('Waline' === 'Waline' || !false) {
+    if (false) btf.loadComment(document.getElementById('waline-wrap'),loadWaline)
+    else setTimeout(loadWaline, 0)
+  } else {
+    window.loadOtherComment = loadWaline
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
