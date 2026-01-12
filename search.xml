@@ -118,14 +118,10 @@ class Solution &#123;    public ListNode partition(ListNode head, int x) &#123; 
 ]]></content>
       <categories>
         <category>LeetCode</category>
-        <category>数据结构</category>
         <category>模板</category>
-        <category>链表</category>
       </categories>
       <tags>
         <tag>链表</tag>
-        <tag>C 语言</tag>
-        <tag>指针</tag>
       </tags>
   </entry>
   <entry>
@@ -186,10 +182,8 @@ tips:数组两头大中间小,适合从后开始两头 PK 谁大填(需要一个
       <categories>
         <category>LeetCode</category>
         <category>模板</category>
-        <category>数组</category>
       </categories>
       <tags>
-        <tag>Java</tag>
         <tag>数组</tag>
       </tags>
   </entry>
@@ -292,10 +286,8 @@ Tips: [N-4.1]
       <categories>
         <category>LeetCode</category>
         <category>模板</category>
-        <category>数组</category>
       </categories>
       <tags>
-        <tag>Java</tag>
         <tag>数组</tag>
       </tags>
   </entry>
@@ -391,10 +383,8 @@ NumMatrix(int[][] matrix) 给定整数矩阵 matrix 进行初始化int sumRegion
       <categories>
         <category>LeetCode</category>
         <category>模板</category>
-        <category>数组</category>
       </categories>
       <tags>
-        <tag>Java</tag>
         <tag>数组</tag>
       </tags>
   </entry>
@@ -475,10 +465,8 @@ nums[i] &lt; nums[stack.peek()]
       <categories>
         <category>LeetCode</category>
         <category>模板</category>
-        <category>数组</category>
       </categories>
       <tags>
-        <tag>Java</tag>
         <tag>数组</tag>
       </tags>
   </entry>
@@ -549,11 +537,9 @@ curr
       <categories>
         <category>LeetCode</category>
         <category>模板</category>
-        <category>链表</category>
       </categories>
       <tags>
         <tag>链表</tag>
-        <tag>指针</tag>
       </tags>
   </entry>
   <entry>
@@ -600,10 +586,8 @@ Tips:通用去重模板（保留 k 位）：if (slow &lt; k || nums[fast] != num
       <categories>
         <category>LeetCode</category>
         <category>模板</category>
-        <category>数组</category>
       </categories>
       <tags>
-        <tag>Java</tag>
         <tag>数组</tag>
       </tags>
   </entry>
@@ -705,7 +689,6 @@ Java 会先判断左边，如果 fast 已经是 null，就不会去执行右边�
       </categories>
       <tags>
         <tag>链表</tag>
-        <tag>Java</tag>
       </tags>
   </entry>
   <entry>
@@ -808,11 +791,10 @@ k 是一个正整数，它的值小于或等于链表的长度。如果节点总
 ]]></content>
       <categories>
         <category>LeetCode</category>
-        <category>链表</category>
+        <category>模板</category>
       </categories>
       <tags>
         <tag>链表</tag>
-        <tag>Java</tag>
       </tags>
   </entry>
   <entry>
@@ -856,11 +838,9 @@ Notice:
       <categories>
         <category>LeetCode</category>
         <category>模板</category>
-        <category>链表</category>
       </categories>
       <tags>
         <tag>链表</tag>
-        <tag>指针</tag>
       </tags>
   </entry>
 </search>
