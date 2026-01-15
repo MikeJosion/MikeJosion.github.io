@@ -4,7 +4,7 @@
     <title>故都的秋</title>
     <url>/2025/10/18/%E6%95%85%E9%83%BD%E7%9A%84%E7%A7%8B/</url>
     <content><![CDATA[
-“秋天的光，落在旧京的屋檐上，也落在人的心里。”——— Fliex’s Blog · 柯南式的夜思录
+“秋天的光，落在旧京的屋檐上，也落在人的心里。”
 
 
 
@@ -28,7 +28,7 @@
 💭 四、读后感郁达夫笔下的秋，不只是自然的描写，更是一种心境的投影。他看到了凋零之美，看到了孤独中的诗意。如今读来，仍能感受到那份淡淡的忧愁与温柔的宁静。
 
 
-📎 原文作者：郁达夫（1934）📚 赏析与再创作：Fliex’s Blog🕯️ “秋天的案件，没有凶手，只有落叶。”
+📎 原文作者：郁达夫（1934）📚 赏析与再创作：Fliex
 
 
 
@@ -87,7 +87,6 @@ init({
       <tags>
         <tag>散文</tag>
         <tag>郁达夫</tag>
-        <tag>秋天</tag>
       </tags>
   </entry>
   <entry>
@@ -685,7 +684,7 @@ Java 会先判断左边，如果 fast 已经是 null，就不会去执行右边�
 ]]></content>
       <categories>
         <category>LeetCode</category>
-        <category>链表</category>
+        <category>模板</category>
       </categories>
       <tags>
         <tag>链表</tag>
@@ -841,6 +840,68 @@ Notice:
       </categories>
       <tags>
         <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LeetCode-中心扩散</title>
+    <url>/2026/01/15/LeetCode-%E4%B8%AD%E5%BF%83%E6%89%A9%E6%95%A3/</url>
+    <content><![CDATA[🧠 枚举回文中心，用左右指针向两边扩散，专治一切回文相关问题。
+🧩 模板步骤
+枚举中心位置 i
+以 (i, i) 作为中心（奇数回文）
+以 (i, i + 1) 作为中心（偶数回文）
+左右指针同时扩散：left–、right++
+越界或不相等立即停止
+
+
+
+⭐ 模板
+中心扩散函数
+&#x2F;&#x2F; 从中心 left, right 开始向两边扩散private int expand(String s, int left, int right) {while (left &gt;&#x3D; 0 &amp;&amp; right &lt; s.length() &amp;&amp; s.charAt(left) &#x3D;&#x3D; s.charAt(right)) {left–;right++;}
+&#x2F;&#x2F; 返回当前回文长度return right - left - 1;}
+
+主流程模板
+int n &#x3D; s.length();int maxLen &#x3D; 0;
+for (int i &#x3D; 0; i &lt; n; i++) {int len1 &#x3D; expand(s, i, i); &#x2F;&#x2F; 奇数回文int len2 &#x3D; expand(s, i, i + 1); &#x2F;&#x2F; 偶数回文MaxLen &#x3D; Math.max(maxLen, Math.max(len1, len2));}
+
+
+
+
+Notice:
+
+while 条件顺序不能乱
+
+
+正确顺序：先判边界，再比字符
+while (left &gt;&#x3D; 0 &amp;&amp; right &lt; n &amp;&amp; s.charAt(left) &#x3D;&#x3D; s.charAt(right))
+❌ 错误写法（可能越界）：
+s.charAt(left) &#x3D;&#x3D; s.charAt(right) &amp;&amp; left &gt;&#x3D; 0
+
+
+注意空串 &amp; 单字符
+
+
+if (s &#x3D;&#x3D; null || s.length() &lt; 2) return s;
+
+
+固定数据
+
+
+回文子串的起始下标: start &#x3D; i - (len - 1) &#x2F; 2;
+回文子串的结束下标: end &#x3D; i + len &#x2F; 2;
+当前中心能扩散得到的「回文长度」: right - left - 1;
+
+
+相关练习题1. LeetCode 5. 最长回文子串题意： 给你一个字符串 s，找到 s 中最长的回文子串。
+2. LeetCode 680. 验证回文字符串 Ⅱ题意： 给定一个非空字符串 s ，最多删除一个字符。判断是否能成为回文字符串。
+3. LeetCode 132. 分割回文串 II题意： 给你一个字符串 s，请你将 s 分割成一些子串，使每个子串都是回文串。返回符合要求的 最少分割次数 。
+]]></content>
+      <categories>
+        <category>LeetCode</category>
+        <category>模板</category>
+      </categories>
+      <tags>
+        <tag>数组</tag>
       </tags>
   </entry>
 </search>
