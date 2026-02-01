@@ -963,4 +963,65 @@ LeetCode 127. 单词接龙题意： 字典 wordList 中从单词 beginWord 到 e
         <tag>栈&amp;队列</tag>
       </tags>
   </entry>
+  <entry>
+    <title>LeetCode-括号栈</title>
+    <url>/2026/02/01/LeetCode-%E6%8B%AC%E5%8F%B7%E6%A0%88/</url>
+    <content><![CDATA[🧠 括号栈 左括号入栈，右括号触发结算⭐ 模板一 合法括号判断
+左括号 → 入栈
+
+右括号 → 弹栈并匹配
+
+最后栈必须为空
+for (cahr c : s.toCharArray()){if ch 是左括号:入栈else:if 栈空: return false;top &#x3D; 栈顶出栈;if top 与 c 不匹配:return false;}return 栈空;
+
+
+⭐ 模板二 最长有效括号
+遇到左括号，下标入栈
+
+遇到右括号，当前遇到的 )，可以和栈顶的 ( 组成一对合法括号，于是把这个 ( 从栈里删掉。不能就更新最后的非法位置
+stack.push(-1);for (int i &#x3D; 0; i &lt; s.length(); i++){if (s.charAt(i) &#x3D;&#x3D; ‘(‘){stack.push(i);else{stack.pop();if (stack.isEmpty()){stack.push(i);}else{maxLen &#x3D; Math.max(maxLen, i - stack.peek());}}}}return maxLen;
+
+
+⭐模板三：需要删除多少括号
+栈记录 未匹配的括号下标
+
+最后统一删除这些位置
+
+
+stack &#x3D; []invalid &#x3D; set()
+for i in range(len(s)):    if s[i] &#x3D;&#x3D; ‘(‘:        stack.push(i)    else if s[i] &#x3D;&#x3D; ‘)’:        if stack 非空:            stack.pop()        else:            invalid.add(i)
+把 stack 中剩余下标加入 invalid删除 invalid 位置换位Java的这种伪代码
+⭐模板四：括号 + 字符串处理
+栈处理 嵌套结构
+
+每遇到 )，处理一段完整子串
+
+
+stack &#x3D; []for ch in s:if ch !&#x3D; ‘)’:stack.push(ch)else:temp &#x3D; “”while stack.top() !&#x3D; ‘(‘:temp +&#x3D; stack.pop()stack.pop() &#x2F;&#x2F; 弹 ‘(‘把 temp 再压回栈
+
+
+Notice:
+合法括号判断为什么最后是返回栈为空
+
+循环结束时，仅仅代表“没有发生冲突”，但不代表“所有括号都匹配完了”,栈为空，说明所有括号都匹配完了，没有发生冲突。
+
+最长有效括号为什么要stack.push(-1)
+
+栈里保存的是合法括号的下标，初始时，栈里应该有一个-1，这样，栈里第一个元素就是合法括号的左边界，栈里最后一个元素就是合法括号的右边界。
+
+
+相关练习题1. LeetCode 20. 有效的括号题意： 给定一个只包括 ‘(‘，’)’，’{‘，’}’，’[‘，’]’ 的字符串 s ，判断字符串是否有效。
+2. LeetCode 32. 最长有效括号题意： 给你一个只包含 ‘(‘ 和 ‘)’ 的字符串，找出最长有效（格式正确且连续）括号子串的长度。
+3. LeetCode 921. 使括号有效的最少添加题意： 给定一个只包含 ‘(‘ 和 ‘)’ 的字符串 s ，找出最长有效（格式正确且连续）括号子串的长度。
+4. LeetCode 1249. 移除无效的括号题意： 给你一个由 ‘(‘、’)’ 和小写字母组成的字符串 s 。你需要从字符串中删除 最少数目的 ‘(‘ 或者 ‘)’ ，使得剩下的字符串有效。
+5. LeetCode 1190. 反转每对括号间的子串题意： 给出一个字符串 s（仅含有小写英文字母和括号）。返回 s 中 “反转字符串” 后的结果。括号中的内容需要翻转。
+]]></content>
+      <categories>
+        <category>LeetCode</category>
+        <category>模板</category>
+      </categories>
+      <tags>
+        <tag>栈</tag>
+      </tags>
+  </entry>
 </search>
