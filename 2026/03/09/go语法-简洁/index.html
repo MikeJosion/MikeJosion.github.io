@@ -1,0 +1,400 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>go语法(简洁) | Fliex</title><meta name="author" content="Fliex"><meta name="copyright" content="Fliex"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#000000"><meta name="description" content="Go 核心语法精简笔记 (背诵&#x2F;速查版) 核心红线： 声明了不用的变量、导入了不用的包，极必编译报错！   1. 变量与常量初始化🌈 变量定义1234567891011&#x2F;&#x2F; 1. 标准声明var a int &#x3D; 10&#x2F;&#x2F; 2. 类型推断var b &#x3D; 20&#x2F;&#x2F; 3. 简短声明（🔥 最常用，仅用于函数内部）str :&#x3D; &quot;fliex&quot;&#x2F;&#x2F; 4. 并行声明x, y,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go语法(简洁)">
+<meta property="og:url" content="http://example.com/2026/03/09/go%E8%AF%AD%E6%B3%95-%E7%AE%80%E6%B4%81/index.html">
+<meta property="og:site_name" content="Fliex">
+<meta property="og:description" content="Go 核心语法精简笔记 (背诵&#x2F;速查版) 核心红线： 声明了不用的变量、导入了不用的包，极必编译报错！   1. 变量与常量初始化🌈 变量定义1234567891011&#x2F;&#x2F; 1. 标准声明var a int &#x3D; 10&#x2F;&#x2F; 2. 类型推断var b &#x3D; 20&#x2F;&#x2F; 3. 简短声明（🔥 最常用，仅用于函数内部）str :&#x3D; &quot;fliex&quot;&#x2F;&#x2F; 4. 并行声明x, y,">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/leetcode.png">
+<meta property="article:published_time" content="2026-03-09T13:55:11.000Z">
+<meta property="article:modified_time" content="2026-03-09T13:55:38.767Z">
+<meta property="article:author" content="Fliex">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/leetcode.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "go语法(简洁)",
+  "url": "http://example.com/2026/03/09/go%E8%AF%AD%E6%B3%95-%E7%AE%80%E6%B4%81/",
+  "image": "http://example.com/img/leetcode.png",
+  "datePublished": "2026-03-09T13:55:11.000Z",
+  "dateModified": "2026-03-09T13:55:38.767Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Fliex",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2026/03/09/go%E8%AF%AD%E6%B3%95-%E7%AE%80%E6%B4%81/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000000')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":true,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'go语法(简洁)',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 8.1.1"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    // Add timeout protection: force end after 7 seconds
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (false) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(/img/leetzong.png);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/logo1.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">16</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/shuoshuo/"><i class="fa-fw fas fa-comments"></i><span> 说说</span></a></div><div class="menus_item"><a class="site-page" href="/templates"><i class="fa-fw fas fa-file-code"></i><span> 模板</span></a></div><div class="menus_item"><span class="site-page group"><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/leetcode.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/colored-logo.png" alt="Logo"><span class="site-name">Fliex</span></a><a class="nav-page-title" href="/"><span class="site-name">go语法(简洁)</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/shuoshuo/"><i class="fa-fw fas fa-comments"></i><span> 说说</span></a></div><div class="menus_item"><a class="site-page" href="/templates"><i class="fa-fw fas fa-file-code"></i><span> 模板</span></a></div><div class="menus_item"><span class="site-page group"><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">go语法(简洁)</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-03-09T13:55:11.000Z" title="发表于 2026-03-09 21:55:11">2026-03-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-03-09T13:55:38.767Z" title="更新于 2026-03-09 21:55:38">2026-03-09</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span class="waline-pageview-count" data-path="/2026/03/09/go%E8%AF%AD%E6%B3%95-%E7%AE%80%E6%B4%81/"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Go-核心语法精简笔记-背诵-速查版"><a href="#Go-核心语法精简笔记-背诵-速查版" class="headerlink" title="Go 核心语法精简笔记 (背诵&#x2F;速查版)"></a>Go 核心语法精简笔记 (背诵&#x2F;速查版)</h1><blockquote>
+<p><strong>核心红线：</strong> <code>声明了不用的变量</code>、<code>导入了不用的包</code>，极必编译报错！</p>
+</blockquote>
+<hr>
+<h2 id="1-变量与常量初始化"><a href="#1-变量与常量初始化" class="headerlink" title="1. 变量与常量初始化"></a>1. 变量与常量初始化</h2><h3 id="🌈-变量定义"><a href="#🌈-变量定义" class="headerlink" title="🌈 变量定义"></a>🌈 变量定义</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 标准声明</span></span><br><span class="line"><span class="keyword">var</span> a <span class="type">int</span> = <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 类型推断</span></span><br><span class="line"><span class="keyword">var</span> b = <span class="number">20</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 3. 简短声明（🔥 最常用，仅用于函数内部）</span></span><br><span class="line">str := <span class="string">&quot;fliex&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 4. 并行声明</span></span><br><span class="line">x, y, z := <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="🌈-常量与iota枚举"><a href="#🌈-常量与iota枚举" class="headerlink" title="🌈 常量与iota枚举"></a>🌈 常量与iota枚举</h3><p>常量的核心：<strong>运行期间绝对不能被改变</strong>，且必须在编译时就能确定类型值。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 普通声明</span></span><br><span class="line"><span class="keyword">const</span> PI = <span class="number">3.14</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 批量声明</span></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    a = <span class="number">1</span></span><br><span class="line">    b = <span class="number">2</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3. iota 枚举器 (遇到 const 重置为 0，每新起一行加 1)</span></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    SUCC = <span class="literal">iota</span>  <span class="comment">// 0</span></span><br><span class="line">    _            <span class="comment">// 1 (占位丢弃)</span></span><br><span class="line">    FAIL         <span class="comment">// 2 (默认继承上一行表达式 iota)</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<hr>
+<h2 id="2-基础内置数据类型"><a href="#2-基础内置数据类型" class="headerlink" title="2. 基础内置数据类型"></a>2. 基础内置数据类型</h2><h3 id="🌈-数字与布尔"><a href="#🌈-数字与布尔" class="headerlink" title="🌈 数字与布尔"></a>🌈 数字与布尔</h3><ul>
+<li><strong>布尔值 <code>bool</code></strong>：<code>true</code> 和 <code>false</code>。（⚠️ C++ 那一套 <code>0</code>&#x2F;<code>1</code> 和空字符串当条件的技巧，在 Go <strong>完全行不通</strong>）</li>
+<li><strong>整型 <code>int</code></strong>：会根据操作系统自适应变成 32&#x2F;64 位。（定长型有：<code>int32</code> &#x2F; <code>int64</code>）</li>
+<li><strong>浮点数 <code>float64</code></strong>：Go 省略小数类型时的<strong>默认推断类型</strong>。</li>
+</ul>
+<h3 id="🌈-字符串与字符"><a href="#🌈-字符串与字符" class="headerlink" title="🌈 字符串与字符"></a>🌈 字符串与字符</h3><ul>
+<li>字符（<strong>单引号 <code>&#39;&#39;</code></strong>）：<ul>
+<li><code>byte</code> (等同 <code>uint8</code>) —— 存 ASCII 纯英文。</li>
+<li><code>rune</code> (等同 <code>int32</code>) —— 存 Unicode（中文汉字）。</li>
+</ul>
+</li>
+<li>字符串（<strong>双引号 <code>&quot;&quot;</code></strong> &#x2F; <strong>反引号 <code>``</code></strong>）：<ul>
+<li>⚠️ <strong>切记字符串不可修改！</strong> 不能 <code>s[0] = &#39;H&#39;</code>。</li>
+<li>必须转切片修改：<code>b := []rune(s) -&gt; 修改 b -&gt; string(b)</code></li>
+<li>💡 <strong>高频拼接用 <code>strings.Builder</code></strong>，性能远大于 <code>+</code> 。</li>
+</ul>
+</li>
+</ul>
+<br>
+
+<hr>
+<h2 id="3-分支控制流"><a href="#3-分支控制流" class="headerlink" title="3. 分支控制流"></a>3. 分支控制流</h2><blockquote>
+<p>⚠️ Go 语言中<strong>没有 <code>a ? b : c</code> 三元运算符</strong>。<br>⚠️ <code>a++</code> 只能当一行的独立<strong>语句</strong>，不能放进式子算数，也没 <code>++a</code>。</p>
+</blockquote>
+<h3 id="🌈-if-条件"><a href="#🌈-if-条件" class="headerlink" title="🌈 if 条件"></a>🌈 if 条件</h3><p>好处是自带初始化，<strong>将变量作用域锁死在 if 内部</strong>。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> a := <span class="number">10</span>; a &gt; <span class="number">0</span> &#123;</span><br><span class="line">    <span class="comment">// a 仅在这对 &#123;&#125; 里活着</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="🌈-switch-分支"><a href="#🌈-switch-分支" class="headerlink" title="🌈 switch 分支"></a>🌈 switch 分支</h3><ul>
+<li>匹配即退出，<strong>不再需要手写 <code>break</code></strong>。</li>
+<li><code>case 1, 2, 3:</code> 支持单行并列多个条件。</li>
+<li>想强制穿透执行紧跟的下一个分支：加 <code>fallthrough</code>。</li>
+<li><strong>Type Switch</strong> (给空接口探明真身)：<code>switch v := interface变量.(type)</code></li>
+</ul>
+<br>
+
+<hr>
+<h2 id="4-Struct-结构与-OOP"><a href="#4-Struct-结构与-OOP" class="headerlink" title="4. Struct 结构与 OOP"></a>4. Struct 结构与 OOP</h2><p>Go 虽然没有面向对象的 Class 类系统，但是利用<strong>结构体</strong>加<strong>方法函数</strong>完美承接。</p>
+<blockquote>
+<p>💡 <strong>首字母大写公开可见，小写私有</strong>。</p>
+</blockquote>
+<h3 id="🌈-定义与初始化"><a href="#🌈-定义与初始化" class="headerlink" title="🌈 定义与初始化"></a>🌈 定义与初始化</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Student <span class="keyword">struct</span> &#123;</span><br><span class="line">    Name <span class="type">string</span></span><br><span class="line">    Age  <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 推荐：大括号键值对点名</span></span><br><span class="line">stu := Student&#123;</span><br><span class="line">    Name: <span class="string">&quot;fliex&quot;</span>,</span><br><span class="line">    Age:  <span class="number">25</span>,    <span class="comment">// ⚠️ 最后哪怕只有一行，只要回车了，必须带逗号</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="🌈-方法接收者（继承的原理）"><a href="#🌈-方法接收者（继承的原理）" class="headerlink" title="🌈 方法接收者（继承的原理）"></a>🌈 方法接收者（继承的原理）</h3><p>把普通函数前面塞个括弧 <code>(s Student)</code> 就成了方法。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 值接收者（拿的是副本，怎么改原本对象都不受影响）</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s Student)</span></span> Read() &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 指针接收者（拿的是对象原件地址，里面随便改都能同步到外部对象身上🔥）</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Student)</span></span> Write() &#123;</span><br><span class="line">    s.Age = <span class="number">99</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="🌈-组合-替代继承机制"><a href="#🌈-组合-替代继承机制" class="headerlink" title="🌈 组合 (替代继承机制)"></a>🌈 组合 (替代继承机制)</h3><p>在结构体里嵌个别的结构体且<strong>不给起名字</strong>。如果有重命名的功能，<strong>外层优先遮蔽里层</strong>。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Animal <span class="keyword">struct</span> &#123; Name <span class="type">string</span> &#125;</span><br><span class="line"><span class="keyword">type</span> Dog <span class="keyword">struct</span> &#123;</span><br><span class="line">    Animal</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// dog.Name 调到的是 Animal 里的 Name</span></span><br></pre></td></tr></table></figure>
+
+<br>
+
+<hr>
+<h2 id="5-数组与切片-Slice"><a href="#5-数组与切片-Slice" class="headerlink" title="5. 数组与切片 (Slice)"></a>5. 数组与切片 (Slice)</h2><h3 id="🌈-核心区分"><a href="#🌈-核心区分" class="headerlink" title="🌈 核心区分"></a>🌈 核心区分</h3><ul>
+<li><strong>数组</strong> 定长！ <code>[3]int</code> 和 <code>[4]int</code> 是两种完全不兼容的异度类型。</li>
+<li><strong>切片</strong> 引用型不定长数组视角，靠 <code>make</code> 生成：<code>make([]int, 长度, 容量)</code></li>
+</ul>
+<h3 id="🌈-扩容解绑大坑-⚠️"><a href="#🌈-扩容解绑大坑-⚠️" class="headerlink" title="🌈 扩容解绑大坑 ⚠️"></a>🌈 扩容解绑大坑 ⚠️</h3><p>通过 <code>s[low : high]</code> 取一段范围出来造的切片，一旦遭遇 <code>append()</code> 数据<strong>且原切片容量已经爆满了需要系统自动扩容时</strong>：</p>
+<blockquote>
+<p>系统会强制拿走老数据在新地方重开辟一个豪华新大底。此后这个新切片跟原来的底子数组<strong>彻底一刀两断恩断义绝</strong>，修改互不干涉。</p>
+</blockquote>
+<br>
+
+<hr>
+<h2 id="6-Map-字典集"><a href="#6-Map-字典集" class="headerlink" title="6. Map 字典集"></a>6. Map 字典集</h2><blockquote>
+<p>⚠️ <strong>Map是超级容易 Panic 挂程序的祖宗！只声明是空指针 <code>nil</code> 绝对不能存数据！</strong></p>
+</blockquote>
+<h3 id="🌈-正确的创建与判空"><a href="#🌈-正确的创建与判空" class="headerlink" title="🌈 正确的创建与判空"></a>🌈 正确的创建与判空</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 必须做 make ！</span></span><br><span class="line">m := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="type">string</span>]<span class="type">int</span>)</span><br><span class="line">m[<span class="string">&quot;李四&quot;</span>] = <span class="number">18</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 判断是否真有的 经典 comma ok</span></span><br><span class="line">value, ok := m[<span class="string">&quot;王五&quot;</span>]</span><br><span class="line"><span class="keyword">if</span> !ok &#123;</span><br><span class="line">    <span class="comment">// 不存在，但此刻系统还是赏了个 int 的老底：0，千万别当真</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="🌈-Map-严格规定-⚠️"><a href="#🌈-Map-严格规定-⚠️" class="headerlink" title="🌈 Map 严格规定 ⚠️"></a>🌈 Map 严格规定 ⚠️</h3><ul>
+<li>你<strong>休想</strong>用 <code>==</code> 判断两个 Map 里面长得一模一样。</li>
+<li>能拿来给 Map 做前面那个 Key 头的，绝不能是：<strong><code>slice 动态切片</code>、<code>map 字典</code>、<code>func 函数</code></strong>。</li>
+</ul>
+<br>
+
+<hr>
+<h2 id="7-for-循环与-Range-陷阱"><a href="#7-for-循环与-Range-陷阱" class="headerlink" title="7. for 循环与 Range 陷阱"></a>7. <code>for</code> 循环与 Range 陷阱</h2><p><strong>Go的循环只有一个 <code>for</code> 关键字打天下。</strong><br>不再提旧三段式，着重提醒专门给切片Map配套遍历的黑科技：<code>for range</code></p>
+<h3 id="🌈-Range-是值拷贝！修改无效-⚠️"><a href="#🌈-Range-是值拷贝！修改无效-⚠️" class="headerlink" title="🌈 Range 是值拷贝！修改无效 ⚠️"></a>🌈 Range 是值拷贝！修改无效 ⚠️</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">s := []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ❌ 错误示范：修改这里的 v 根本没用，v 是临时造出来的替身！</span></span><br><span class="line"><span class="keyword">for</span> _, v := <span class="keyword">range</span> s &#123;</span><br><span class="line">    v *= <span class="number">10</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ✅ 正确示范：永远只信任原汁原味的底层地址索引</span></span><br><span class="line"><span class="keyword">for</span> i := <span class="keyword">range</span> s &#123;</span><br><span class="line">    s[i] *= <span class="number">10</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<hr>
+<h2 id="8-函数值传递与真假指针"><a href="#8-函数值传递与真假指针" class="headerlink" title="8. 函数值传递与真假指针"></a>8. 函数值传递与真假指针</h2><h3 id="🌈-统一都是值传递！"><a href="#🌈-统一都是值传递！" class="headerlink" title="🌈 统一都是值传递！"></a>🌈 统一都是值传递！</h3><p>所有的传参，一律全都是在拷贝复印件！<br>如果你发现这复印件你在函数里涂改，咋外面的也变了？</p>
+<blockquote>
+<p>那是因为这个件印的是**“带指针锁眼的大门钥匙地址”**，拿着复印的地址你去捣腾的还是原来大马路上的那套房。</p>
+</blockquote>
+<h3 id="🌈-彻底阉割的指针-和"><a href="#🌈-彻底阉割的指针-和" class="headerlink" title="🌈 彻底阉割的指针 * 和 &amp;"></a>🌈 彻底阉割的指针 <code>*</code> 和 <code>&amp;</code></h3><ul>
+<li>取地址： <code>&amp;变量</code></li>
+<li>去地址的房里拿真身值： <code>*指针</code></li>
+<li>⚠️ 绝对<strong>不允许运算</strong>（如 <code>p++</code>），指针的唯一作用就是替值传递留一个修改实体的通道门匙。</li>
+<li>⚠️ 面对未初始化的虚空指针直接 <code>*p</code> -&gt; Panic！</li>
+</ul>
+<blockquote>
+<p><strong>切片、Map、Channel 不需要加 <code>*</code> ，它三哥俩骨子里就带着原生基因“隐形指针”。</strong></p>
+</blockquote>
+<br>
+
+<hr>
+<h2 id="9-Interface-接口机制"><a href="#9-Interface-接口机制" class="headerlink" title="9. Interface 接口机制"></a>9. Interface 接口机制</h2><p>在 Go，接口实现了<strong>鸭子模型</strong>的极简多态：</p>
+<blockquote>
+<p>你只要走路像鸭子，叫声像鸭子，你就算没办证书写明 <code>implements 鸭子</code>，它也认你是一只钦定接口鸭！</p>
+</blockquote>
+<h3 id="🌈-唯一的大坑：接收者限定"><a href="#🌈-唯一的大坑：接收者限定" class="headerlink" title="🌈 唯一的大坑：接收者限定"></a>🌈 唯一的大坑：接收者限定</h3><p>如果你是用<strong>值接收者</strong>实现了方法：那么你传 <code>狗体</code> 或 <code>&amp;狗体指针</code> 给接口对象都能兜住。<br>如果你是用<strong>指针接收者</strong>实现了方法：<strong>死规定，你特么只能塞且必须强行塞 <code>&amp;狗地址</code> 给我</strong>才能行。</p>
+<h3 id="🌈-万能的空接口与破壳"><a href="#🌈-万能的空接口与破壳" class="headerlink" title="🌈 万能的空接口与破壳"></a>🌈 万能的空接口与破壳</h3><p>所有类型不论是原始数据还是自定义奇葩类，都天生实现了 <code>interface{}</code> 空接口囊。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> unknown <span class="keyword">interface</span>&#123;&#125; = <span class="string">&quot;我是个刺客&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 类型断言：剥壳求证（也叫 comma ok 安全测试）</span></span><br><span class="line">str, ok := unknown.(<span class="type">string</span>)</span><br><span class="line"><span class="keyword">if</span> ok &#123;</span><br><span class="line">    <span class="comment">// 是字符串没跑了</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<hr>
+<h2 id="10-错误捕获-defer-err-panic"><a href="#10-错误捕获-defer-err-panic" class="headerlink" title="10. 错误捕获 (defer&#x2F;err&#x2F;panic)"></a>10. 错误捕获 (defer&#x2F;err&#x2F;panic)</h2><h3 id="🌈-错误提取断言"><a href="#🌈-错误提取断言" class="headerlink" title="🌈 错误提取断言"></a>🌈 错误提取断言</h3><ul>
+<li>判断它底层根源是不是预定义常量错（Sentinel Error）： <code>errors.Is(err, 拿来对比的预设变量)</code></li>
+<li>强行把它破壳拿里面的特定实体类型的属性错： <code>errors.As(err, &amp;特定的自定错误大类型)</code></li>
+</ul>
+<h3 id="🌈-defer-的回旋镖（后进先出栈）"><a href="#🌈-defer-的回旋镖（后进先出栈）" class="headerlink" title="🌈 defer 的回旋镖（后进先出栈）"></a>🌈 defer 的回旋镖（后进先出栈）</h3><p>**你写的 return 语句根本就不是一劳永逸！**它有三步曲：</p>
+<ol>
+<li>它先把值丢在后备箱变量里。</li>
+<li>逆向顺藤摸走所有预先挂着的 <code>defer</code>。如果此刻遇到有命名返回值的大哥搞破坏影响了后备箱，<strong>你退出的答案就被改了！</strong></li>
+<li>这才退出。</li>
+</ol>
+<h3 id="🌈-Panic-急救包"><a href="#🌈-Panic-急救包" class="headerlink" title="🌈 Panic 急救包"></a>🌈 Panic 急救包</h3><p>只把 <code>recover()</code> 塞进提前挂着的 <code>defer</code> 匿名兜底函数里才能用！<br>只要逮着了报错就吃进隐患，让上级功能安然无恙接着大踏步执行。</p>
+<br>
+
+<hr>
+<h2 id="11-终极并发-Goroutine-Channel"><a href="#11-终极并发-Goroutine-Channel" class="headerlink" title="11. 终极并发 (Goroutine &amp; Channel)"></a>11. 终极并发 (Goroutine &amp; Channel)</h2><blockquote>
+<p>💡 <strong>通过通信来共享系统内存</strong>。</p>
+</blockquote>
+<h3 id="🌈-解决主死全僵的问题-sync-WaitGroup"><a href="#🌈-解决主死全僵的问题-sync-WaitGroup" class="headerlink" title="🌈 解决主死全僵的问题 (sync.WaitGroup)"></a>🌈 解决主死全僵的问题 (sync.WaitGroup)</h3><p>放弃 <code>time.Sleep</code> 土鳖等协程。靠精准算术下发任务数。</p>
+<ul>
+<li>加任务：在协程发动 <code>go func()</code> 之前：<code>wg.Add(1)</code></li>
+<li>退任务：切记在协程的第一行埋死兜底：<code>defer wg.Done()</code></li>
+<li>查结果：大主子线程结尾等收网：<code>wg.Wait()</code></li>
+<li>⚠️ <strong>切记协程如果外部封装函数里带着这个计数器往下发，必定全用指针 <code>*sync.WaitGroup</code> 传，绝不能发影子副本去糊弄</strong>。</li>
+</ul>
+<h3 id="🌈-Channel-管道交互"><a href="#🌈-Channel-管道交互" class="headerlink" title="🌈 Channel 管道交互"></a>🌈 Channel 管道交互</h3><p>在不同的 Go 并行管线之间安全接抛快递件。不许在声明里画蛇添足加 <code>*</code> （<strong>它是自带原生引用指针体制的</strong>）。</p>
+<ol>
+<li>强同步版 <code>make(chan int)</code> -&gt; （无缓冲）双方不到齐就不准过，死锁堵塞。</li>
+<li>接活版 <code>make(chan int, 3)</code> -&gt; （有缓冲）放信箱不超过 3 的上限随便撒手，不用等对方拿货立马往下跑。</li>
+<li>读死空结案 -&gt; 如果使用 <code>for range</code> 去拿货，<strong>发送端用完如果不自己发 <code>close(通道名)</code> 倒闭关门拉电闸，那收货这段就会永久处于接收痴汉傻等死机状态 (PanicDeadlock)</strong>。</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Fliex</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2026/03/09/go%E8%AF%AD%E6%B3%95-%E7%AE%80%E6%B4%81/">http://example.com/2026/03/09/go%E8%AF%AD%E6%B3%95-%E7%AE%80%E6%B4%81/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">Fliex</a>！</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/img/leetcode.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/03/08/go%E8%AF%AD%E6%B3%95%E6%80%BB%E7%BB%93/" title="go语法总结"><img class="cover" src="/img/leetcode.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">go语法总结</div></div><div class="info-2"><div class="info-item-1">Go 语言变量声明笔记在 Go 语言中，变量的声明有多种不同的方式。  ⚠️ 核心规则：在 Go 语言中，声明的变量定义了就必须被使用，否则在编译时会报错（declared and not used）。  1. 标准声明 (指定变量类型)使用 var 关键字，明确指定变量的类型。先声明，后赋值...</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="waline-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/logo1.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Fliex</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">16</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/MikeJosion"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/MikeJosion" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="https://mail.qq.com/" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a><a class="social-icon" href="/img/wechat.jpg" target="_blank" title="WeChat"><i class="fab fa-weixin" style="color: #09bb07;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">数据结构与算法学习中
+</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Go-%E6%A0%B8%E5%BF%83%E8%AF%AD%E6%B3%95%E7%B2%BE%E7%AE%80%E7%AC%94%E8%AE%B0-%E8%83%8C%E8%AF%B5-%E9%80%9F%E6%9F%A5%E7%89%88"><span class="toc-number">1.</span> <span class="toc-text">Go 核心语法精简笔记 (背诵&#x2F;速查版)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%8F%98%E9%87%8F%E4%B8%8E%E5%B8%B8%E9%87%8F%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">1.1.</span> <span class="toc-text">1. 变量与常量初始化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-%E5%8F%98%E9%87%8F%E5%AE%9A%E4%B9%89"><span class="toc-number">1.1.1.</span> <span class="toc-text">🌈 变量定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-%E5%B8%B8%E9%87%8F%E4%B8%8Eiota%E6%9E%9A%E4%B8%BE"><span class="toc-number">1.1.2.</span> <span class="toc-text">🌈 常量与iota枚举</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%9F%BA%E7%A1%80%E5%86%85%E7%BD%AE%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.2.</span> <span class="toc-text">2. 基础内置数据类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-%E6%95%B0%E5%AD%97%E4%B8%8E%E5%B8%83%E5%B0%94"><span class="toc-number">1.2.1.</span> <span class="toc-text">🌈 数字与布尔</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%8E%E5%AD%97%E7%AC%A6"><span class="toc-number">1.2.2.</span> <span class="toc-text">🌈 字符串与字符</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%88%86%E6%94%AF%E6%8E%A7%E5%88%B6%E6%B5%81"><span class="toc-number">1.3.</span> <span class="toc-text">3. 分支控制流</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-if-%E6%9D%A1%E4%BB%B6"><span class="toc-number">1.3.1.</span> <span class="toc-text">🌈 if 条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-switch-%E5%88%86%E6%94%AF"><span class="toc-number">1.3.2.</span> <span class="toc-text">🌈 switch 分支</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Struct-%E7%BB%93%E6%9E%84%E4%B8%8E-OOP"><span class="toc-number">1.4.</span> <span class="toc-text">4. Struct 结构与 OOP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-%E5%AE%9A%E4%B9%89%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">1.4.1.</span> <span class="toc-text">🌈 定义与初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-%E6%96%B9%E6%B3%95%E6%8E%A5%E6%94%B6%E8%80%85%EF%BC%88%E7%BB%A7%E6%89%BF%E7%9A%84%E5%8E%9F%E7%90%86%EF%BC%89"><span class="toc-number">1.4.2.</span> <span class="toc-text">🌈 方法接收者（继承的原理）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-%E7%BB%84%E5%90%88-%E6%9B%BF%E4%BB%A3%E7%BB%A7%E6%89%BF%E6%9C%BA%E5%88%B6"><span class="toc-number">1.4.3.</span> <span class="toc-text">🌈 组合 (替代继承机制)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E6%95%B0%E7%BB%84%E4%B8%8E%E5%88%87%E7%89%87-Slice"><span class="toc-number">1.5.</span> <span class="toc-text">5. 数组与切片 (Slice)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-%E6%A0%B8%E5%BF%83%E5%8C%BA%E5%88%86"><span class="toc-number">1.5.1.</span> <span class="toc-text">🌈 核心区分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-%E6%89%A9%E5%AE%B9%E8%A7%A3%E7%BB%91%E5%A4%A7%E5%9D%91-%E2%9A%A0%EF%B8%8F"><span class="toc-number">1.5.2.</span> <span class="toc-text">🌈 扩容解绑大坑 ⚠️</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-Map-%E5%AD%97%E5%85%B8%E9%9B%86"><span class="toc-number">1.6.</span> <span class="toc-text">6. Map 字典集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-%E6%AD%A3%E7%A1%AE%E7%9A%84%E5%88%9B%E5%BB%BA%E4%B8%8E%E5%88%A4%E7%A9%BA"><span class="toc-number">1.6.1.</span> <span class="toc-text">🌈 正确的创建与判空</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-Map-%E4%B8%A5%E6%A0%BC%E8%A7%84%E5%AE%9A-%E2%9A%A0%EF%B8%8F"><span class="toc-number">1.6.2.</span> <span class="toc-text">🌈 Map 严格规定 ⚠️</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-for-%E5%BE%AA%E7%8E%AF%E4%B8%8E-Range-%E9%99%B7%E9%98%B1"><span class="toc-number">1.7.</span> <span class="toc-text">7. for 循环与 Range 陷阱</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-Range-%E6%98%AF%E5%80%BC%E6%8B%B7%E8%B4%9D%EF%BC%81%E4%BF%AE%E6%94%B9%E6%97%A0%E6%95%88-%E2%9A%A0%EF%B8%8F"><span class="toc-number">1.7.1.</span> <span class="toc-text">🌈 Range 是值拷贝！修改无效 ⚠️</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E5%87%BD%E6%95%B0%E5%80%BC%E4%BC%A0%E9%80%92%E4%B8%8E%E7%9C%9F%E5%81%87%E6%8C%87%E9%92%88"><span class="toc-number">1.8.</span> <span class="toc-text">8. 函数值传递与真假指针</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-%E7%BB%9F%E4%B8%80%E9%83%BD%E6%98%AF%E5%80%BC%E4%BC%A0%E9%80%92%EF%BC%81"><span class="toc-number">1.8.1.</span> <span class="toc-text">🌈 统一都是值传递！</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-%E5%BD%BB%E5%BA%95%E9%98%89%E5%89%B2%E7%9A%84%E6%8C%87%E9%92%88-%E5%92%8C"><span class="toc-number">1.8.2.</span> <span class="toc-text">🌈 彻底阉割的指针 * 和 &amp;</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-Interface-%E6%8E%A5%E5%8F%A3%E6%9C%BA%E5%88%B6"><span class="toc-number">1.9.</span> <span class="toc-text">9. Interface 接口机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-%E5%94%AF%E4%B8%80%E7%9A%84%E5%A4%A7%E5%9D%91%EF%BC%9A%E6%8E%A5%E6%94%B6%E8%80%85%E9%99%90%E5%AE%9A"><span class="toc-number">1.9.1.</span> <span class="toc-text">🌈 唯一的大坑：接收者限定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-%E4%B8%87%E8%83%BD%E7%9A%84%E7%A9%BA%E6%8E%A5%E5%8F%A3%E4%B8%8E%E7%A0%B4%E5%A3%B3"><span class="toc-number">1.9.2.</span> <span class="toc-text">🌈 万能的空接口与破壳</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E9%94%99%E8%AF%AF%E6%8D%95%E8%8E%B7-defer-err-panic"><span class="toc-number">1.10.</span> <span class="toc-text">10. 错误捕获 (defer&#x2F;err&#x2F;panic)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-%E9%94%99%E8%AF%AF%E6%8F%90%E5%8F%96%E6%96%AD%E8%A8%80"><span class="toc-number">1.10.1.</span> <span class="toc-text">🌈 错误提取断言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-defer-%E7%9A%84%E5%9B%9E%E6%97%8B%E9%95%96%EF%BC%88%E5%90%8E%E8%BF%9B%E5%85%88%E5%87%BA%E6%A0%88%EF%BC%89"><span class="toc-number">1.10.2.</span> <span class="toc-text">🌈 defer 的回旋镖（后进先出栈）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-Panic-%E6%80%A5%E6%95%91%E5%8C%85"><span class="toc-number">1.10.3.</span> <span class="toc-text">🌈 Panic 急救包</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E7%BB%88%E6%9E%81%E5%B9%B6%E5%8F%91-Goroutine-Channel"><span class="toc-number">1.11.</span> <span class="toc-text">11. 终极并发 (Goroutine &amp; Channel)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-%E8%A7%A3%E5%86%B3%E4%B8%BB%E6%AD%BB%E5%85%A8%E5%83%B5%E7%9A%84%E9%97%AE%E9%A2%98-sync-WaitGroup"><span class="toc-number">1.11.1.</span> <span class="toc-text">🌈 解决主死全僵的问题 (sync.WaitGroup)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%8C%88-Channel-%E7%AE%A1%E9%81%93%E4%BA%A4%E4%BA%92"><span class="toc-number">1.11.2.</span> <span class="toc-text">🌈 Channel 管道交互</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/03/09/go%E8%AF%AD%E6%B3%95-%E7%AE%80%E6%B4%81/" title="go语法(简洁)"><img src="/img/leetcode.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="go语法(简洁)"/></a><div class="content"><a class="title" href="/2026/03/09/go%E8%AF%AD%E6%B3%95-%E7%AE%80%E6%B4%81/" title="go语法(简洁)">go语法(简洁)</a><time datetime="2026-03-09T13:55:11.000Z" title="发表于 2026-03-09 21:55:11">2026-03-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/08/go%E8%AF%AD%E6%B3%95%E6%80%BB%E7%BB%93/" title="go语法总结"><img src="/img/leetcode.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="go语法总结"/></a><div class="content"><a class="title" href="/2026/03/08/go%E8%AF%AD%E6%B3%95%E6%80%BB%E7%BB%93/" title="go语法总结">go语法总结</a><time datetime="2026-03-08T10:43:32.000Z" title="发表于 2026-03-08 18:43:32">2026-03-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/02/01/LeetCode-%E6%8B%AC%E5%8F%B7%E6%A0%88/" title="LeetCode-括号栈"><img src="/img/leetcode.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LeetCode-括号栈"/></a><div class="content"><a class="title" href="/2026/02/01/LeetCode-%E6%8B%AC%E5%8F%B7%E6%A0%88/" title="LeetCode-括号栈">LeetCode-括号栈</a><time datetime="2026-02-01T05:32:42.000Z" title="发表于 2026-02-01 13:32:42">2026-02-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/01/16/LeetCode-BFS/" title="LeetCode-BFS"><img src="/img/leetcode.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LeetCode-BFS"/></a><div class="content"><a class="title" href="/2026/01/16/LeetCode-BFS/" title="LeetCode-BFS">LeetCode-BFS</a><time datetime="2026-01-16T05:49:48.000Z" title="发表于 2026-01-16 13:49:48">2026-01-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/01/15/LeetCode-%E4%B8%AD%E5%BF%83%E6%89%A9%E6%95%A3/" title="LeetCode-中心扩散"><img src="/img/leetcode.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LeetCode-中心扩散"/></a><div class="content"><a class="title" href="/2026/01/15/LeetCode-%E4%B8%AD%E5%BF%83%E6%89%A9%E6%95%A3/" title="LeetCode-中心扩散">LeetCode-中心扩散</a><time datetime="2026-01-15T00:38:01.000Z" title="发表于 2026-01-15 08:38:01">2026-01-15</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/top.png);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Fliex</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.1</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.3</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script><div class="js-pjax"><script>(() => {
+  let initFn = window.walineFn || null
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const destroyWaline = ele => ele.destroy()
+
+  const initWaline = (Fn, el = document, path = window.location.pathname) => {
+    const waline = Fn({
+      el: el.querySelector('#waline-wrap'),
+      serverURL: 'https://waline527.vercel.app',
+      pageview: true,
+      dark: 'html[data-theme="dark"]',
+      comment: false,
+      ...option,
+      path: isShuoshuo ? path : (option && option.path) || path
+    })
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyWaline = () => {
+        destroyWaline(waline)
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const loadWaline = (el, path) => {
+    if (initFn) initWaline(initFn, el, path)
+    else {
+      btf.getCSS('https://cdn.jsdelivr.net/npm/@waline/client@3.8.0/dist/waline.min.css')
+        .then(() => import('https://cdn.jsdelivr.net/npm/@waline/client@3.8.0/dist/waline.min.js'))
+        .then(({ init }) => {
+          initFn = init || Waline.init
+          initWaline(initFn, el, path)
+          window.walineFn = initFn
+        })
+    }
+  }
+
+  if (isShuoshuo) {
+    'Waline' === 'Waline'
+      ? window.shuoshuoComment = { loadComment: loadWaline } 
+      : window.loadOtherComment = loadWaline
+    return
+  }
+
+  if ('Waline' === 'Waline' || !false) {
+    if (false) btf.loadComment(document.getElementById('waline-wrap'),loadWaline)
+    else setTimeout(loadWaline, 0)
+  } else {
+    window.loadOtherComment = loadWaline
+  }
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-show-text.min.js" data-mobile="false" data-text="I,MISS,LOVE,YOU" data-fontsize="15px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="Search..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div></body></html>
