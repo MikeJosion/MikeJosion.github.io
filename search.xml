@@ -390,76 +390,57 @@ NumMatrix(int[][] matrix) 给定整数矩阵 matrix 进行初始化int sumRegion
   <entry>
     <title>LeetCode-单调栈</title>
     <url>/2026/01/07/LeetCode-%E5%8D%95%E8%B0%83%E6%A0%88/</url>
-    <content><![CDATA[🧠 找出每个元素在某个方向上第一个满足大小关系的元素
-一句话结论：👉 单调栈的目的不是排序，而是“填答案数组”,栈里存的是下标 index，不是值用一个保持有序的栈，在 O(n) 时间内找到每个元素左&#x2F;右边第一个比它大或小的元素。如果题目满足 这 3 条中的 2 条以上，基本就是单调栈：数组 &#x2F; 连续序列,元素之间要比较大小,要找“第一个满足条件的位置”
+    <content><![CDATA[🧠 单调栈✅ 什么时候用👉 题目出现这三个词 → 直接上单调栈：
+
+右边 &#x2F; 左边
+第一个
+更大 &#x2F; 更小
+
+⚡ 核心：谁被弹出，谁结算答案
 
 
 
-⭐ 模板
-初始化&#x2F;&#x2F;nums 是需要做对比的数组int n &#x3D; nums.length;res (存放每个元素最终答案的容器)&#x2F;&#x2F;初始化为默认值(数组)Arrays.fill(res, -1);
-Deque&lt; Integer&gt; stack &#x3D; new ArrayDeque&lt;&gt;();
-
-遍历数组for (int i &#x3D; 0; i &lt; n; i++) {while(!stack.isEmpty() &amp;&amp; nums[i] 满足题目的大小关系){&#x2F;&#x2F;弹出栈顶:prevIndex 代表 “过去某一天”（之前被存进栈里，一直在等待目标值的那一天）。int prevIndex &#x3D; stack.pop();&#x2F;&#x2F;填入内容 (哈希表:此时将答案存进 map)res[prevIndex] &#x3D; 目标值}stack.push(i);}
-
-返回结果return res;
+⭐ 模板// 1. 初始化int n = nums.length;int[] res = new int[n];// 默认值按题目决定：-1（不存在） / 0（距离）Arrays.fill(res, -1);Deque&lt;Integer&gt; stack = new ArrayDeque&lt;&gt;();// 2. 遍历数组for (int i = 0; i &lt; n; i++) &#123;    // 👉 找更大：&gt;    找更小：&lt;    while (!stack.isEmpty() &amp;&amp; nums[i] &gt; nums[stack.peek()]) &#123;        int idx = stack.pop();   // 谁被弹出，谁结算        res[idx] = i - idx;      // 或 nums[i]，看题目要什么    &#125;    stack.push(i); // 存下标，不是值&#125;// 3. 返回结果return res;// ⚠️ 栈里剩下的元素 → 没找到答案，保持默认值 -1
 
 
 
+🔑 核心要点
+栈里存什么？
 
-Questions
+下标 index，不是值。目的不是排序，而是”填答案数组”。
 
-单调栈存放答案的容器(常见)
+答案容器怎么选？
 
+👉 答案跟下标走 → 数组👉 答案跟值走 → 哈希表
 
-答案跟下标走 → 数组 vs 答案跟值走 → 哈希表
+While 条件怎么判断？
 
+👉 找更大 → while nums[i] &gt; nums[top]👉 找更小 → while nums[i] &lt; nums[top]
 
-哈希表的初始化
+方向怎么定？
 
+👉 找右边 → 从左往右遍历👉 找左边 → 从右往左遍历
 
-哈希表的“默认值逻辑”，不是在初始化时做的，而是在「查询时」用 if &#x2F; else（或等价写法）决定的
+栈里剩余元素？
 
-
-什么时候 nums[i] 满足题目的大小关系
-
-
-单调栈里存的是一群 **“还没找到答案”**的元素的下标。当新的元素 nums[i] 出现时，如果它能作为栈顶元素的“答案”，我们就把栈顶弹出。
-
-
-
-题目需求
-你的目标
-While 循环条件 (打破规则)
-栈内单调性
+⚠️ 遍历结束后栈里还有元素 → 没找到答案，保持默认值
 
 
 
-找下一个更大的数
-谁比栈顶大？
-nums[i] &gt; nums[stack.peek()]
-单调递减 (大 -&gt; 小)
+📝 练习题1. LeetCode 739. 每日温度题意： 给定每天温度数组，求每天要等几天才能遇到更高温度，没有则为 0。
+
+🏷️ 这题 &#x3D; 单调栈「找右边第一个更大元素」👉 关键：res[idx] = i - idx（温度差 &#x3D; 当前下标 - 栈顶下标）
 
 
-找下一个更小的数
-谁比栈顶小？
-nums[i] &lt; nums[stack.peek()]
-单调递增 (小 -&gt; 大)
+2. LeetCode 496. 下一个更大元素 I题意： nums1 是 nums2 的子集，对 nums1 每个元素找它在 nums2 中右侧第一个更大的值，没有返回 -1。
+
+🏷️ 这题 &#x3D; 单调栈 + 哈希表映射👉 关键：先对 nums2 建「值 → 下一个更大值」的 map，再用 nums1 查表
 
 
+3. LeetCode 503. 下一个更大元素 II题意： 循环数组，找每个元素的下一个更大元素，不存在返回 -1。
 
+🏷️ 这题 &#x3D; 单调栈 + 循环数组👉 关键：遍历 2*n，下标用 i % n（循环 &#x3D; 遍历两遍 + 取模）
 
-哈希表什么用
-
-
-找下一个满足目标的元素：哈希表存放答案，下标为 key，答案为 value
-
-
-相关练习题1. LeetCode 739. 每日温度题意： 给定一个整数数组 temperatures ，表示每天的温度，返回一个数组 answer ，其中 answer[i] 是指对于第 i 天，下一个更高温度出现在几天后。如果气温在这之后都不会升高，请在该位置用 0 来代替。
-2. LeetCode 496. 下一个更大元素 I题意： nums1 中数字 x 的 下一个更大元素 是指 x 在 nums2 中对应位置 右侧 的 第一个 比 x 大的元素。
-给你两个 没有重复元素 的数组 nums1 和 nums2 ，下标从 0 开始计数，其中 nums1 是 nums2 的子集。
-对于每个 0 &lt;&#x3D; i &lt; nums1.length ，找出满足 nums1[i] &#x3D;&#x3D; nums2[j] 的下标 j ，并且在 nums2 确定 nums2[j] 的 下一个更大元素 。如果不存在下一个更大元素，那么本次查询的答案是 -1 。
-返回一个长度为 nums1.length 的数组 ans 作为答案，满足 ans[i] 是如上所述的 下一个更大元素 。
-3. LeetCode 503. 下一个更大元素 II题意： 给定一个循环数组 nums （ nums[nums.length - 1] 的下一个元素是 nums[0] ），返回 nums 中每个元素的 下一个更大元素 。数字 x 的 下一个更大的元素 是按数组遍历顺序，这个数字之后的第一个比它更大的数，这意味着你应该循环地搜索它的下一个更大的数。如果不存在，则输出 -1 。
 ]]></content>
       <categories>
         <category>LeetCode</category>
