@@ -203,3 +203,29 @@
 [data-theme="dark"] .note.danger i {
   color: #5352ed !important;
 }
+
+/* ==========================================================================
+   Part 3: 行内代码 (Inline Code) 样式覆盖
+   替换默认的红色，统一为冷色调
+   ========================================================================== */
+
+/* ☀️ 浅色模式 */
+.container code {
+  color: #4a4a8a !important;           /* 深靛蓝文字 */
+  background: rgba(83, 82, 237, 0.07) !important; /* 极淡靛蓝背景 */
+  border-radius: 4px !important;
+  padding: 2px 6px !important;
+}
+
+/* 🌑 深色模式 */
+[data-theme="dark"] .container code {
+  color: #a9b4f0 !important;           /* 柔和浅蓝紫文字 */
+  background: rgba(99, 102, 241, 0.15) !important; /* 低透明度靛蓝背景 */
+}
+
+/* 代码块内的 code 不受影响 */
+.container pre code {
+  color: var(--hl-color) !important;
+  background: none !important;
+  padding: 0 !important;
+}
