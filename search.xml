@@ -1947,4 +1947,110 @@ next[i]
         <tag>字符串</tag>
       </tags>
   </entry>
+  <entry>
+    <title>链表模板速览</title>
+    <url>/2026/03/28/%E9%93%BE%E8%A1%A8%E6%A8%A1%E6%9D%BF%E9%80%9F%E8%A7%88/</url>
+    <content><![CDATA[🧌 链表模板速览📦 基础结构typedef struct LNode &#123;    int data;    struct LNode *next;&#125; LNode, *LinkList;
+
+
+1️⃣ 反转整个链表思路： 三指针 prev / curr / next，逐个改指向。结束时 prev 就是新头。
+
+
+LinkList reverseList(LinkList head) &#123;    if (head == NULL || head-&gt;next == NULL) return head;    LNode *prev = NULL, *curr = head;    while (curr != NULL) &#123;        LNode *next = curr-&gt;next;        curr-&gt;next = prev;        prev = curr;        curr = next;    &#125;    return prev;&#125;
+
+
+2️⃣ 删除指定值节点思路： 用 dummy 哨兵节点统一处理头节点删除。遍历时判断 curr-&gt;next 的值，命中就跳过并 free。
+
+
+LinkList Del_x(LinkList head, int x) &#123;    if (head == NULL) return NULL;    LNode dummy = &#123;0, NULL&#125;;    dummy.next = head;    LNode *curr = &amp;dummy;    while (curr != NULL) &#123;        if (curr-&gt;next != NULL &amp;&amp; curr-&gt;next-&gt;data == x) &#123;            LNode *del = curr-&gt;next;            curr-&gt;next = curr-&gt;next-&gt;next;            free(del);        &#125; else &#123;            curr = curr-&gt;next;        &#125;    &#125;    return dummy.next;&#125;
+
+
+3️⃣ 删除倒数第 k 个节点思路： 快慢指针。fast 先走 k 步拉开间距，再走一步让 slow 停在被删节点的前驱，然后一起走到底。
+
+
+LinkList Del_k(LinkList head, int k) &#123;    if (head == NULL || k &lt;= 0) return head;    LNode dummy = &#123;0, head&#125;;    LNode *fast = &amp;dummy, *slow = &amp;dummy;    // fast 先走 k 步    for (int i = 0; i &lt; k; i++) &#123;        if (fast == NULL) return head; // k 大于链表长度        fast = fast-&gt;next;    &#125;    // fast 再走 1 步，让 slow 停在被删节点的前驱    fast = fast-&gt;next;    while (fast != NULL) &#123;        fast = fast-&gt;next;        slow = slow-&gt;next;    &#125;    LNode *del = slow-&gt;next;    if (del != NULL) &#123;        slow-&gt;next = del-&gt;next;        free(del);    &#125;    return dummy.next;&#125;
+
+
+4️⃣ 反转前 n 个节点思路： 和全反转一样，但只反转 n 个。反转结束后把原头的 next 接上剩余部分。
+
+
+LinkList reserve_n(LinkList head, int n) &#123;    if (head == NULL || n &lt;= 0) return head;    LNode *curr = head, *prev = NULL;    int count = 0;    while (curr != NULL &amp;&amp; count &lt; n) &#123;        count++;        LNode *next = curr-&gt;next;        curr-&gt;next = prev;        prev = curr;        curr = next;    &#125;    head-&gt;next = curr; // 原头接上剩余    return prev;&#125;
+
+
+5️⃣ 反转 m ~ n 区间（头插法）思路： 找到第 m-1 个节点 pre，从 m+1 开始逐个头插到 pre 后面，循环 n-m 次。
+
+
+LinkList reverseBetween(LinkList head, int m, int n) &#123;    if (head == NULL || m &gt;= n) return head;    LNode dummy = &#123;0, head&#125;;    LNode *pre = &amp;dummy;    for (int i = 1; i &lt; m; i++) pre = pre-&gt;next;    LNode *start = pre-&gt;next;    LNode *curr = start-&gt;next;    for (int i = 0; i &lt; n - m; i++) &#123;        start-&gt;next = curr-&gt;next;        curr-&gt;next = pre-&gt;next;        pre-&gt;next = curr;        curr = start-&gt;next;    &#125;    return dummy.next;&#125;
+
+
+6️⃣ 合并两个有序链表思路： 双指针比较，小的先接到 tail 后，剩余直接拼。
+
+
+LinkList merge(LinkList head1, LinkList head2) &#123;    LNode dummy = &#123;0, NULL&#125;;    LNode *tail = &amp;dummy;    LNode *p = head1, *q = head2;    while (p != NULL &amp;&amp; q != NULL) &#123;        if (p-&gt;data &lt;= q-&gt;data) &#123;            tail-&gt;next = p; p = p-&gt;next;        &#125; else &#123;            tail-&gt;next = q; q = q-&gt;next;        &#125;        tail = tail-&gt;next;    &#125;    tail-&gt;next = (p != NULL) ? p : q;    return dummy.next;&#125;
+
+
+7️⃣ 判断环思路： 快慢指针，fast 走两步、slow 走一步，相遇即有环。
+
+
+bool is_circle(LinkList head) &#123;    LNode *slow = head, *fast = head;    while (fast != NULL &amp;&amp; fast-&gt;next != NULL) &#123;        slow = slow-&gt;next;        fast = fast-&gt;next-&gt;next;        if (slow == fast) return true;    &#125;    return false;&#125;
+
+
+8️⃣ 找中点思路： 快慢指针，fast 到底时 slow 在中间。
+
+
+⚠️ 左中点 vs 右中点（极度重要！）
+以 1-&gt;2-&gt;3-&gt;4 为例：
+
+
+
+写法
+fast 初始化
+slow 停在
+适用场景
+
+
+
+右中点
+fast = head
+3（偏后）
+回文链表等
+
+
+左中点
+fast = head-&gt;next
+2（偏前）
+归并排序 &#x2F; 链表分割
+
+
+🚨 归并排序必须用左中点！ 右中点在 2 个节点时会导致死循环（切不开）。
+
+
+// 右中点（默认）LinkList find_mid(LinkList head) &#123;    LNode *slow = head, *fast = head;    while (fast != NULL &amp;&amp; fast-&gt;next != NULL) &#123;        slow = slow-&gt;next;        fast = fast-&gt;next-&gt;next;    &#125;    return slow;&#125;// 左中点（归并排序用这个）LinkList find_mid_left(LinkList head) &#123;    LNode *slow = head, *fast = head-&gt;next;    while (fast != NULL &amp;&amp; fast-&gt;next != NULL) &#123;        slow = slow-&gt;next;        fast = fast-&gt;next-&gt;next;    &#125;    return slow;&#125;
+
+
+9️⃣ 判断回文链表思路： ① 快慢指针找中点 → ② 反转后半段 → ③ 前后逐个比较。
+💡 注意：此做法会修改原链表结构（反转了后半段）。工程中判断结束后通常需要再反转一次后半段复原链表。
+
+
+bool isPalindrome(LinkList head) &#123;    if (head == NULL || head-&gt;next == NULL) return true;    // 1. 找中点    LNode *slow = head, *fast = head;    while (fast != NULL &amp;&amp; fast-&gt;next != NULL) &#123;        slow = slow-&gt;next;        fast = fast-&gt;next-&gt;next;    &#125;    // 2. 反转后半段    LNode *prev = NULL, *curr = slow;    while (curr != NULL) &#123;        LNode *next = curr-&gt;next;        curr-&gt;next = prev;        prev = curr;        curr = next;    &#125;    // 3. 比较    LNode *p = head, *q = prev;    while (q != NULL) &#123;        if (p-&gt;data != q-&gt;data) return false;        p = p-&gt;next; q = q-&gt;next;    &#125;    return true;&#125;
+
+
+🔟 K 个一组反转思路： 找 k 个 → 断开 → 反转 → 接回 → 移动 pre，不足 k 个直接返回。
+
+
+LinkList reverseKGroup(LinkList head, int k) &#123;    if (head == NULL || k &lt;= 1) return head;    LNode dummy = &#123;0, head&#125;;    LNode *pre = &amp;dummy;    while (1) &#123;        LNode *tail = pre;        for (int i = 0; i &lt; k; i++) &#123;            tail = tail-&gt;next;            if (tail == NULL) return dummy.next;        &#125;        LNode *start = pre-&gt;next;        LNode *next = tail-&gt;next;        tail-&gt;next = NULL;        LNode *newHead = reverseList(start);        pre-&gt;next = newHead;        start-&gt;next = next;        pre = start;    &#125;&#125;
+
+
+1️⃣1️⃣ 链表归并排序思路： 找中点 → 断开 → 递归排序左右 → merge 合并。经典分治。
+
+
+LinkList sortList(LinkList head) &#123;    if (head == NULL || head-&gt;next == NULL) return head;    // 1. 找中点并断开    LNode *slow = head, *fast = head-&gt;next;    while (fast != NULL &amp;&amp; fast-&gt;next != NULL) &#123;        slow = slow-&gt;next;        fast = fast-&gt;next-&gt;next;    &#125;    LNode *mid = slow-&gt;next;    slow-&gt;next = NULL;    // 2. 递归    LNode *left = sortList(head);    LNode *right = sortList(mid);    // 3. 合并    return merge(left, right);&#125;
+]]></content>
+      <categories>
+        <category>模板</category>
+      </categories>
+      <tags>
+        <tag>链表</tag>
+      </tags>
+  </entry>
 </search>
