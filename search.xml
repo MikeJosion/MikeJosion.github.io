@@ -1980,7 +1980,7 @@ LinkList reserve_n(LinkList head, int n) &#123;    if (head == NULL || n &lt;= 0
 5️⃣ 反转 m ~ n 区间（头插法）思路： 找到第 m-1 个节点 pre，从 m+1 开始逐个头插到 pre 后面，循环 n-m 次。
 
 
-LinkList reverseBetween(LinkList head, int m, int n) &#123;    if (head == NULL || m &gt;= n) return head;    LNode dummy = &#123;0, head&#125;;    LNode *pre = &amp;dummy;    for (int i = 1; i &lt; m; i++) pre = pre-&gt;next;    LNode *start = pre-&gt;next;    LNode *curr = start-&gt;next;    for (int i = 0; i &lt; n - m; i++) &#123;        start-&gt;next = curr-&gt;next;        curr-&gt;next = pre-&gt;next;        pre-&gt;next = curr;        curr = start-&gt;next;    &#125;    return dummy.next;&#125;
+// 反转m~nLinkList reverseBetween(LinkList head, int m, int n) &#123;  if (head == NULL || m &gt;= n) &#123;    return head;  &#125;  LNode dummy = &#123;0, head&#125;;  LNode *pre = &amp;dummy;  for (int i = 1; i &lt; m; i++) &#123;    if (pre-&gt;next == NULL) &#123;      return head;    &#125;    pre = pre-&gt;next;  &#125;  // 第m个  LNode *start = pre-&gt;next;  if (start == NULL)    return head;  // 第m+1个  LNode *curr = start-&gt;next;  for (int i = 0; i &lt; n - m; i++) &#123;    start-&gt;next = curr-&gt;next;    curr-&gt;next = pre-&gt;next;    pre-&gt;next = curr;    curr = start-&gt;next;  &#125;  return dummy.next;&#125;
 
 
 6️⃣ 合并两个有序链表思路： 双指针比较，小的先接到 tail 后，剩余直接拼。
@@ -2032,7 +2032,7 @@ fast = head-&gt;next
 💡 注意：此做法会修改原链表结构（反转了后半段）。工程中判断结束后通常需要再反转一次后半段复原链表。
 
 
-bool isPalindrome(LinkList head) &#123;    if (head == NULL || head-&gt;next == NULL) return true;    // 1. 找中点    LNode *slow = head, *fast = head;    while (fast != NULL &amp;&amp; fast-&gt;next != NULL) &#123;        slow = slow-&gt;next;        fast = fast-&gt;next-&gt;next;    &#125;    // 2. 反转后半段    LNode *prev = NULL, *curr = slow;    while (curr != NULL) &#123;        LNode *next = curr-&gt;next;        curr-&gt;next = prev;        prev = curr;        curr = next;    &#125;    // 3. 比较    LNode *p = head, *q = prev;    while (q != NULL) &#123;        if (p-&gt;data != q-&gt;data) return false;        p = p-&gt;next; q = q-&gt;next;    &#125;    return true;&#125;
+bool isPalindrome(LinkList head) &#123;    if (head == NULL || head-&gt;next == NULL) return true;    // 1. 找中点    LNode *slow = head, *fast = head;    while (fast != NULL &amp;&amp; fast-&gt;next != NULL) &#123;        slow = slow-&gt;next;        fast = fast-&gt;next-&gt;next;    &#125;    // 奇数长度，跳过中点    if (fast != NULL) &#123;      slow = slow-&gt;next;    &#125;    // 2. 反转后半段    LNode *prev = NULL, *curr = slow;    while (curr != NULL) &#123;        LNode *next = curr-&gt;next;        curr-&gt;next = prev;        prev = curr;        curr = next;    &#125;    // 3. 比较    LNode *p = head, *q = prev;    while (q != NULL) &#123;        if (p-&gt;data != q-&gt;data) return false;        p = p-&gt;next; q = q-&gt;next;    &#125;    return true;&#125;
 
 
 🔟 K 个一组反转思路： 找 k 个 → 断开 → 反转 → 接回 → 移动 pre，不足 k 个直接返回。
