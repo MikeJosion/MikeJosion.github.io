@@ -1106,14 +1106,18 @@ Tips: [N-4.1]
   <entry>
     <title>go语法(简洁)</title>
     <url>/2026/03/09/go%E8%AF%AD%E6%B3%95-%E7%AE%80%E6%B4%81/</url>
-    <content><![CDATA[Go 核心语法精简笔记 (背诵&#x2F;速查版)
+    <content><![CDATA[Go 核心语法精简笔记
 核心红线： 声明了不用的变量、导入了不用的包，极必编译报错！
 
 
-1. 变量与常量初始化🌈 变量定义// 1. 标准声明var a int = 10// 2. 类型推断var b = 20// 3. 简短声明（🔥 最常用，仅用于函数内部）str := &quot;fliex&quot;// 4. 并行声明x, y, z := 1, 2, 3
+1. 变量与常量初始化🌈 变量定义🔹 基本写法var a int = 10      // 显式类型var b = 20          // 自动推断 (全局变量必须用 var)c := 30             // 简短声明（仅函数&#123;&#125;内,局部变量）
 
-🌈 常量与iota枚举常量的核心：运行期间绝对不能被改变，且必须在编译时就能确定类型值。
-// 1. 普通声明const PI = 3.14// 2. 批量声明const (    a = 1    b = 2)// 3. iota 枚举器 (遇到 const 重置为 0，每新起一行加 1)const (    SUCC = iota  // 0    _            // 1 (占位丢弃)    FAIL         // 2 (默认继承上一行表达式 iota))
+🔹 多变量x, y, z := 1, 2, 3
+
+⚠️ 限制（高频坑）:= 只能在函数内部使用:= 必须至少声明一个新变量a := 10a := 20 // ❌ 报错（没有新变量）a, b := 20, 30 // ✅ 可以（b 是新变量）var a inta := 10 // ❌ 不能混用（同一作用域）
+
+🌈 常量与iota枚举常量的核心：编译期确定值，运行期不可修改（可以是无类型常量）。
+// 1. 普通声明const PI = 3.14//const 不能依赖变量（var / :=）x := 10const a = x*2 // ❌ 报错// 2. 批量声明const (    a = 1    b = 2)//3.自动适配类型const a = 10   // 无类型常量var b int32 = a // ✅ 自动适配类// 4. iota 枚举器 (每一行递增，遇到新的 const 块重置为 0)const (    SUCC = iota  // 0    _            // 1 (占位丢弃)    FAIL         // 2 (默认继承上一行表达式 iota))
 
 
 
@@ -1125,16 +1129,20 @@ Tips: [N-4.1]
 
 🌈 字符串与字符
 字符（单引号 &#39;&#39;）：
-byte (等同 uint8) —— 存 ASCII 纯英文。
-rune (等同 int32) —— 存 Unicode（中文汉字）。
+byte (等同 uint8) —— 存 ASCII 纯英文,按照字节处理。
+rune (等同 int32) —— 存 Unicode（中文汉字）,按照字符处理。
 
 
 字符串（双引号 &quot;&quot; &#x2F; 反引号 ``）：
 ⚠️ 切记字符串不可修改！ 不能 s[0] = &#39;H&#39;。
-必须转切片修改：b := []rune(s) -&gt; 修改 b -&gt; string(b)
-💡 高频拼接用 strings.Builder，性能远大于 + 。
+必须转切片修改： 处理英文（ASCII） → []byte处理中文（Unicode） → []rune 
 
 
+
+s := &quot;hello&quot;b := []byte(s)b[0] = &#x27;H&#x27;s = string(b) //[]byte(s) 是拷贝，修改不会影响原字符串，必须再转回 stringfmt.Println(s) // Hello
+
+
+💡 高频拼接字符串 → 用 strings.Builder（避免重复内存分配） 。
 
 
 
@@ -1142,38 +1150,45 @@ rune (等同 int32) —— 存 Unicode（中文汉字）。
 3. 分支控制流
 ⚠️ Go 语言中没有 a ? b : c 三元运算符。⚠️ a++ 只能当一行的独立语句，不能放进式子算数，也没 ++a。
 
-🌈 if 条件好处是自带初始化，将变量作用域锁死在 if 内部。
-if a := 10; a &gt; 0 &#123;    // a 仅在这对 &#123;&#125; 里活着&#125;
+🌈 if 条件好处是自带初始化，将变量作用域锁死在 if 内部。变量作用域覆盖 整个 if &#x2F; else if &#x2F; else 结构
+if a := 10; a &gt; 0 &#123;    //变量遮蔽⚠️    a := 20 //新变量（遮蔽外层 a）    fmt.Println(a) // 20&#125;else if a == 0&#123;&#125;else&#123;&#125;
 
-🌈 switch 分支
-匹配即退出，不再需要手写 break。
-case 1, 2, 3: 支持单行并列多个条件。
-想强制穿透执行紧跟的下一个分支：加 fallthrough。
-Type Switch (给空接口探明真身)：switch v := interface变量.(type)
+🌈 switch 分支🔹 基本特性默认只执行一个 case（自动 break）支持多个匹配值：
+case 1, 2, 3:
 
+🔹 fallthrough（⚠️ 易错）强制执行下一个 case（不会判断条件）
+switch x &#123;case 1:    fallthroughcase 2:    fmt.Println(&quot;执行到这里&quot;)&#125;
 
+🔹 无表达式 switch（🔥 高频）等价于 if-else 链
+switch &#123;case x &gt; 0:    fmt.Println(&quot;positive&quot;)case x &lt; 0:    fmt.Println(&quot;negative&quot;)&#125;
 
-
-4. Struct 结构与 OOPGo 虽然没有面向对象的 Class 类系统，但是利用结构体加方法函数完美承接。
-
-💡 首字母大写公开可见，小写私有。
-
-🌈 定义与初始化type Student struct &#123;    Name string    Age  int&#125;// 推荐：大括号键值对点名stu := Student&#123;    Name: &quot;fliex&quot;,    Age:  25,    // ⚠️ 最后哪怕只有一行，只要回车了，必须带逗号&#125;
-
-🌈 方法接收者（继承的原理）把普通函数前面塞个括弧 (s Student) 就成了方法。
-// 1. 值接收者（拿的是副本，怎么改原本对象都不受影响）func (s Student) Read() &#123;&#125;// 2. 指针接收者（拿的是对象原件地址，里面随便改都能同步到外部对象身上🔥）func (s *Student) Write() &#123;    s.Age = 99&#125;
-
-🌈 组合 (替代继承机制)在结构体里嵌个别的结构体且不给起名字。如果有重命名的功能，外层优先遮蔽里层。
-type Animal struct &#123; Name string &#125;type Dog struct &#123;    Animal&#125;// dog.Name 调到的是 Animal 里的 Name
+🔹 Type Switch（类型判断）用于判断接口的真实类型
+switch v := i.(type) &#123;case int:    fmt.Println(&quot;int&quot;, v)case string:    fmt.Println(&quot;string&quot;, v)&#125;
 
 
+
+
+4. Struct 结构与 OOPGo 没有 class，通过 struct + 方法 实现面向对象
+💡 首字母大写 → 可导出（跨 package 可见）💡 首字母小写 → 私有
+🌈 定义与初始化type Student struct &#123;    Name string    Age  int&#125;//键值初始化(推荐)stu1 := Student&#123;    Name: &quot;fliex&quot;,    Age:  25,    // ⚠️ 最后哪怕只有一行，只要回车了，必须带逗号&#125;//顺序初始化（不推荐）stu2 := Student&#123;&quot;fliex&quot;, 25&#125;//指针初始化（常用） struct 默认是值拷贝，指针可以避免拷贝 + 修改原对象stu3 := &amp;Student&#123;    Name: &quot;fliex&quot;,    Age:  25,&#125;stu3.Name = &quot;mike&quot; // ✅ 不需要 (*stu3).Name 会自动解引用  stu3的名字就改为了 mike//返回 *Student，避免拷贝（推荐在函数中使用） 指针接收者：修改数据 + 避免拷贝(数据比较大的时候) + 保持一致性(工程规范)🔹 struct 是值类型（默认拷贝）s1 := Student&#123;&quot;a&quot;, 10&#125;s2 := s1s2.Name = &quot;b&quot;fmt.Println(s1.Name) // a ❗ 不变
+
+🌈 零值（默认值）var stu Student👉 等价于：Student&#123;    Name: &quot;&quot;,    Age:  0,&#125;
+
+🌈 方法接收者（实现面向对象）Go 没有 class，通过 struct + 方法（receiver） 实现行为
+// 1. 值接收者（拿的是副本，怎么改原本对象都不受影响）func (s Student) Read() &#123;&#125;// 2. 指针接收者（拿的是对象原件地址，里面随便改都能同步到外部对象身上）func (s *Student) Write() &#123;    s.Age = 99&#125;
+
+🌈 组合（Embedding）Go 没有继承，通过组合（embedding）实现复用和类似继承效果
+type Dog struct &#123;    Animal    name string&#125;🔹 字段遮蔽（就近原则）dog.name        // 优先用 Dog 的 namedog.Animal.name // 访问内层外层字段会遮蔽内层同名字段🔹 方法“重写”（本质是遮蔽）dog.Speak()        // 调 Dog 的 Speakdog.Animal.Speak() // 调 Animal 的 Speak子结构体同名方法会覆盖（遮蔽）内层方法🔹 初始化规则dog := Dog&#123;    name: &quot;alice&quot;,    Animal: Animal&#123;&quot;cat&quot;&#125;,&#125;❗ embedding 初始化必须写完整结构（不能展开）
 
 
 5. 数组与切片 (Slice)🌈 核心区分
 数组 定长！ [3]int 和 [4]int 是两种完全不兼容的异度类型。
 切片 引用型不定长数组视角，靠 make 生成：make([]int, 长度, 容量)
 
-🌈 扩容解绑大坑 ⚠️通过 s[low : high] 取一段范围出来造的切片，一旦遭遇 append() 数据且原切片容量已经爆满了需要系统自动扩容时：
+切片本身是“引用类型”，但不代表所有得到切片的操作都是“引用原数据”
+🌈 切片与数组的关联切片是对数组的引用（共享底层数组）切片的容量 &#x3D; 从切片起始位置到数组末尾的长度 对切片使用append时 容量够 → 会修改原数组 容量不够 → 不会影响数组(会开辟出新的空间)
+🌈 切片与sring的关联string 是一个切片，切片是引用类型，string 的底层数组是只读的，不能被修改。从 string 转成 []byte → 会拷贝
+🌈 扩容解绑大坑 ⚠️通过 s[low : high] 取一段范围(low取 high不取)出来造的切片，一旦遭遇 append() 数据且原切片容量已经爆满了需要系统自动扩容时：一旦扩容(当切片的长度 + 新增元素个数 &gt; 容量（cap）时，就会扩容) → 切片就“脱离”原数组
 
 系统会强制拿走老数据在新地方重开辟一个豪华新大底。此后这个新切片跟原来的底子数组彻底一刀两断恩断义绝，修改互不干涉。
 
@@ -1181,13 +1196,15 @@ type Animal struct &#123; Name string &#125;type Dog struct &#123;    Animal&#12
 
 
 6. Map 字典集
-⚠️ Map是超级容易 Panic 挂程序的祖宗！只声明是空指针 nil 绝对不能存数据！
+⚠️ map 如果只是声明，没有 make，就是 nil，此时不能写入数据，否则会 panicmap 是引用类型，需 make 才能写，key 必须可比较(可以用 &#x3D;&#x3D; 或 !&#x3D; 比较的类型，才能当 map 的 key)，遍历无序，判断存在用 ok
 
-🌈 正确的创建与判空// 必须做 make ！m := make(map[string]int)m[&quot;李四&quot;] = 18// 判断是否真有的 经典 comma okvalue, ok := m[&quot;王五&quot;]if !ok &#123;    // 不存在，但此刻系统还是赏了个 int 的老底：0，千万别当真&#125;
+🌈 正确的创建与判空// 必须做 make ！map[key] = valuem := make(map[string]int)m[&quot;李四&quot;] = 18/// 判断是否真有的 经典 comma ok// 当 value 类型是：int / bool / string 👉 强烈建议用 ok  因为：这些类型都有“默认值”，很容易误判value, ok := m[&quot;王五&quot;]if !ok &#123;     // key 不存在    // ⚠️ v 是默认值（int→0，string→&quot;&quot;，bool→false）&#125;
 
 🌈 Map 严格规定 ⚠️
 你休想用 == 判断两个 Map 里面长得一模一样。
 能拿来给 Map 做前面那个 Key 头的，绝不能是：slice 动态切片、map 字典、func 函数。
+
+🔹 删除元素delete(m, &quot;李四&quot;)🔹 遍历（无序）for k, v := range m &#123;&#125;⚠️ map 遍历顺序是随机的🔹 长度len(m)🔹 map 是引用类型（重要）m1 := map[string]int&#123;&quot;a&quot;: 1&#125;m2 := m1m2[&quot;a&quot;] = 100fmt.Println(m1[&quot;a&quot;]) // 100 ✅（共用数据）🔹 判断 nil（唯一能用 == 的场景）if m == nil &#123;&#125;❗ 判断存在必须用 ok
 
 
 
