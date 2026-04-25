@@ -1242,6 +1242,14 @@ append🔹 1. 加一个元素arr &#x3D; append(arr, 4)🔹 2. 拼接切片（你
 
 🌈 唯一的大坑：接收者限定如果你是用值接收者实现了方法：那么你传 值类型 或 指针类型 给接口对象都能兜住。如果你是用指针接收者实现了方法：**只有指针类型实现这个接口 ,只可以接收 &amp;地址 **才能行。
 🌈 万能的空接口与破壳所有类型不论是原始数据还是自定义奇葩类，都天生实现了 interface{} 空接口囊。所以什么类型都可以往里面传
+空接口最大问题放进去：
+var a any &#x3D; 100
+取出来：
+不能直接：
+fmt.Println(a + 10)
+错误。
+因为：
+Go 不知道它是不是 int。
 var unknown interface&#123;&#125;unknown = &quot;hello&quot;unknown = 100unknown = trueunknown = []int&#123;1, 2, 3&#125;// 类型断言：剥壳求证（也叫 comma ok 安全测试）//值num := unknown.(int)fmt.Println(num) //如果是int类型打印值 不是则panic(程序崩溃)str, ok := unknown.(string)if ok &#123;    fmt.Println(&quot;是string类型&quot;)&#125;else&#123;    fmt.Println(&quot;不是string类型&quot;)&#125;
 
 
@@ -1272,7 +1280,112 @@ var unknown interface&#123;&#125;unknown = &quot;hello&quot;unknown = 100unknown
 11. 终极并发 (Goroutine &amp; Channel)
 💡 通过通信来共享系统内存。
 
-🌈 解决主死全僵的问题 (sync.WaitGroup)放弃 time.Sleep 土鳖等协程。靠精准算术下发任务数。
+🌈 解决主死全僵的问题 (sync.WaitGroup)放弃 time.Sleep 等协程。靠精准算术下发任务数。
+Goroutine 笔记总结
+1. 什么是 goroutine
+goroutine 是 Go 的轻量级并发任务。
+
+
+开启方式：
+idgo 函数调用()
+
+
+例如：
+idgo test()
+
+
+2. goroutine 特点
+并发执行多个 goroutine：
+
+同时运行。
+
+
+执行顺序不确定例如：
+idgo fmt.Println(&quot;A&quot;)go fmt.Println(&quot;B&quot;)
+
+输出顺序随机。
+
+main 结束程序直接结束即使：
+idgoroutine
+
+没执行完。
+
+3. go 后面能写什么必须是：
+
+函数调用。
+
+
+合法：
+idgo test()go fmt.Println()go user.Print()go func() &#123;&#125;()
+
+
+不合法：
+idgo x = 10go fmt.Println
+
+
+4. goroutine 常见写法
+普通函数idgo test()
+
+
+匿名函数idgo func() &#123;	fmt.Println(&quot;hello&quot;)&#125;()
+
+
+5. WaitGroup 作用
+
+等待 goroutine 执行完成。
+
+
+防止：
+idmain
+
+提前退出。
+
+6. WaitGroup 固定流程
+idAdd → go → Done → Wait
+
+
+创建idvar wg sync.WaitGroup
+
+
+登记任务idwg.Add(1)
+
+
+goroutine 完成iddefer wg.Done()
+
+
+等待结束idwg.Wait()
+
+
+7. WaitGroup 核心规则
+Add 和 Done 次数必须一致
+错误：
+idwg.Add(2)只 Done 一次
+
+
+结果：
+程序卡住。
+
+Add 必须写在 goroutine 前正确：
+idwg.Add(1)go test()
+
+
+8. goroutine + WaitGroup 标准模板idvar wg sync.WaitGroupwg.Add(1)go func() &#123;	defer wg.Done()	fmt.Println(&quot;task&quot;)&#125;()wg.Wait()
+
+
+9. 核心理解
+goroutine：
+
+开启并发。
+
+
+WaitGroup：
+
+等待并发结束。
+
+
+10. 一句话总结
+goroutine 用 go 开启并发执行，WaitGroup 用来等待 goroutine 完成，防止 main 提前退出。
+
 
 加任务：在协程发动 go func() 之前：wg.Add(1)
 退任务：切记在协程的第一行埋死兜底：defer wg.Done()
@@ -1285,6 +1398,7 @@ var unknown interface&#123;&#125;unknown = &quot;hello&quot;unknown = 100unknown
 接活版 make(chan int, 3) -&gt; （有缓冲）放信箱不超过 3 的上限随便撒手，不用等对方拿货立马往下跑。
 读死空结案 -&gt; 如果使用 for range 去拿货，发送端用完如果不自己发 close(通道名) 倒闭关门拉电闸，那收货这段就会永久处于接收痴汉傻等死机状态 (PanicDeadlock)。
 
+goto &#x3D; 强制跳转，只在跳出多层循环时合理使用
 ]]></content>
   </entry>
   <entry>
