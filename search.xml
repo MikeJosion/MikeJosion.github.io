@@ -2197,4 +2197,544 @@ LinkList sortList(LinkList head) &#123;    if (head == NULL || head-&gt;next == 
         <tag>链表</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Go Gin MySQL CRUD 详细笔记</title>
+    <url>/2026/07/15/Go%20Gin%20MySQL%20CRUD%20%E5%BC%80%E5%8F%91%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[Go Gin + MySQL CRUD 开发笔记CRUD 是后端开发中最基础、最常见的一组操作。
+C：Create，新增数据R：Read，查询数据U：Update，修改数据D：Delete，删除数据
+
+在 Go 项目中，通常会结合以下技术完成 CRUD：
+Gin             接收和响应 HTTP 请求database/sql    操作数据库MySQL           存储数据JSON            前后端传递数据
+
+
+核心原则：
+CRUD 不是背四个函数，而是掌握一套固定处理流程。以后无论写商品、用户、订单还是评论模块，整体结构都相似。
+
+一、CRUD 与 HTTP、SQL 的对应关系
+
+
+CRUD
+功能
+HTTP 方法
+SQL
+
+
+
+Create
+新增
+POST
+INSERT
+
+
+Read
+查询
+GET
+SELECT
+
+
+Update
+修改
+PUT &#x2F; PATCH
+UPDATE
+
+
+Delete
+删除
+DELETE
+DELETE
+
+
+例如用户模块可以设计为：
+GET    /users       查询全部用户GET    /users/:id   查询单个用户POST   /users       新增用户PUT    /users/:id   修改用户DELETE /users/:id   删除用户
+
+二、常用数据库方法1. DB.Query()DB.Query() 用于执行可能返回多行数据的查询。
+常见场景：
+查询全部用户查询商品列表查询订单列表分页查询
+
+基本写法：
+rows, err := DB.Query(	&quot;SELECT id, username, email FROM users&quot;,)if err != nil &#123;	return&#125;defer rows.Close()
+
+返回值：
+rows *sql.Rowserr  error
+
+记忆：
+Query 用于查询多行数据。
+
+
+2. DB.QueryRow()DB.QueryRow() 用于查询预期只有一行的数据。
+常见场景：
+根据 ID 查询用户根据用户名查询用户根据邮箱查询用户查询数据总数
+
+基本写法：
+var user UserResponseerr := DB.QueryRow(	&quot;SELECT id, username, email FROM users WHERE id = ?&quot;,	id,).Scan(	&amp;user.ID,	&amp;user.Username,	&amp;user.Email,)
+
+
+QueryRow() 本身不会立即返回错误。
+查询错误会在调用 Scan() 时返回。
+
+记忆：
+QueryRow 查询单行，必须配合 Scan。
+
+
+3. DB.Exec()DB.Exec() 用于执行不需要返回数据行的 SQL。
+主要用于：
+INSERTUPDATEDELETE
+
+基本写法：
+result, err := DB.Exec(	&quot;UPDATE users SET email = ? WHERE id = ?&quot;,	email,	id,)if err != nil &#123;	return&#125;
+
+返回值：
+result sql.Resulterr    error
+
+记忆：
+Exec 执行增、删、改。
+
+三、查询多行的相关方法1. rows.Next()rows.Next() 会：
+
+将数据库游标移动到下一行。
+判断下一行是否存在。
+
+基本写法：
+for rows.Next() &#123;	// 读取当前这一行&#125;
+
+假设数据库有三条数据：
+第一次 Next()：移动到第 1 行，返回 true第二次 Next()：移动到第 2 行，返回 true第三次 Next()：移动到第 3 行，返回 true第四次 Next()：没有数据，返回 false
+
+
+rows.Next() 只负责移动和判断，不会自动读取数据。
+
+
+2. rows.Scan()rows.Scan() 用于将数据库当前行的数据读取到 Go 变量中。
+数据流向：
+数据库 → Go 变量
+
+基本写法：
+err := rows.Scan(	&amp;user.ID,	&amp;user.Username,	&amp;user.Email,)
+
+SQL 字段顺序：
+SELECT id, username, email
+
+必须与 Scan() 顺序一致：
+rows.Scan(	&amp;user.ID,	&amp;user.Username,	&amp;user.Email,)
+
+下面这种顺序就是错误的：
+rows.Scan(	&amp;user.Username,	&amp;user.ID,	&amp;user.Email,)
+
+
+核心规则：
+SELECT 后面的字段数量、顺序，必须与 Scan() 中变量的数量、顺序完全一致。
+
+
+3. rows.Err()rows.Err() 用于检查遍历数据库结果的过程中是否发生错误。
+if err := rows.Err(); err != nil &#123;	return&#125;
+
+因为 rows.Next() 返回 false 有两种可能：
+数据已经正常遍历完成遍历过程中发生数据库错误
+
+必须使用 rows.Err() 区分。
+
+4. rows.Close()rows.Close() 用于关闭查询结果并释放数据库连接资源。
+标准写法：
+rows, err := DB.Query(...)if err != nil &#123;	return&#125;defer rows.Close()
+
+defer 表示：
+当前函数结束时执行 rows.Close()
+
+
+查询成功后，应尽快写 defer rows.Close()。
+
+四、SQL 执行结果相关方法1. result.LastInsertId()LastInsertId() 用于获取刚刚新增数据生成的自增主键 ID。
+主要用于：
+INSERT
+
+示例：
+result, err := DB.Exec(	&quot;INSERT INTO users (username, email) VALUES (?, ?)&quot;,	username,	email,)if err != nil &#123;	return&#125;id, err := result.LastInsertId()if err != nil &#123;	return&#125;
+
+假设数据库新增的数据为：
+id = 10username = fliex
+
+那么：
+id
+
+可能得到：
+10
+
+
+LastInsertId() 主要适用于使用自增主键的数据库表。
+
+
+2. result.RowsAffected()RowsAffected() 用于获取本次 SQL 影响了多少行数据。
+主要用于：
+UPDATEDELETE
+
+示例：
+affected, err := result.RowsAffected()if err != nil &#123;	return&#125;if affected == 0 &#123;	// 没有找到需要修改或删除的数据	return&#125;
+
+可能的结果：
+affected = 1：影响了一行affected = 0：没有匹配到数据
+
+
+注意：MySQL 修改数据时，如果新值和旧值完全相同，受数据库连接配置影响，RowsAffected() 也可能返回 0。
+因此，真实项目中不能在所有场景下简单认为 0 一定代表数据不存在。
+
+五、常见数据库错误1. sql.ErrNoRowssql.ErrNoRows 表示：
+SQL 执行成功，但是没有查询到符合条件的数据。
+
+常见于：
+DB.QueryRow(...).Scan(...)
+
+标准处理：
+err := DB.QueryRow(...).Scan(...)if err == sql.ErrNoRows &#123;	// 数据不存在	return&#125;if err != nil &#123;	// 其他数据库错误	return&#125;
+
+在 HTTP 接口中通常返回：
+404 Not Found
+
+
+sql.ErrNoRows 不代表数据库崩溃，只代表没有找到数据。
+
+
+2. 普通数据库错误例如：
+数据库连接中断SQL 语法错误字段名错误表不存在字段类型不匹配
+
+通常使用：
+if err != nil &#123;	// 返回 500	return&#125;
+
+HTTP 状态码通常是：
+500 Internal Server Error
+
+六、通用数据结构假设需要开发一个用户模块。
+1. 数据库模型数据库模型用于接收数据库中的完整数据。
+type User struct &#123;	ID           int       `json:&quot;id&quot;`	Username     string    `json:&quot;username&quot;`	PasswordHash string    `json:&quot;-&quot;`	Email        string    `json:&quot;email&quot;`	Phone        string    `json:&quot;phone&quot;`	Role         string    `json:&quot;role&quot;`	CreatedAt    time.Time `json:&quot;created_at&quot;`&#125;
+
+密码哈希字段使用：
+json:&quot;-&quot;
+
+表示该字段不会被 JSON 序列化。
+
+2. 新增用户请求结构体type CreateUserRequest struct &#123;	Username string `json:&quot;username&quot;`	Password string `json:&quot;password&quot;`	Email    string `json:&quot;email&quot;`	Phone    string `json:&quot;phone&quot;`&#125;
+
+这个结构体只负责接收前端新增用户时提交的数据。
+
+3. 修改用户请求结构体type UpdateUserRequest struct &#123;	Email string `json:&quot;email&quot;`	Phone string `json:&quot;phone&quot;`&#125;
+
+修改资料时不应该允许前端随意修改：
+ID角色创建时间密码哈希
+
+
+4. 用户响应结构体type UserResponse struct &#123;	ID        int       `json:&quot;id&quot;`	Username  string    `json:&quot;username&quot;`	Email     string    `json:&quot;email&quot;`	Phone     string    `json:&quot;phone&quot;`	Role      string    `json:&quot;role&quot;`	CreatedAt time.Time `json:&quot;created_at&quot;`&#125;
+
+响应结构体中不能包含：
+PasswordPasswordHash
+
+
+真实项目原则：
+数据库模型、请求模型和响应模型最好分开定义。
+
+七、统一响应结构可以定义一个统一响应结构体：
+type Response struct &#123;	Code    int    `json:&quot;code&quot;`	Message string `json:&quot;message&quot;`	Data    any    `json:&quot;data&quot;`&#125;
+
+成功响应：
+c.JSON(http.StatusOK, Response&#123;	Code:    200,	Message: &quot;success&quot;,	Data:    user,&#125;)
+
+错误响应：
+c.JSON(http.StatusBadRequest, Response&#123;	Code:    400,	Message: &quot;invalid request&quot;,	Data:    nil,&#125;)
+
+八、Read：查询全部数据1. 接口设计GET /users
+
+功能：
+查询全部用户的公开信息
+
+
+2. 固定流程执行 DB.Query→ 检查查询错误→ defer rows.Close→ 创建结果切片→ rows.Next 循环→ rows.Scan 读取数据→ append 添加到切片→ rows.Err 检查遍历错误→ 返回查询结果
+
+
+3. 代码模板func getUsers(c *gin.Context) &#123;	rows, err := DB.Query(`		SELECT id, username, email, phone, role, created_at		FROM users		ORDER BY id DESC	`)	if err != nil &#123;		c.JSON(http.StatusInternalServerError, Response&#123;			Code:    500,			Message: &quot;query users failed&quot;,			Data:    nil,		&#125;)		return	&#125;	defer rows.Close()	users := make([]UserResponse, 0)	for rows.Next() &#123;		var user UserResponse		err := rows.Scan(			&amp;user.ID,			&amp;user.Username,			&amp;user.Email,			&amp;user.Phone,			&amp;user.Role,			&amp;user.CreatedAt,		)		if err != nil &#123;			c.JSON(http.StatusInternalServerError, Response&#123;				Code:    500,				Message: &quot;scan user failed&quot;,				Data:    nil,			&#125;)			return		&#125;		users = append(users, user)	&#125;	if err := rows.Err(); err != nil &#123;		c.JSON(http.StatusInternalServerError, Response&#123;			Code:    500,			Message: &quot;iterate users failed&quot;,			Data:    nil,		&#125;)		return	&#125;	c.JSON(http.StatusOK, Response&#123;		Code:    200,		Message: &quot;query users success&quot;,		Data:    users,	&#125;)&#125;
+
+这里使用：
+users := make([]UserResponse, 0)
+
+而不是：
+var users []UserResponse
+
+原因是没有数据时：
+make([]UserResponse, 0)
+
+JSON 返回：
+[]
+
+而 nil 切片可能返回：
+null
+
+九、Read：查询单个数据1. 接口设计GET /users/:id
+
+例如：
+GET /users/1
+
+
+2. 固定流程获取路径参数→ 字符串转整数→ 校验 ID→ QueryRow 查询→ Scan 读取→ 判断 ErrNoRows→ 判断其他错误→ 返回数据
+
+
+3. 代码模板func getUserByID(c *gin.Context) &#123;	idStr := c.Param(&quot;id&quot;)	id, err := strconv.Atoi(idStr)	if err != nil || id &lt;= 0 &#123;		c.JSON(http.StatusBadRequest, Response&#123;			Code:    400,			Message: &quot;invalid user id&quot;,			Data:    nil,		&#125;)		return	&#125;	var user UserResponse	err = DB.QueryRow(`		SELECT id, username, email, phone, role, created_at		FROM users		WHERE id = ?	`, id).Scan(		&amp;user.ID,		&amp;user.Username,		&amp;user.Email,		&amp;user.Phone,		&amp;user.Role,		&amp;user.CreatedAt,	)	if err == sql.ErrNoRows &#123;		c.JSON(http.StatusNotFound, Response&#123;			Code:    404,			Message: &quot;user not found&quot;,			Data:    nil,		&#125;)		return	&#125;	if err != nil &#123;		c.JSON(http.StatusInternalServerError, Response&#123;			Code:    500,			Message: &quot;query user failed&quot;,			Data:    nil,		&#125;)		return	&#125;	c.JSON(http.StatusOK, Response&#123;		Code:    200,		Message: &quot;query user success&quot;,		Data:    user,	&#125;)&#125;
+
+十、Create：新增数据1. 接口设计POST /users
+
+请求体：
+&#123;  &quot;username&quot;: &quot;fliex&quot;,  &quot;password&quot;: &quot;12345678&quot;,  &quot;email&quot;: &quot;fliex@example.com&quot;,  &quot;phone&quot;: &quot;13800138000&quot;&#125;
+
+
+2. 固定流程ShouldBindJSON→ 参数格式校验→ 业务校验→ 密码加密→ Exec 执行 INSERT→ LastInsertId 获取主键→ 构造响应数据→ 返回 201
+
+
+3. 代码模板func createUser(c *gin.Context) &#123;	var req CreateUserRequest	if err := c.ShouldBindJSON(&amp;req); err != nil &#123;		c.JSON(http.StatusBadRequest, Response&#123;			Code:    400,			Message: &quot;invalid request body&quot;,			Data:    nil,		&#125;)		return	&#125;	if req.Username == &quot;&quot; ||		req.Password == &quot;&quot; ||		req.Email == &quot;&quot; ||		req.Phone == &quot;&quot; &#123;		c.JSON(http.StatusBadRequest, Response&#123;			Code:    400,			Message: &quot;username, password, email and phone are required&quot;,			Data:    nil,		&#125;)		return	&#125;	if len(req.Password) &lt; 8 &#123;		c.JSON(http.StatusBadRequest, Response&#123;			Code:    400,			Message: &quot;password must be at least 8 characters&quot;,			Data:    nil,		&#125;)		return	&#125;	passwordHash, err := bcrypt.GenerateFromPassword(		[]byte(req.Password),		bcrypt.DefaultCost,	)	if err != nil &#123;		c.JSON(http.StatusInternalServerError, Response&#123;			Code:    500,			Message: &quot;encrypt password failed&quot;,			Data:    nil,		&#125;)		return	&#125;	role := &quot;user&quot;	result, err := DB.Exec(`		INSERT INTO users		(username, password, email, phone, role)		VALUES (?, ?, ?, ?, ?)	`,		req.Username,		string(passwordHash),		req.Email,		req.Phone,		role,	)	if err != nil &#123;		c.JSON(http.StatusInternalServerError, Response&#123;			Code:    500,			Message: &quot;create user failed&quot;,			Data:    nil,		&#125;)		return	&#125;	id, err := result.LastInsertId()	if err != nil &#123;		c.JSON(http.StatusInternalServerError, Response&#123;			Code:    500,			Message: &quot;get user id failed&quot;,			Data:    nil,		&#125;)		return	&#125;	user := UserResponse&#123;		ID:       int(id),		Username: req.Username,		Email:    req.Email,		Phone:    req.Phone,		Role:     role,	&#125;	c.JSON(http.StatusCreated, Response&#123;		Code:    201,		Message: &quot;create user success&quot;,		Data:    user,	&#125;)&#125;
+
+
+密码必须经过哈希处理，不能明文存储。
+role 应由后端指定，不能直接相信前端提交的数据。
+
+十一、Update：修改数据1. 接口设计PUT /users/:id
+
+请求体：
+&#123;  &quot;email&quot;: &quot;new@example.com&quot;,  &quot;phone&quot;: &quot;13900139000&quot;&#125;
+
+
+2. 固定流程解析 ID→ ShouldBindJSON→ 参数校验→ Exec 执行 UPDATE→ RowsAffected 获取影响行数→ 判断数据是否存在→ 构造响应数据→ 返回 200
+
+
+3. 代码模板func updateUser(c *gin.Context) &#123;	idStr := c.Param(&quot;id&quot;)	id, err := strconv.Atoi(idStr)	if err != nil || id &lt;= 0 &#123;		c.JSON(http.StatusBadRequest, Response&#123;			Code:    400,			Message: &quot;invalid user id&quot;,			Data:    nil,		&#125;)		return	&#125;	var req UpdateUserRequest	if err := c.ShouldBindJSON(&amp;req); err != nil &#123;		c.JSON(http.StatusBadRequest, Response&#123;			Code:    400,			Message: &quot;invalid request body&quot;,			Data:    nil,		&#125;)		return	&#125;	if req.Email == &quot;&quot; || req.Phone == &quot;&quot; &#123;		c.JSON(http.StatusBadRequest, Response&#123;			Code:    400,			Message: &quot;email and phone are required&quot;,			Data:    nil,		&#125;)		return	&#125;	result, err := DB.Exec(`		UPDATE users		SET email = ?, phone = ?		WHERE id = ?	`,		req.Email,		req.Phone,		id,	)	if err != nil &#123;		c.JSON(http.StatusInternalServerError, Response&#123;			Code:    500,			Message: &quot;update user failed&quot;,			Data:    nil,		&#125;)		return	&#125;	affected, err := result.RowsAffected()	if err != nil &#123;		c.JSON(http.StatusInternalServerError, Response&#123;			Code:    500,			Message: &quot;get affected rows failed&quot;,			Data:    nil,		&#125;)		return	&#125;	if affected == 0 &#123;		c.JSON(http.StatusNotFound, Response&#123;			Code:    404,			Message: &quot;user not found or data unchanged&quot;,			Data:    nil,		&#125;)		return	&#125;	c.JSON(http.StatusOK, Response&#123;		Code:    200,		Message: &quot;update user success&quot;,		Data: map[string]any&#123;			&quot;id&quot;:    id,			&quot;email&quot;: req.Email,			&quot;phone&quot;: req.Phone,		&#125;,	&#125;)&#125;
+
+PUT 和 PATCH 的区别PUT：通常表示完整更新PATCH：通常表示部分更新
+
+例如只允许修改邮箱：
+&#123;  &quot;email&quot;: &quot;new@example.com&quot;&#125;
+
+这种场景更适合：
+PATCH /users/:id
+
+当前学习阶段使用 PUT 也可以。
+十二、Delete：删除数据1. 接口设计DELETE /users/:id
+
+
+2. 固定流程解析 ID→ Exec 执行 DELETE→ RowsAffected→ 判断数据是否存在→ 返回删除结果
+
+
+3. 代码模板func deleteUser(c *gin.Context) &#123;	idStr := c.Param(&quot;id&quot;)	id, err := strconv.Atoi(idStr)	if err != nil || id &lt;= 0 &#123;		c.JSON(http.StatusBadRequest, Response&#123;			Code:    400,			Message: &quot;invalid user id&quot;,			Data:    nil,		&#125;)		return	&#125;	result, err := DB.Exec(		&quot;DELETE FROM users WHERE id = ?&quot;,		id,	)	if err != nil &#123;		c.JSON(http.StatusInternalServerError, Response&#123;			Code:    500,			Message: &quot;delete user failed&quot;,			Data:    nil,		&#125;)		return	&#125;	affected, err := result.RowsAffected()	if err != nil &#123;		c.JSON(http.StatusInternalServerError, Response&#123;			Code:    500,			Message: &quot;get affected rows failed&quot;,			Data:    nil,		&#125;)		return	&#125;	if affected == 0 &#123;		c.JSON(http.StatusNotFound, Response&#123;			Code:    404,			Message: &quot;user not found&quot;,			Data:    nil,		&#125;)		return	&#125;	c.JSON(http.StatusOK, Response&#123;		Code:    200,		Message: &quot;delete user success&quot;,		Data: map[string]int&#123;			&quot;id&quot;: id,		&#125;,	&#125;)&#125;
+
+十三、物理删除与软删除1. 物理删除直接从数据库中删除记录：
+DELETE FROM users WHERE id = ?
+
+特点：
+数据真正消失通常无法恢复实现简单
+
+
+2. 软删除不真正删除数据，只记录删除时间：
+UPDATE usersSET deleted_at = NOW()WHERE id = ?
+
+表中需要增加字段：
+deleted_at DATETIME NULL
+
+查询时排除已删除数据：
+SELECT id, usernameFROM usersWHERE deleted_at IS NULL
+
+特点：
+数据可以恢复方便审计和追踪真实项目中更常见
+
+十四、Gin 路由注册func main() &#123;	r := gin.Default()	r.GET(&quot;/users&quot;, getUsers)	r.GET(&quot;/users/:id&quot;, getUserByID)	r.POST(&quot;/users&quot;, createUser)	r.PUT(&quot;/users/:id&quot;, updateUser)	r.DELETE(&quot;/users/:id&quot;, deleteUser)	r.Run(&quot;:8080&quot;)&#125;
+
+每一个路由已经明确对应一个处理函数，因此不需要再手动判断：
+switch r.Method
+
+例如：
+r.GET(&quot;/users&quot;, getUsers)
+
+只会接收 GET 请求。
+r.POST(&quot;/users&quot;, createUser)
+
+只会接收 POST 请求。
+十五、常见 HTTP 状态码
+
+
+状态码
+名称
+常见使用场景
+
+
+
+200
+OK
+查询、修改、删除成功
+
+
+201
+Created
+新增成功
+
+
+400
+Bad Request
+参数错误、JSON 格式错误
+
+
+401
+Unauthorized
+未登录、Token 无效
+
+
+403
+Forbidden
+已登录但没有权限
+
+
+404
+Not Found
+数据不存在
+
+
+409
+Conflict
+用户名、邮箱等数据重复
+
+
+500
+Internal Server Error
+数据库或服务器异常
+
+
+400 与 404 的区别请求：
+GET /users/abc
+
+abc 不是合法 ID：
+400 Bad Request
+
+请求：
+GET /users/999
+
+ID 格式正确，但数据库中没有：
+404 Not Found
+
+401 与 403 的区别401：你是谁？请先登录。403：知道你是谁，但你没有权限。
+
+十六、参数校验的三个层次1. JSON 格式校验if err := c.ShouldBindJSON(&amp;req); err != nil &#123;	// JSON 无法解析&#125;
+
+
+2. 基础字段校验if req.Username == &quot;&quot; &#123;	// 用户名不能为空&#125;if len(req.Password) &lt; 8 &#123;	// 密码长度不够&#125;
+
+
+3. 业务规则校验例如：
+用户名不能重复邮箱不能重复商品库存必须充足订单状态不能随意修改普通用户不能设置 role
+
+业务校验通常需要查询数据库。
+十七、SQL 占位符正确写法：
+DB.QueryRow(	&quot;SELECT id FROM users WHERE id = ?&quot;,	id,)
+
+错误写法：
+sqlStr := &quot;SELECT id FROM users WHERE id = &quot; + idStr
+
+必须使用 ? 占位符，因为它可以：
+防止 SQL 注入自动处理参数避免字符串拼接错误提高代码可读性
+
+
+用户输入不能直接拼接进 SQL。
+
+十八、常见错误与避坑1. 忘记 return错误：
+if err != nil &#123;	c.JSON(http.StatusBadRequest, Response&#123;		Code: 400,	&#125;)&#125;// 代码还会继续向下执行
+
+正确：
+if err != nil &#123;	c.JSON(http.StatusBadRequest, Response&#123;		Code: 400,	&#125;)	return&#125;
+
+
+2. Scan() 顺序错误SQL：
+SELECT id, username, email
+
+正确：
+Scan(	&amp;user.ID,	&amp;user.Username,	&amp;user.Email,)
+
+
+3. 查询用户时返回密码错误：
+SELECT id, username, password, emailFROM users
+
+普通查询接口中不应该查询和返回密码。
+正确：
+SELECT id, username, emailFROM users
+
+
+4. 明文保存密码错误：
+DB.Exec(	&quot;INSERT INTO users (password) VALUES (?)&quot;,	req.Password,)
+
+正确：
+passwordHash, err := bcrypt.GenerateFromPassword(	[]byte(req.Password),	bcrypt.DefaultCost,)
+
+然后保存：
+string(passwordHash)
+
+
+5. 查询多行后不检查 rows.Err()错误：
+for rows.Next() &#123;	rows.Scan(...)&#125;c.JSON(...)
+
+正确：
+for rows.Next() &#123;	rows.Scan(...)&#125;if err := rows.Err(); err != nil &#123;	return&#125;
+
+
+6. 让前端决定用户角色危险请求：
+&#123;  &quot;username&quot;: &quot;test&quot;,  &quot;role&quot;: &quot;admin&quot;&#125;
+
+普通用户注册时，后端应直接指定：
+role := &quot;user&quot;
+
+不能直接信任前端提交的角色。
+
+7. 一个结构体负责所有事情不推荐：
+type User struct &#123;	ID       int	Username string	Password string	Email    string	Role     string&#125;
+
+然后同时用于：
+数据库查询接收注册请求修改用户资料接口响应
+
+更规范的方式：
+User                  数据库模型CreateUserRequest     新增请求UpdateUserRequest     修改请求UserResponse          接口响应
+
+十九、CRUD 固定记忆模板查询多行Query→ Close→ Next→ Scan→ append→ Err
+
+查询单行QueryRow→ Scan→ ErrNoRows→ 其他错误
+
+新增ShouldBindJSON→ 参数校验→ Exec INSERT→ LastInsertId→ 返回 201
+
+修改解析 ID→ ShouldBindJSON→ 参数校验→ Exec UPDATE→ RowsAffected→ 返回 200
+
+删除解析 ID→ Exec DELETE→ RowsAffected→ 返回 200
+
+二十、CRUD 核心方法总结DB.Query()
+
+查询多行数据。
+DB.QueryRow()
+
+查询单行数据。
+DB.Exec()
+
+执行新增、修改、删除。
+rows.Next()
+
+移动到下一行并判断是否存在数据。
+rows.Scan()
+
+将数据库当前行读取到 Go 变量。
+rows.Err()
+
+检查遍历过程中是否发生错误。
+rows.Close()
+
+关闭查询结果，释放数据库连接。
+result.LastInsertId()
+
+获取新增数据的自增主键。
+result.RowsAffected()
+
+获取修改或删除影响的行数。
+sql.ErrNoRows
+
+表示查询正常执行，但没有找到数据。
+二十一、一句话总结Query 查多行，QueryRow 查一行；Scan 把数据库数据读取到 Go；Exec 负责执行增删改；LastInsertId 获取新增 ID；RowsAffected 判断影响行数；ErrNoRows 表示数据不存在；所有错误响应后都要及时 return。
+]]></content>
+      <tags>
+        <tag>CRUD</tag>
+      </tags>
+  </entry>
 </search>
