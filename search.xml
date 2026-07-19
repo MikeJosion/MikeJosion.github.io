@@ -2737,4 +2737,103 @@ sql.ErrNoRows
         <tag>CRUD</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Go MySQL 数据库连接模板</title>
+    <url>/2026/07/19/Go%20Mysql%20%E6%95%B0%E6%8D%AE%E5%BA%93%E9%93%BE%E6%8E%A5%E6%A8%A1%E6%9D%BF/</url>
+    <content><![CDATA[Go MySQL 数据库连接模板在 Go 项目中，可以使用 database/sql 配合 MySQL 驱动创建数据库连接池。
+1. 数据库启动流程1. 声明全局变量 DB，用来保存数据库连接池2. godotenv.Load() 加载 .env 文件3. os.Getenv(&quot;MYSQL_DSN&quot;) 读取 MySQL 连接字符串4. sql.Open(&quot;mysql&quot;, dsn) 创建连接池对象，先保存到局部变量 db5. db.Ping() 真正测试数据库能否连接6. 如果 Ping 失败，db.Close() 并返回错误7. DB = db，把同一个连接池保存到全局变量8. return nil，表示初始化成功
+
+整体执行顺序：
+main()    ↓InitDB()    ↓加载 .env    ↓读取 MYSQL_DSN    ↓创建数据库连接池    ↓Ping 测试连接    ↓保存到全局变量 DB    ↓启动 Gin 服务
+
+2. 安装数据库依赖在项目根目录执行：
+go get github.com/go-sql-driver/mysqlgo get github.com/joho/godotenv
+
+MySQL 驱动需要使用匿名导入：
+_ &quot;github.com/go-sql-driver/mysql&quot;
+
+因为代码不会直接调用该包中的函数，只需要让它完成 MySQL 驱动注册。
+3. database.go 完整模板package mainimport (	&quot;database/sql&quot;	&quot;fmt&quot;	&quot;os&quot;	_ &quot;github.com/go-sql-driver/mysql&quot;	&quot;github.com/joho/godotenv&quot;)// 一个全局变量 用来保存数据库连接池var DB *sql.DBfunc InitDB() error &#123;	// 读取项目里的 .env 文件	// godotenv.Load() 无论成功还是失败，都会返回一个 error 类型的值：加载成功：返回 nil ,加载失败：返回具体错误，赋值给 err	err := godotenv.Load()	if err != nil &#123;		fmt.Println(&quot;.env file not found, use system environment variables, the err is :&quot;, err)	&#125;	// 获取 mysql 连接信息  只想拿值：os.Getenv 还想知道存不存在：os.LookupEnv	// os.Getenv(&quot;MYSQL_DSN&quot;)从当前程序的环境变量中，读取名字叫 MYSQL_DSN 的值	dsn := os.Getenv(&quot;MYSQL_DSN&quot;)	if dsn == &quot;&quot; &#123;		return fmt.Errorf(&quot;MYSQL_DSN is empty&quot;)	&#125;	// 创建 MySQL 创建连接池对象，不一定马上真正连接数据库	db, err := sql.Open(&quot;mysql&quot;, dsn)	if err != nil &#123;		return err	&#125;	// 真正测试 MySQL 能不能连接	err = db.Ping()	if err != nil &#123;		db.Close()		return err	&#125;	// 把连接成功的局部变量 db，保存到全局变量 DB，方便其他接口使用。	DB = db	fmt.Println(&quot;MYSQL connected successfully&quot;)	return nil&#125;## 4. `.env` 配置文件在项目根目录创建：```text.env
+
+基本格式：
+MYSQL_DSN=用户名:密码@tcp(数据库地址:端口)/数据库名?charset=utf8mb4&amp;parseTime=True&amp;loc=Local
+
+本地数据库示例：
+MYSQL_DSN=root:123456@tcp(127.0.0.1:3306)/user_system?charset=utf8mb4&amp;parseTime=True&amp;loc=Local
+
+参数说明：
+root               MySQL 用户名123456             MySQL 密码127.0.0.1          MySQL 地址3306               MySQL 端口user_system        数据库名称charset=utf8mb4    支持完整 UTF-8 字符parseTime=True     将数据库时间解析为 time.Timeloc=Local          使用本地时区
+
+
+⚠️ 注意：.env 中等号两边不要随意添加空格，并且需要把 .env 加入 .gitignore，避免数据库密码被提交到 GitHub。
+
+5. main.go 调用数据库package mainimport (	&quot;log&quot;	&quot;github.com/gin-gonic/gin&quot;)func main() &#123;	err := InitDB()	if err != nil &#123;		log.Fatal(&quot;database initialization failed:&quot;, err)	&#125;	defer DB.Close()	r := gin.Default()	r.Run(&quot;:8080&quot;)&#125;
+
+这里使用：
+defer DB.Close()
+
+表示程序结束时关闭数据库连接池。
+6. 其他文件使用数据库因为 DB 是当前 main 包中的全局变量，所以同一个包中的其他文件可以直接使用：
+DB.Query()DB.QueryRow()DB.Exec()
+
+三者的主要区别：
+
+
+
+方法
+用途
+
+
+
+DB.Query()
+查询多条数据
+
+
+DB.QueryRow()
+查询单条数据
+
+
+DB.Exec()
+新增、修改、删除
+
+
+7. 查询多条数据rows, err := DB.Query(	&quot;SELECT id, username, email FROM users&quot;,)if err != nil &#123;	return&#125;defer rows.Close()for rows.Next() &#123;	var user User	err := rows.Scan(		&amp;user.ID,		&amp;user.Username,		&amp;user.Email,	)	if err != nil &#123;		return	&#125;&#125;if err := rows.Err(); err != nil &#123;	return&#125;
+
+基本流程：
+DB.Query()    ↓defer rows.Close()    ↓rows.Next()    ↓rows.Scan()    ↓rows.Err()
+
+8. 查询单条数据var user Usererr := DB.QueryRow(	&quot;SELECT id, username, email FROM users WHERE id = ?&quot;,	id,).Scan(	&amp;user.ID,	&amp;user.Username,	&amp;user.Email,)
+
+如果没有查询到数据：
+if errors.Is(err, sql.ErrNoRows) &#123;	// 数据不存在	return&#125;
+
+如果是其他数据库错误：
+if err != nil &#123;	// 数据库查询失败	return&#125;
+
+9. 新增数据result, err := DB.Exec(	`INSERT INTO users (username, password, email)	 VALUES (?, ?, ?)`,	username,	password,	email,)if err != nil &#123;	return&#125;
+
+获取新增数据的 ID：
+id, err := result.LastInsertId()if err != nil &#123;	return&#125;
+
+10. 修改数据result, err := DB.Exec(	`UPDATE users	 SET username = ?, email = ?	 WHERE id = ?`,	username,	email,	id,)if err != nil &#123;	return&#125;
+
+获取受到影响的行数：
+affected, err := result.RowsAffected()if err != nil &#123;	return&#125;
+
+11. 删除数据result, err := DB.Exec(	&quot;DELETE FROM users WHERE id = ?&quot;,	id,)if err != nil &#123;	return&#125;
+
+
+⚠️ 删除操作必须带 WHERE：
+DELETE FROM users WHERE id = ?
+
+如果漏掉 WHERE，可能会删除表中的全部数据。
+
+12. 数据库方法总结初始化数据库：InitDB()查询多条：DB.Query()查询单条：DB.QueryRow()新增、修改、删除：DB.Exec()获取新增 ID：result.LastInsertId()获取影响行数：result.RowsAffected()判断数据不存在：errors.Is(err, sql.ErrNoRows)
+
+13. 项目文件结构项目目录├── main.go├── database.go├── handler.go├── model.go├── response.go├── .env├── .gitignore├── go.mod└── go.sum
+
+.gitignore：
+.env
+]]></content>
+  </entry>
 </search>
