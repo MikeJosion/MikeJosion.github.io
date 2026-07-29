@@ -69,7 +69,7 @@ body.nova-template-route main#content-inner.nova-template-shell {
   min-height: clamp(430px, 54vh, 570px);
   place-items: center;
   overflow: hidden;
-  background: url("/img/guidang.png") center 48% / cover no-repeat;
+  background: url("/img/moban.png") center 48% / cover no-repeat;
   isolation: isolate;
 }
 

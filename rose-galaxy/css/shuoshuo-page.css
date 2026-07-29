@@ -82,7 +82,7 @@ body.nova-shuoshuo-route footer#footer {
   display: grid;
   place-items: center;
   overflow: hidden;
-  background: url("/img/guidang.png") center 48% / cover no-repeat;
+  background: url("/img/shuoshuo.png") center 48% / cover no-repeat;
   isolation: isolate;
 }
 
