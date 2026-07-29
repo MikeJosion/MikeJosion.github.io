@@ -1,0 +1,102 @@
+/* =========================================================
+   ROSE GALAXY CANVAS — visible but non-tech version
+   Applies to Hero + non-music sections. Melody/player page is excluded.
+   ========================================================= */
+
+.hero-section,
+.showcase-section,
+.melody-page,
+.footer-section {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-galaxy-canvas,
+.section-galaxy-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  opacity: 1;
+  mix-blend-mode: screen;
+  filter: saturate(1.06);
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+/* Hero layer order: rose forest bg -> overlays -> galaxy canvas -> labels/text */
+.hero-galaxy-canvas {
+  z-index: 3;
+}
+
+.hero-fog-overlay,
+.hero-section::before,
+.hero-section::after {
+  z-index: 2;
+}
+
+.hero-label,
+.hero-scroll-hint,
+.hero-divider {
+  z-index: 4;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 5;
+}
+
+/* Non-music sections: canvas above background but below content */
+.showcase-section:not(.no-galaxy-section) .section-galaxy-canvas,
+.melody-page .section-galaxy-canvas,
+.footer-section .section-galaxy-canvas {
+  z-index: 1;
+}
+
+.showcase-section:not(.no-galaxy-section) .showcase-number {
+  z-index: 2;
+}
+
+.showcase-section:not(.no-galaxy-section) .showcase-content,
+.melody-page .melody-layout,
+.footer-section .footer-content,
+.footer-section .footer-bottom,
+.footer-section .footer-divider-line {
+  position: relative;
+  z-index: 3;
+}
+
+/* Sections can opt out of the galaxy layer. */
+.no-galaxy-section .section-galaxy-canvas,
+[data-galaxy='off'] .section-galaxy-canvas {
+  display: none !important;
+}
+
+/* Remove old cross lines; otherwise the galaxy reads as a tech grid. */
+.hero-grid-h,
+.hero-grid-v {
+  display: none !important;
+}
+
+.hero-action,
+.hero-action *,
+.contact-mail,
+.footer-back-top {
+  pointer-events: auto;
+}
+
+@media (max-width: 767px) {
+  .hero-galaxy-canvas,
+  .section-galaxy-canvas {
+    opacity: 0.96;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-galaxy-canvas,
+  .section-galaxy-canvas {
+    opacity: 0.82;
+  }
+}

@@ -1,0 +1,217 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>标签: MySWQL | Fliex</title><meta name="author" content="Fliex"><meta name="copyright" content="Fliex"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta property="og:type" content="website">
+<meta property="og:title" content="Fliex">
+<meta property="og:url" content="https://mikejosion.github.io/tags/MySWQL/index.html">
+<meta property="og:site_name" content="Fliex">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mikejosion.github.io/img/logo1.jpg">
+<meta property="article:author" content="Fliex">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mikejosion.github.io/img/logo1.jpg"><script type="application/ld+json"></script><link rel="shortcut icon" href="/img/favicon.ico"><link rel="canonical" href="https://mikejosion.github.io/tags/MySWQL/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="//busuanzi.ibruce.info"><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000000')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":true,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '标签: MySWQL',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'tag'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 8.1.1"><link rel="stylesheet" href="/rose-galaxy/css/tag-page.css"></head><body class="nova-tag-route"><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/logo1.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">20</div></a><a href="/categories/#nova-category-tags"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/#nova-notes"><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><span> 音乐</span></a></div><div class="menus_item"><span class="site-page group"><span> 更多</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/shuoshuo/"><span> 说说</span></a></li><li><a class="site-page child" href="/templates/"><span> 模板</span></a></li><li><a class="site-page child" href="/Gallery/"><span> 照片</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="not-home-page nova-tag-hero" id="page-header" style="background-image:url(/img/guidang.png)"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/brand/nova-rose-line.png" alt="Logo"><span class="site-name">Fliex</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/#nova-notes"><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><span> 音乐</span></a></div><div class="menus_item"><span class="site-page group"><span> 更多</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/shuoshuo/"><span> 说说</span></a></li><li><a class="site-page child" href="/templates/"><span> 模板</span></a></li><li><a class="site-page child" href="/Gallery/"><span> 照片</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="page-site-info" class="nova-tag-hero-content">
+    <p class="nova-tag-eyebrow">NOVA · TOPIC STREAM</p>
+    <h1 id="site-title" class="nova-tag-title">MySWQL</h1>
+    <p class="nova-tag-description">记录数据库连接、SQL 查询与后端工程实践。</p>
+    <a class="nova-tag-scroll-hint" href="#nova-tag-notes">EXPLORE THE NOTES</a></div></header><main class="nova-tag-content" id="content-inner">
+    <section class="nova-tag-summary" aria-label="MySWQL 标签概览">
+      <div><strong>1</strong><span>NOTES</span><small>相关文章</small></div>
+      <div><strong>2026</strong><span>FIRST RECORD</span><small>最早记录</small></div>
+      <div><strong>07·29</strong><span>LAST UPDATED</span><small>最近更新</small></div>
+      <div><strong>—</strong><span>MAIN CATEGORY</span><small>主要分类</small></div>
+    </section>
+    <div class="nova-tag-layout" id="nova-tag-notes">
+      <section class="nova-tag-main">
+        <header class="nova-tag-main-header">
+          <div><span>TOPIC NOTES</span><h2>主题笔记</h2><p>围绕“MySWQL”整理的文章与实践记录。</p></div>
+          <b>1 NOTES</b>
+        </header>
+        <div class="nova-tag-post-list">
+      <article class="nova-tag-post-card" id="nova-tag-note-gpdf9q-1" data-note-title="Go MySQL 数据库连接模板" data-note-index="1" data-note-href="/2026/07/19/Go%20Mysql%20%E6%95%B0%E6%8D%AE%E5%BA%93%E9%93%BE%E6%8E%A5%E6%A8%A1%E6%9D%BF/">
+        <a class="nova-tag-post-cover" href="/2026/07/19/Go%20Mysql%20%E6%95%B0%E6%8D%AE%E5%BA%93%E9%93%BE%E6%8E%A5%E6%A8%A1%E6%9D%BF/" aria-label="阅读 Go MySQL 数据库连接模板">
+          <img src="/img/covers/tech-mysql.png" alt="Go MySQL 数据库连接模板" loading="lazy" onerror="this.onerror=null;this.src='/img/covers/tech-notes.png'">
+        </a>
+        <div class="nova-tag-post-content">
+          <div class="nova-tag-post-meta">
+            <time datetime="2026-07-19T02:14:11.000Z">2026-07-19</time>
+            
+            <span>MySWQL</span>
+          </div>
+          <h2><a href="/2026/07/19/Go%20Mysql%20%E6%95%B0%E6%8D%AE%E5%BA%93%E9%93%BE%E6%8E%A5%E6%A8%A1%E6%9D%BF/">Go MySQL 数据库连接模板</a></h2>
+          <p>Go MySQL 数据库连接模板在 Go 项目中，可以使用 database/sql 配合 MySQL 驱动创建数据库连接池。 1. 数据库启动流程1234567891011121314151. 声明全局变量 DB，用来保存数据库连接池2. godotenv.Load() 加载 .env 文件...</p>
+          <a class="nova-tag-post-action" href="/2026/07/19/Go%20Mysql%20%E6%95%B0%E6%8D%AE%E5%BA%93%E9%93%BE%E6%8E%A5%E6%A8%A1%E6%9D%BF/">阅读笔记 <span>→</span></a>
+        </div>
+      </article></div>
+        
+      </section>
+      <aside class="nova-tag-sidebar">
+        <section class="nova-tag-side-card nova-tag-profile">
+          <header><span>TOPIC PROFILE</span><h2>标签简介</h2></header>
+          <h3>MySWQL</h3>
+          <p>记录数据库连接、SQL 查询与后端工程实践。</p>
+          <div><b>1 NOTES</b><small>2026—2026</small></div>
+          <a href="/tags/">查看全部标签 →</a>
+        </section>
+        <section class="nova-tag-side-card nova-tag-current-note" aria-live="polite">
+          <header><span>CURRENT NOTE</span><h2>当前阅读</h2></header>
+          <p class="nova-tag-current-title">MySWQL</p>
+          <div class="nova-tag-current-meta">
+            <span class="nova-tag-current-count">1 NOTES</span>
+            <span class="nova-tag-current-percent">向下浏览专题笔记</span>
+          </div>
+          <div class="nova-tag-progress" aria-hidden="true"><i></i></div>
+          <div class="nova-tag-current-actions">
+            <a class="nova-tag-current-open" href="#nova-tag-notes">查看当前文章</a>
+            <a href="#nova-tag-notes">返回专题顶部 ↑</a>
+          </div>
+        </section>
+        <section class="nova-tag-side-card nova-tag-reading-path">
+          <header><span>READING PATH</span><h2>推荐阅读顺序</h2></header>
+          <nav>
+    <a class="nova-tag-reading-link" href="#nova-tag-note-gpdf9q-1" data-note-target="nova-tag-note-gpdf9q-1">
+      <span>01</span>
+      <strong>Go MySQL 数据库连接模板</strong>
+      <i aria-hidden="true"></i>
+    </a></nav>
+        </section>
+        <section class="nova-tag-side-card nova-tag-related">
+          <header><span>RELATED TAGS</span><h2>相关标签</h2></header>
+          <div><a class="nova-tag-related-link" href="/tags/数组/">数组<span>6</span></a><a class="nova-tag-related-link" href="/tags/链表/">链表<span>6</span></a><a class="nova-tag-related-link" href="/tags/CRUD/">CRUD<span>1</span></a><a class="nova-tag-related-link" href="/tags/字符串/">字符串<span>1</span></a><a class="nova-tag-related-link" href="/tags/栈-队列/">栈&amp;队列<span>1</span></a><a class="nova-tag-related-link" href="/tags/栈/">栈<span>1</span></a><a class="nova-tag-related-link" href="/tags/散文/">散文<span>1</span></a><a class="nova-tag-related-link" href="/tags/郁达夫/">郁达夫<span>1</span></a></div>
+          <a class="nova-tag-map-link" href="/categories/#nova-category-tags">返回知识地图 →</a>
+        </section>
+      </aside>
+    </div></main><footer id="footer" style="background-image: url(/img/guidang.png);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">©&nbsp;2025 - 2026 By Fliex</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.1</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.3</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script><div class="js-pjax"></div><script src="/rose-galaxy/js/nova-ux.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-show-text.min.js" data-mobile="false" data-text="I,MISS,LOVE,YOU" data-fontsize="15px" data-random="true" async="async"></script><script async="" data-pjax="" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="Search..." type="text"></div><hr><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div><script src="/rose-galaxy/js/tag-page.js"></script></body></html>
