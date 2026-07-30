@@ -1,6 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Go MySQL 数据库连接模板</title>
+    <url>/2026/07/19/Go%20Mysql%20%E6%95%B0%E6%8D%AE%E5%BA%93%E9%93%BE%E6%8E%A5%E6%A8%A1%E6%9D%BF/</url>
+    <content><![CDATA[
+Go MySQL 数据库连接模板在 Go 项目中，可以使用 database/sql 配合 MySQL 驱动创建数据库连接池。
+1. 数据库启动流程1. 声明全局变量 DB，用来保存数据库连接池2. godotenv.Load() 加载 .env 文件3. os.Getenv(&quot;MYSQL_DSN&quot;) 读取 MySQL 连接字符串4. sql.Open(&quot;mysql&quot;, dsn) 创建连接池对象，先保存到局部变量 db5. db.Ping() 真正测试数据库能否连接6. 如果 Ping 失败，db.Close() 并返回错误7. DB = db，把同一个连接池保存到全局变量8. return nil，表示初始化成功
+
+整体执行顺序：
+main()    ↓InitDB()    ↓加载 .env    ↓读取 MYSQL_DSN    ↓创建数据库连接池    ↓Ping 测试连接    ↓保存到全局变量 DB    ↓启动 Gin 服务
+
+2. 安装数据库依赖在项目根目录执行：
+go get github.com/go-sql-driver/mysqlgo get github.com/joho/godotenv
+
+MySQL 驱动需要使用匿名导入：
+_ &quot;github.com/go-sql-driver/mysql&quot;
+
+因为代码不会直接调用该包中的函数，只需要让它完成 MySQL 驱动注册。
+3. database.go 完整模板package mainimport (	&quot;database/sql&quot;	&quot;fmt&quot;	&quot;os&quot;	_ &quot;github.com/go-sql-driver/mysql&quot;	&quot;github.com/joho/godotenv&quot;)// 一个全局变量 用来保存数据库连接池var DB *sql.DBfunc InitDB() error &#123;	// 读取项目里的 .env 文件	// godotenv.Load() 无论成功还是失败，都会返回一个 error 类型的值：加载成功：返回 nil ,加载失败：返回具体错误，赋值给 err	err := godotenv.Load()	if err != nil &#123;		fmt.Println(&quot;.env file not found, use system environment variables, the err is :&quot;, err)	&#125;	// 获取 mysql 连接信息  只想拿值：os.Getenv 还想知道存不存在：os.LookupEnv	// os.Getenv(&quot;MYSQL_DSN&quot;)从当前程序的环境变量中，读取名字叫 MYSQL_DSN 的值	dsn := os.Getenv(&quot;MYSQL_DSN&quot;)	if dsn == &quot;&quot; &#123;		return fmt.Errorf(&quot;MYSQL_DSN is empty&quot;)	&#125;	// 创建 MySQL 创建连接池对象，不一定马上真正连接数据库	db, err := sql.Open(&quot;mysql&quot;, dsn)	if err != nil &#123;		return err	&#125;	// 真正测试 MySQL 能不能连接	err = db.Ping()	if err != nil &#123;		db.Close()		return err	&#125;	// 把连接成功的局部变量 db，保存到全局变量 DB，方便其他接口使用。	DB = db	fmt.Println(&quot;MYSQL connected successfully&quot;)	return nil&#125;## 4. `.env` 配置文件在项目根目录创建：```text.env
+
+基本格式：
+MYSQL_DSN=用户名:密码@tcp(数据库地址:端口)/数据库名?charset=utf8mb4&amp;parseTime=True&amp;loc=Local
+
+本地数据库示例：
+MYSQL_DSN=root:123456@tcp(127.0.0.1:3306)/user_system?charset=utf8mb4&amp;parseTime=True&amp;loc=Local
+
+参数说明：
+root               MySQL 用户名123456             MySQL 密码127.0.0.1          MySQL 地址3306               MySQL 端口user_system        数据库名称charset=utf8mb4    支持完整 UTF-8 字符parseTime=True     将数据库时间解析为 time.Timeloc=Local          使用本地时区
+
+
+⚠️ 注意：.env 中等号两边不要随意添加空格，并且需要把 .env 加入 .gitignore，避免数据库密码被提交到 GitHub。
+
+5. main.go 调用数据库package mainimport (	&quot;log&quot;	&quot;github.com/gin-gonic/gin&quot;)func main() &#123;	err := InitDB()	if err != nil &#123;		log.Fatal(&quot;database initialization failed:&quot;, err)	&#125;	defer DB.Close()	r := gin.Default()	r.Run(&quot;:8080&quot;)&#125;
+
+这里使用：
+defer DB.Close()
+
+表示程序结束时关闭数据库连接池。
+6. 其他文件使用数据库因为 DB 是当前 main 包中的全局变量，所以同一个包中的其他文件可以直接使用：
+DB.Query()DB.QueryRow()DB.Exec()
+
+三者的主要区别：
+
+
+
+方法
+用途
+
+
+
+DB.Query()
+查询多条数据
+
+
+DB.QueryRow()
+查询单条数据
+
+
+DB.Exec()
+新增、修改、删除
+
+
+7. 查询多条数据rows, err := DB.Query(	&quot;SELECT id, username, email FROM users&quot;,)if err != nil &#123;	return&#125;defer rows.Close()for rows.Next() &#123;	var user User	err := rows.Scan(		&amp;user.ID,		&amp;user.Username,		&amp;user.Email,	)	if err != nil &#123;		return	&#125;&#125;if err := rows.Err(); err != nil &#123;	return&#125;
+
+基本流程：
+DB.Query()    ↓defer rows.Close()    ↓rows.Next()    ↓rows.Scan()    ↓rows.Err()
+
+8. 查询单条数据var user Usererr := DB.QueryRow(	&quot;SELECT id, username, email FROM users WHERE id = ?&quot;,	id,).Scan(	&amp;user.ID,	&amp;user.Username,	&amp;user.Email,)
+
+如果没有查询到数据：
+if errors.Is(err, sql.ErrNoRows) &#123;	// 数据不存在	return&#125;
+
+如果是其他数据库错误：
+if err != nil &#123;	// 数据库查询失败	return&#125;
+
+9. 新增数据result, err := DB.Exec(	`INSERT INTO users (username, password, email)	 VALUES (?, ?, ?)`,	username,	password,	email,)if err != nil &#123;	return&#125;
+
+获取新增数据的 ID：
+id, err := result.LastInsertId()if err != nil &#123;	return&#125;
+
+10. 修改数据result, err := DB.Exec(	`UPDATE users	 SET username = ?, email = ?	 WHERE id = ?`,	username,	email,	id,)if err != nil &#123;	return&#125;
+
+获取受到影响的行数：
+affected, err := result.RowsAffected()if err != nil &#123;	return&#125;
+
+11. 删除数据result, err := DB.Exec(	&quot;DELETE FROM users WHERE id = ?&quot;,	id,)if err != nil &#123;	return&#125;
+
+
+⚠️ 删除操作必须带 WHERE：
+DELETE FROM users WHERE id = ?
+
+如果漏掉 WHERE，可能会删除表中的全部数据。
+
+12. 数据库方法总结初始化数据库：InitDB()查询多条：DB.Query()查询单条：DB.QueryRow()新增、修改、删除：DB.Exec()获取新增 ID：result.LastInsertId()获取影响行数：result.RowsAffected()判断数据不存在：errors.Is(err, sql.ErrNoRows)
+
+13. 项目文件结构项目目录├── main.go├── database.go├── handler.go├── model.go├── response.go├── .env├── .gitignore├── go.mod└── go.sum
+
+.gitignore：
+.env
+]]></content>
+      <tags>
+        <tag>MySWQL</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Go Gin MySQL CRUD 详细笔记</title>
     <url>/2026/07/15/Go%20Gin%20MySQL%20CRUD%20%E5%BC%80%E5%8F%91%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[Go Gin + MySQL CRUD 开发笔记CRUD 是后端开发中最基础、最常见的一组操作。
@@ -541,108 +644,6 @@ sql.ErrNoRows
       </tags>
   </entry>
   <entry>
-    <title>Go MySQL 数据库连接模板</title>
-    <url>/2026/07/19/Go%20Mysql%20%E6%95%B0%E6%8D%AE%E5%BA%93%E9%93%BE%E6%8E%A5%E6%A8%A1%E6%9D%BF/</url>
-    <content><![CDATA[Go MySQL 数据库连接模板在 Go 项目中，可以使用 database/sql 配合 MySQL 驱动创建数据库连接池。
-1. 数据库启动流程1. 声明全局变量 DB，用来保存数据库连接池2. godotenv.Load() 加载 .env 文件3. os.Getenv(&quot;MYSQL_DSN&quot;) 读取 MySQL 连接字符串4. sql.Open(&quot;mysql&quot;, dsn) 创建连接池对象，先保存到局部变量 db5. db.Ping() 真正测试数据库能否连接6. 如果 Ping 失败，db.Close() 并返回错误7. DB = db，把同一个连接池保存到全局变量8. return nil，表示初始化成功
-
-整体执行顺序：
-main()    ↓InitDB()    ↓加载 .env    ↓读取 MYSQL_DSN    ↓创建数据库连接池    ↓Ping 测试连接    ↓保存到全局变量 DB    ↓启动 Gin 服务
-
-2. 安装数据库依赖在项目根目录执行：
-go get github.com/go-sql-driver/mysqlgo get github.com/joho/godotenv
-
-MySQL 驱动需要使用匿名导入：
-_ &quot;github.com/go-sql-driver/mysql&quot;
-
-因为代码不会直接调用该包中的函数，只需要让它完成 MySQL 驱动注册。
-3. database.go 完整模板package mainimport (	&quot;database/sql&quot;	&quot;fmt&quot;	&quot;os&quot;	_ &quot;github.com/go-sql-driver/mysql&quot;	&quot;github.com/joho/godotenv&quot;)// 一个全局变量 用来保存数据库连接池var DB *sql.DBfunc InitDB() error &#123;	// 读取项目里的 .env 文件	// godotenv.Load() 无论成功还是失败，都会返回一个 error 类型的值：加载成功：返回 nil ,加载失败：返回具体错误，赋值给 err	err := godotenv.Load()	if err != nil &#123;		fmt.Println(&quot;.env file not found, use system environment variables, the err is :&quot;, err)	&#125;	// 获取 mysql 连接信息  只想拿值：os.Getenv 还想知道存不存在：os.LookupEnv	// os.Getenv(&quot;MYSQL_DSN&quot;)从当前程序的环境变量中，读取名字叫 MYSQL_DSN 的值	dsn := os.Getenv(&quot;MYSQL_DSN&quot;)	if dsn == &quot;&quot; &#123;		return fmt.Errorf(&quot;MYSQL_DSN is empty&quot;)	&#125;	// 创建 MySQL 创建连接池对象，不一定马上真正连接数据库	db, err := sql.Open(&quot;mysql&quot;, dsn)	if err != nil &#123;		return err	&#125;	// 真正测试 MySQL 能不能连接	err = db.Ping()	if err != nil &#123;		db.Close()		return err	&#125;	// 把连接成功的局部变量 db，保存到全局变量 DB，方便其他接口使用。	DB = db	fmt.Println(&quot;MYSQL connected successfully&quot;)	return nil&#125;## 4. `.env` 配置文件在项目根目录创建：```text.env
-
-基本格式：
-MYSQL_DSN=用户名:密码@tcp(数据库地址:端口)/数据库名?charset=utf8mb4&amp;parseTime=True&amp;loc=Local
-
-本地数据库示例：
-MYSQL_DSN=root:123456@tcp(127.0.0.1:3306)/user_system?charset=utf8mb4&amp;parseTime=True&amp;loc=Local
-
-参数说明：
-root               MySQL 用户名123456             MySQL 密码127.0.0.1          MySQL 地址3306               MySQL 端口user_system        数据库名称charset=utf8mb4    支持完整 UTF-8 字符parseTime=True     将数据库时间解析为 time.Timeloc=Local          使用本地时区
-
-
-⚠️ 注意：.env 中等号两边不要随意添加空格，并且需要把 .env 加入 .gitignore，避免数据库密码被提交到 GitHub。
-
-5. main.go 调用数据库package mainimport (	&quot;log&quot;	&quot;github.com/gin-gonic/gin&quot;)func main() &#123;	err := InitDB()	if err != nil &#123;		log.Fatal(&quot;database initialization failed:&quot;, err)	&#125;	defer DB.Close()	r := gin.Default()	r.Run(&quot;:8080&quot;)&#125;
-
-这里使用：
-defer DB.Close()
-
-表示程序结束时关闭数据库连接池。
-6. 其他文件使用数据库因为 DB 是当前 main 包中的全局变量，所以同一个包中的其他文件可以直接使用：
-DB.Query()DB.QueryRow()DB.Exec()
-
-三者的主要区别：
-
-
-
-方法
-用途
-
-
-
-DB.Query()
-查询多条数据
-
-
-DB.QueryRow()
-查询单条数据
-
-
-DB.Exec()
-新增、修改、删除
-
-
-7. 查询多条数据rows, err := DB.Query(	&quot;SELECT id, username, email FROM users&quot;,)if err != nil &#123;	return&#125;defer rows.Close()for rows.Next() &#123;	var user User	err := rows.Scan(		&amp;user.ID,		&amp;user.Username,		&amp;user.Email,	)	if err != nil &#123;		return	&#125;&#125;if err := rows.Err(); err != nil &#123;	return&#125;
-
-基本流程：
-DB.Query()    ↓defer rows.Close()    ↓rows.Next()    ↓rows.Scan()    ↓rows.Err()
-
-8. 查询单条数据var user Usererr := DB.QueryRow(	&quot;SELECT id, username, email FROM users WHERE id = ?&quot;,	id,).Scan(	&amp;user.ID,	&amp;user.Username,	&amp;user.Email,)
-
-如果没有查询到数据：
-if errors.Is(err, sql.ErrNoRows) &#123;	// 数据不存在	return&#125;
-
-如果是其他数据库错误：
-if err != nil &#123;	// 数据库查询失败	return&#125;
-
-9. 新增数据result, err := DB.Exec(	`INSERT INTO users (username, password, email)	 VALUES (?, ?, ?)`,	username,	password,	email,)if err != nil &#123;	return&#125;
-
-获取新增数据的 ID：
-id, err := result.LastInsertId()if err != nil &#123;	return&#125;
-
-10. 修改数据result, err := DB.Exec(	`UPDATE users	 SET username = ?, email = ?	 WHERE id = ?`,	username,	email,	id,)if err != nil &#123;	return&#125;
-
-获取受到影响的行数：
-affected, err := result.RowsAffected()if err != nil &#123;	return&#125;
-
-11. 删除数据result, err := DB.Exec(	&quot;DELETE FROM users WHERE id = ?&quot;,	id,)if err != nil &#123;	return&#125;
-
-
-⚠️ 删除操作必须带 WHERE：
-DELETE FROM users WHERE id = ?
-
-如果漏掉 WHERE，可能会删除表中的全部数据。
-
-12. 数据库方法总结初始化数据库：InitDB()查询多条：DB.Query()查询单条：DB.QueryRow()新增、修改、删除：DB.Exec()获取新增 ID：result.LastInsertId()获取影响行数：result.RowsAffected()判断数据不存在：errors.Is(err, sql.ErrNoRows)
-
-13. 项目文件结构项目目录├── main.go├── database.go├── handler.go├── model.go├── response.go├── .env├── .gitignore├── go.mod└── go.sum
-
-.gitignore：
-.env
-]]></content>
-      <tags>
-        <tag>MySWQL</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>KMP算法</title>
     <url>/2026/03/25/KMP%E7%AE%97%E6%B3%95/</url>
     <content><![CDATA[🧠 KMP 算法 —— next 数组求法⭐ 下标从 0 开始
@@ -862,103 +863,6 @@ left– 和 right++ 是在“字符已经相等之后”执行的,也就是说�
 相关练习题1. LeetCode 5. 最长回文子串题意： 给你一个字符串 s，找到 s 中最长的回文子串。
 2. LeetCode 680. 验证回文字符串 Ⅱ题意： 给定一个非空字符串 s ，最多删除一个字符。判断是否能成为回文字符串。
 3. LeetCode 132. 分割回文串 II题意： 给你一个字符串 s，请你将 s 分割成一些子串，使每个子串都是回文串。返回符合要求的 最少分割次数 。
-]]></content>
-      <categories>
-        <category>LeetCode</category>
-        <category>模板</category>
-      </categories>
-      <tags>
-        <tag>数组</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>LeetCode-前缀和</title>
-    <url>/2026/01/06/LeetCode-%E5%89%8D%E7%BC%80%E5%92%8C/</url>
-    <content><![CDATA[🧠 通过提前累计数组的“历史和”，将任意连续区间的求和问题，转化为两次前缀值的相减。
-一句话结论：👉pre 数组要比原数组的长度多一pre[0] &#x3D; 0 是为了统一公式，避免边界特判前缀和 + 哈希: 找历史区间
-
-
-
-⭐ 模板前缀和
-初始化int n &#x3D; nums.length;
-&#x2F;&#x2F; 前缀和数组，多开一位int[] pre &#x3D; new int[n + 1];pre[0] &#x3D; 0;
-&#x2F;&#x2F; [可选] 记录结果int res &#x3D; 0;
-
-循环处理（构建 &#x2F; 使用前缀和）构建前缀和for (int i &#x3D; 0; i &lt; n; i++) {pre[i + 1] &#x3D; pre[i] + nums[i];}
-使用前缀和（查询区间）&#x2F;&#x2F; 区间 [l, r] 的和int sum &#x3D; pre[r + 1] - pre[l];
-
-
-二维前缀和
-初始化int m &#x3D; matrix.length;int n &#x3D; matrix[ 0].length;
-&#x2F;&#x2F; 二维前缀和数组，多开一行一列(多开一行一列是“哨兵设计”，用空间换逻辑统一，避免所有边界特判)int[][] pre &#x3D; new int[m + 1][n + 1];
-&#x2F;&#x2F; 第 0 行、第 0 列默认都是 0
-
-循环处理（构建前缀和）for (int i &#x3D; 0; i &lt; m; i++) {for (int j &#x3D; 0; j &lt; n; j++) {pre[i + 1][j + 1] &#x3D;pre[i][j + 1] &#x2F;&#x2F; 上 + pre[i + 1][j] &#x2F;&#x2F; 左 - pre[i][j] &#x2F;&#x2F; 左上 + matrix[i][j]; &#x2F;&#x2F; 自己}}
-
-使用前缀和（查询区间）查询矩形 [r1, c1] ~ [r2, c2]（闭区间）int sum &#x3D; pre[r2 + 1][c2 + 1] - pre[r1][c2 + 1] - pre[r2 + 1][c1] + pre[r1][c1];
-
-
-前缀和 + 哈希
-初始化int n &#x3D; nums.length;
-&#x2F;&#x2F; 记录「前缀和(总距离) &lt;-&gt; 出现次数」Map&lt;Integer, Integer&gt; map &#x3D; new HashMap&lt;&gt;();
-&#x2F;&#x2F; 多开一位：表示“什么都不选”的前缀和map.put(0, 1);
-int target &#x3D; 0; &#x2F;&#x2F; 当前前缀和&#x2F;余数int res &#x3D; 0; &#x2F;&#x2F; res 代表数组中「和等于 k 的子数组（连续区间）」的个数
-
-循环处理（构建 &#x2F; 使用前缀和）for (int i &#x3D; 0; i &lt; n; i++) {
-&#x2F;&#x2F; 构建前缀和target +&#x3D; nums[i];
-&#x2F;&#x2F; target - pre &#x3D; k ,所以 target - k &#x3D; pre ,pre 代表的是之前某个位置的前缀和
-if (map.containsKey(target - k)) {res +&#x3D; map.get(target - k);}
-&#x2F;&#x2F; 更新当前前缀和出现次数map.put(target, map.getOrDefault(target, 0) + 1);}
-
-返回结果return res;
-
-
-
-
-Notice
-
-哈希表存的是「次数」，不是下标（大多数题）
-
-
-Map&lt;Integer, Integer&gt; map;含义通常是：
-key &#x3D; 前缀和 (从起点（数组下标 0）出发，走到当前位置时，累计的总距离)value &#x3D; 这个前缀和出现过多少次
-
-
-顺序非常重要（先算答案，再更新 map）
-
-
-✅ 正确顺序
-sum += nums[i];if (map.containsKey(sum - k)) &#123;    res += map.get(sum - k);&#125;map.put(sum, map.getOrDefault(sum, 0) + 1);
-
-
-
-区间元素
-
-
-区间内不能重复用同一个位置的元素,不同区间之间可以重叠，所以元素位置可以被“重复使用”
-
-
-二维前缀和
-
-
-初始化多开一行一列构建：上 + 左 − 左上 + 自己查询：大 − 上 − 左 + 左上
-
-
-什么场景用什么方法
-
-
-一维前缀和:频繁地计算数组中任意一段连续子数组的和
-二维前缀和:频繁地计算矩阵中任意矩形区域的和
-前缀和+哈希:不关心具体的区间位置，只关心“ 有多少个”或“ 是否存在”满足条件的区间
-
-
-相关练习题1. LeetCode 303. 区域和检索 - 数组不可变题意： 给定一个整数数组 nums，处理以下类型的多个查询:
-计算索引 left 和 right （包含 left 和 right）之间的 nums 元素的 和 ，其中 left &lt;&#x3D; right实现 NumArray 类：
-NumArray(int[] nums) 使用数组 nums 初始化对象int sumRange(int left, int right) 返回数组 nums 中索引 left 和 right 之间的元素的 总和 ，包含 left 和 right 两点（也就是 nums[left] + nums[left + 1] + … + nums[right] )
-2. LeetCode 560. 和为 K 的子数组题意： 给你一个整数数组 nums 和一个整数 k ，请你统计并返回 该数组中和为 k 的子数组的个数 。子数组是数组中元素的连续非空序列。
-3. LeetCode 304. 二维区域和检索 - 矩阵不可变题意： 给定一个二维矩阵 matrix，以下类型的多个请求：
-计算其子矩形范围内元素的总和，该子矩阵的 左上角 为 (row1, col1) ，右下角 为 (row2, col2) 。实现 NumMatrix 类：
-NumMatrix(int[][] matrix) 给定整数矩阵 matrix 进行初始化int sumRegion(int row1, int col1, int row2, int col2) 返回 左上角 (row1, col1) 、右下角 (row2, col2) 所描述的子矩阵的元素 总和
 ]]></content>
       <categories>
         <category>LeetCode</category>
@@ -1209,6 +1113,103 @@ While 条件怎么判断？
 
 🏷️ 这题 &#x3D; 单调栈 + 循环数组👉 关键：遍历 2*n，下标用 i % n（循环 &#x3D; 遍历两遍 + 取模）
 
+]]></content>
+      <categories>
+        <category>LeetCode</category>
+        <category>模板</category>
+      </categories>
+      <tags>
+        <tag>数组</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LeetCode-前缀和</title>
+    <url>/2026/01/06/LeetCode-%E5%89%8D%E7%BC%80%E5%92%8C/</url>
+    <content><![CDATA[🧠 通过提前累计数组的“历史和”，将任意连续区间的求和问题，转化为两次前缀值的相减。
+一句话结论：👉pre 数组要比原数组的长度多一pre[0] &#x3D; 0 是为了统一公式，避免边界特判前缀和 + 哈希: 找历史区间
+
+
+
+⭐ 模板前缀和
+初始化int n &#x3D; nums.length;
+&#x2F;&#x2F; 前缀和数组，多开一位int[] pre &#x3D; new int[n + 1];pre[0] &#x3D; 0;
+&#x2F;&#x2F; [可选] 记录结果int res &#x3D; 0;
+
+循环处理（构建 &#x2F; 使用前缀和）构建前缀和for (int i &#x3D; 0; i &lt; n; i++) {pre[i + 1] &#x3D; pre[i] + nums[i];}
+使用前缀和（查询区间）&#x2F;&#x2F; 区间 [l, r] 的和int sum &#x3D; pre[r + 1] - pre[l];
+
+
+二维前缀和
+初始化int m &#x3D; matrix.length;int n &#x3D; matrix[ 0].length;
+&#x2F;&#x2F; 二维前缀和数组，多开一行一列(多开一行一列是“哨兵设计”，用空间换逻辑统一，避免所有边界特判)int[][] pre &#x3D; new int[m + 1][n + 1];
+&#x2F;&#x2F; 第 0 行、第 0 列默认都是 0
+
+循环处理（构建前缀和）for (int i &#x3D; 0; i &lt; m; i++) {for (int j &#x3D; 0; j &lt; n; j++) {pre[i + 1][j + 1] &#x3D;pre[i][j + 1] &#x2F;&#x2F; 上 + pre[i + 1][j] &#x2F;&#x2F; 左 - pre[i][j] &#x2F;&#x2F; 左上 + matrix[i][j]; &#x2F;&#x2F; 自己}}
+
+使用前缀和（查询区间）查询矩形 [r1, c1] ~ [r2, c2]（闭区间）int sum &#x3D; pre[r2 + 1][c2 + 1] - pre[r1][c2 + 1] - pre[r2 + 1][c1] + pre[r1][c1];
+
+
+前缀和 + 哈希
+初始化int n &#x3D; nums.length;
+&#x2F;&#x2F; 记录「前缀和(总距离) &lt;-&gt; 出现次数」Map&lt;Integer, Integer&gt; map &#x3D; new HashMap&lt;&gt;();
+&#x2F;&#x2F; 多开一位：表示“什么都不选”的前缀和map.put(0, 1);
+int target &#x3D; 0; &#x2F;&#x2F; 当前前缀和&#x2F;余数int res &#x3D; 0; &#x2F;&#x2F; res 代表数组中「和等于 k 的子数组（连续区间）」的个数
+
+循环处理（构建 &#x2F; 使用前缀和）for (int i &#x3D; 0; i &lt; n; i++) {
+&#x2F;&#x2F; 构建前缀和target +&#x3D; nums[i];
+&#x2F;&#x2F; target - pre &#x3D; k ,所以 target - k &#x3D; pre ,pre 代表的是之前某个位置的前缀和
+if (map.containsKey(target - k)) {res +&#x3D; map.get(target - k);}
+&#x2F;&#x2F; 更新当前前缀和出现次数map.put(target, map.getOrDefault(target, 0) + 1);}
+
+返回结果return res;
+
+
+
+
+Notice
+
+哈希表存的是「次数」，不是下标（大多数题）
+
+
+Map&lt;Integer, Integer&gt; map;含义通常是：
+key &#x3D; 前缀和 (从起点（数组下标 0）出发，走到当前位置时，累计的总距离)value &#x3D; 这个前缀和出现过多少次
+
+
+顺序非常重要（先算答案，再更新 map）
+
+
+✅ 正确顺序
+sum += nums[i];if (map.containsKey(sum - k)) &#123;    res += map.get(sum - k);&#125;map.put(sum, map.getOrDefault(sum, 0) + 1);
+
+
+
+区间元素
+
+
+区间内不能重复用同一个位置的元素,不同区间之间可以重叠，所以元素位置可以被“重复使用”
+
+
+二维前缀和
+
+
+初始化多开一行一列构建：上 + 左 − 左上 + 自己查询：大 − 上 − 左 + 左上
+
+
+什么场景用什么方法
+
+
+一维前缀和:频繁地计算数组中任意一段连续子数组的和
+二维前缀和:频繁地计算矩阵中任意矩形区域的和
+前缀和+哈希:不关心具体的区间位置，只关心“ 有多少个”或“ 是否存在”满足条件的区间
+
+
+相关练习题1. LeetCode 303. 区域和检索 - 数组不可变题意： 给定一个整数数组 nums，处理以下类型的多个查询:
+计算索引 left 和 right （包含 left 和 right）之间的 nums 元素的 和 ，其中 left &lt;&#x3D; right实现 NumArray 类：
+NumArray(int[] nums) 使用数组 nums 初始化对象int sumRange(int left, int right) 返回数组 nums 中索引 left 和 right 之间的元素的 总和 ，包含 left 和 right 两点（也就是 nums[left] + nums[left + 1] + … + nums[right] )
+2. LeetCode 560. 和为 K 的子数组题意： 给你一个整数数组 nums 和一个整数 k ，请你统计并返回 该数组中和为 k 的子数组的个数 。子数组是数组中元素的连续非空序列。
+3. LeetCode 304. 二维区域和检索 - 矩阵不可变题意： 给定一个二维矩阵 matrix，以下类型的多个请求：
+计算其子矩形范围内元素的总和，该子矩阵的 左上角 为 (row1, col1) ，右下角 为 (row2, col2) 。实现 NumMatrix 类：
+NumMatrix(int[][] matrix) 给定整数矩阵 matrix 进行初始化int sumRegion(int row1, int col1, int row2, int col2) 返回 左上角 (row1, col1) 、右下角 (row2, col2) 所描述的子矩阵的元素 总和
 ]]></content>
       <categories>
         <category>LeetCode</category>
@@ -1578,178 +1579,6 @@ Notice:
       </tags>
   </entry>
   <entry>
-    <title>LeetCode-快慢指针(链表)</title>
-    <url>/2026/01/10/LeetCode-%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88(%E9%93%BE%E8%A1%A8)/</url>
-    <content><![CDATA[🧠 核心场景：链表中的位置定位、测距与判环
-判断用哪个模板的唯一标准：
-
-是否涉及“相对位置变化 &#x2F; 追及” → 倍速循环
-是否涉及“倒数 &#x2F; 固定间距” → 定距循环
-
-
-⭐ 模板模板一：倍速循环 (Double Speed)
-核心逻辑：只有跑得快，才能根据“相对位置”算中点，或者在环里“套圈”。口诀：快走两步，慢走一步，这就叫倍速。
-ListNode slow &#x3D; head;ListNode fast &#x3D; head;
-&#x2F;&#x2F; 必须保证 fast 能走两步，否则会空指针
-while (fast !&#x3D; null &amp;&amp; fast.next !&#x3D; null) {slow &#x3D; slow.next; &#x2F;&#x2F; 慢走 1fast &#x3D; fast.next.next; &#x2F;&#x2F; 快走 2
-&#x2F;&#x2F; 【插入点】：如果有“追击&#x2F;判圈”逻辑，写在这里}&#x2F;&#x2F; 【结束点】：奇数长度 slow 在正中；偶数长度 slow 在右中点（第二个中点）
-
-👇 变型点拨 (只需改哪里)：
-找中点 (876)：不用改，循环结束后直接 return slow。
-判圈 (141)：在【插入点】加一句 if (slow &#x3D;&#x3D; fast) return true;。
-找圈入口 (142)：判圈相遇后，把一个指针扔回 head，改为同速（都走 1 步），再次相遇处即入口。
-回文 (234)：先用这套模板拿到 slow (中点)，然后把 slow 后面的链表反转，再跟 头节点对比。
-
-
-模板二：定距循环 (Fixed Gap)
-核心逻辑：只要先拉开 N 步距离，当头走到终点，尾巴就在倒数第 N 个。口诀：快先走，慢后走，维持距离到尽头
-&#x2F;&#x2F; 必须用 Dummy，防止删除的是头节点
-ListNode dummy &#x3D; new ListNode(-1, head);ListNode slow &#x3D; dummy, fast &#x3D; dummy;
-&#x2F;&#x2F; 1. 制造间距：fast 先走 N+1 步 (为了删倒数第 N 个，slow 要在它前一个)&#x2F;&#x2F;⚠️ 默认题目保证 n 合法,若 n 可能非法，需在 for 中判断 fast &#x3D;&#x3D; null
-for (int i &#x3D; 0; i &lt;&#x3D; n; i++) {fast &#x3D; fast.next;}
-&#x2F;&#x2F; 2. 保持间距同速走：直到 fast 摸到 null
-while (fast !&#x3D; null) {fast &#x3D; fast.next;slow &#x3D; slow.next;}
-&#x2F;&#x2F; 【操作点】：此时 slow 停在目标节点的前一位
-
-返回答案return dummy.next;
-
-
-👇 变型点拨 (只需改哪里)：
-删倒数第 N 个 (19)：在【操作点】执行 slow.next &#x3D; slow.next.next。
-找倒数第 K 个 (面试题)：slow、fast 都从 dummy 起步，fast 先走 K 步,循环结束时 slow 指向的就是倒数第 K 个节点, return slow 即为目标。
-
-
-
-一句话总结记忆：找中点、找环 -&gt; 用 while 同时起步，一快一慢。找倒数 -&gt; 用 for 先跑几步，保持距离。
-
-
-
-Notice:
-
-倍速循环的“判空顺序” (防爆核心)在写 while 循环条件时，顺序绝对不能颠倒。
-
-
-正确写法：while (fast !&#x3D; null &amp;&amp; fast.next !&#x3D; null)
-Java 会先判断左边，如果 fast 已经是 null，就不会去执行右边，从而避免报错
-错误写法：while (fast.next !&#x3D; null &amp;&amp; fast !&#x3D; null)
-如果 fast 已经是 null，直接访问 fast.next 会立刻报 NullPointerException
-记忆点：先判“人”在不在，再判“下一步”能不能走。
-
-
-找中点的“偶数偏右”特性用标准倍速模板
-
-
-(fast 走两步，slow 走一步) 找中点时，对于偶数长度的链表，slow 最终会停在 第二个 中间节点上。
-链表：1 -&gt; 2 -&gt; 3 -&gt; 4 标准模板结果：slow 指向 3。注意：有些题目（虽然少）要求找“左中点”（即 2），那时候循环条件要微调改为 fast.next !&#x3D; null &amp;&amp; fast.next.next !&#x3D; null。
-记忆点：默认模板是“偏右”的（LeetCode 876 标准答案）。
-
-
-定距删除时的 “N” 还是 “N+1”？
-
-
-场景：你要 删除 倒数第 N 个节点。必须做到：slow 指针必须停在 倒数第 N+1 个 节点（即目标节点的前驱），这样你才能执行 slow.next &#x3D; slow.next.next。
-操作：所以 fast 指针必须先走 N + 1 步（或者让 fast 指向 dummy，先走 N 步，效果一样
-记忆点：要删除，必须多走一步，或者从 dummy 起步多算一个身位。
-
-
-环的入口问题
-
-
-快慢指针相遇时，起点到入口的距离，正好等于相遇点到入口的距离。
-环形链表 II 的“回头位置”在 LeetCode 142 (找环入口) 中，当 slow 和 fast 第一次相遇后，开启“回马枪”阶段。新指针（或重置的 fast）必须回到 head (真正的头)，而不是 dummy。
-
-
-相关练习题1. LeetCode 19. 删除链表的倒数第 N 个结点(测距流)题意： 给你一个链表，删除链表的倒数第 n 个结点，并且返回链表的头结点。
-2. LeetCode 876. 链表的中间结点(二倍速流)题意： 给你单链表的头结点 head ，请你找出并返回链表的中间结点。如果有两个中间结点，则返回第二个中间结点
-3. LeetCode 141. 环形链表(判圈流)题意： 给你一个链表的头节点 head ，判断链表中是否有环。
-如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。注意：pos 不作为参数进行传递 。仅仅是为了标识链表的实际情况。
-如果链表中存在环 ，则返回 true 。 否则，返回 false 。
-4. LeetCode 142. 环形链表 II(判圈流)题意： 给定一个链表的头节点 head ，返回链表开始入环的第一个节点。 如果链表无环，则返回 null。
-如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。如果 pos 是 -1，则在该链表中没有环。注意：pos 不作为参数进行传递，仅仅是为了标识链表的实际情况。
-不允许修改 链表。
-5. LeetCode 234. 回文链表题意： 给你一个单链表的头节点 head ，请你判断该链表是否为回文链表。如果是，返回 true ；否则，返回 false 。
-]]></content>
-      <categories>
-        <category>LeetCode</category>
-        <category>模板</category>
-      </categories>
-      <tags>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>LeetCode-链表过滤（dummy + prev + curr）</title>
-    <url>/2025/12/20/LeetCode-%E9%93%BE%E8%A1%A8%E8%BF%87%E6%BB%A4%EF%BC%88dummy-prev-curr%EF%BC%89/</url>
-    <content><![CDATA[🧠 链表过滤（dummy + prev + curr）通过遍历链表，将满足特定条件（如值等于 target）的节点通过修改指针“跳过”并移除，从而得到一个清洗后的新链表
-一句话结论：
-👉 LeetCode 中 所有可能删除头节点的链表题👉 本质上 都可以反向映射为同一个删除模板
-
-
-
-⭐ 模板
-建立虚拟头，处理边界
-&#x2F;&#x2F;创建 dummy 节点,dummy.next 指向 headListNode dummy &#x3D; new ListNode(0,head);
-
-创建探险家 curr 和接线员prev 指向 dummy &#x2F;&#x2F; 当前已经确认保留链表的最后一个节点curr 指向 head &#x2F;&#x2F; 当前正在判断的节点
-
-遍历链表
-while (curr !&#x3D; null) {
-if (curr 满足【删除条件】) {&#x2F;&#x2F;【核心动作】：剪断链接！&#x2F;&#x2F; 让 prev 的指针越过 curr，直接连到 curr 的下一位prev.next &#x3D; curr.next
-&#x2F;&#x2F; 注意：此时 prev 不要动！因为新接过来的 prev.next 还没检查过，下一轮循环要检查它}else (不需要删除):{&#x2F;&#x2F;更新 prevprev &#x3D; curr}
-&#x2F;&#x2F;【迭代】：无论删没删，探险家都要去下一个地方看看curr &#x3D; curr.next
-}
-
-返回结果return dummy.next
-
-
-
-
-三大角色（必须先记住）dummy -&gt; prev -&gt; curr -&gt; curr-&gt;next -&gt; …
-
-
-
-指针
-角色
-一句话职责
-
-
-
-dummy
-哨兵节点
-保住链表入口，统一头删
-
-
-prev
-接线员
-指向最后一个“已确认保留”的节点
-
-
-curr
-探险家
-当前正在判断删不删的节点
-
-
-👉 核心口诀：
-
-✅ curr 每轮都要前进
-❌ prev 只有在 curr 被保留时才前进
-
-
-
-
-相关练习题1. LeetCode 203. 移除链表元素题意： 给你一个链表的头节点 head 和一个整数 val ，请你删除链表中所有满足 Node.val &#x3D;&#x3D; val 的节点，并返回 新的头节点 。
-2. LeetCode 83. 删除排序链表中的重复元素题意： 删除排序链表中的重复元素，只保留一个元素。
-3. LeetCode 82. 删除排序链表中的重复元素 II题意： 删除排序链表中的所有重复元素，只保留没有重复的节点。
-]]></content>
-      <categories>
-        <category>LeetCode</category>
-        <category>模板</category>
-      </categories>
-      <tags>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>LeetCode-滑动窗口</title>
     <url>/2026/01/04/LeetCode-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/</url>
     <content><![CDATA[🧠 通过移动 right 和 left，始终维护一个 [left, right] 的连续区间，并根据题目条件不断扩大或缩小这个区间。
@@ -1851,6 +1680,493 @@ Tips: [N-4.1]
       </categories>
       <tags>
         <tag>数组</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>go语法(简洁)</title>
+    <url>/2026/03/09/go%E8%AF%AD%E6%B3%95-%E7%AE%80%E6%B4%81/</url>
+    <content><![CDATA[Go 核心语法精简笔记
+核心红线： 声明了不用的变量、导入了不用的包，极必编译报错！
+
+
+1. 变量与常量初始化🌈 变量定义🔹 基本写法var a int = 10      // 显式类型var b = 20          // 自动推断 (全局变量必须用 var)c := 30             // 简短声明（仅函数&#123;&#125;内,局部变量）
+
+🔹 多变量x, y, z := 1, 2, 3
+
+⚠️ 限制（高频坑）:= 只能在函数内部使用:= 必须至少声明一个新变量a := 10a := 20 // ❌ 报错（没有新变量）a, b := 20, 30 // ✅ 可以（b 是新变量）var a inta := 10 // ❌ 不能混用（同一作用域）
+
+🌈 常量与iota枚举常量的核心：编译期确定值，运行期不可修改（可以是无类型常量）。
+// 1. 普通声明const PI = 3.14//const 不能依赖变量（var / :=）x := 10const a = x*2 // ❌ 报错// 2. 批量声明const (    a = 1    b = 2)//3.自动适配类型const a = 10   // 无类型常量var b int32 = a // ✅ 自动适配类// 4. iota 枚举器 (每一行递增，遇到新的 const 块重置为 0)const (    SUCC = iota  // 0    _            // 1 (占位丢弃)    FAIL         // 2 (默认继承上一行表达式 iota))
+
+
+
+
+2. 基础内置数据类型🌈 数字与布尔
+布尔值 bool：true 和 false。（⚠️ C++ 那一套 0&#x2F;1 和空字符串当条件的技巧，在 Go 完全行不通）
+整型 int：会根据操作系统自适应变成 32&#x2F;64 位。（定长型有：int32 &#x2F; int64）
+浮点数 float64：Go 省略小数类型时的默认推断类型。
+
+🌈 字符串与字符
+字符（单引号 &#39;&#39;）：
+byte (等同 uint8) —— 存 ASCII 纯英文,按照字节处理。
+rune (等同 int32) —— 存 Unicode（中文汉字）,按照字符处理。
+
+
+字符串（双引号 &quot;&quot; &#x2F; 反引号 ``）：
+⚠️ 切记字符串不可修改！ 不能 s[0] = &#39;H&#39;。
+必须转切片修改： 处理英文（ASCII） → []byte处理中文（Unicode） → []rune 
+
+
+
+s := &quot;hello&quot;b := []byte(s)b[0] = &#x27;H&#x27;s = string(b) //[]byte(s) 是拷贝，修改不会影响原字符串，必须再转回 stringfmt.Println(s) // Hello
+
+
+💡 高频拼接字符串 → 用 strings.Builder（避免重复内存分配） 。
+
+
+
+
+3. 分支控制流
+⚠️ Go 语言中没有 a ? b : c 三元运算符。⚠️ a++ 只能当一行的独立语句，不能放进式子算数，也没 ++a。
+
+🌈 if 条件好处是自带初始化，将变量作用域锁死在 if 内部。变量作用域覆盖 整个 if &#x2F; else if &#x2F; else 结构
+if a := 10; a &gt; 0 &#123;    //变量遮蔽⚠️    a := 20 //新变量（遮蔽外层 a）    fmt.Println(a) // 20&#125;else if a == 0&#123;&#125;else&#123;&#125;
+
+🌈 switch 分支🔹 基本特性默认只执行一个 case（自动 break）支持多个匹配值：
+case 1, 2, 3:
+
+🔹 fallthrough（⚠️ 易错）强制执行下一个 case（不会判断条件）
+switch x &#123;case 1:    fallthroughcase 2:    fmt.Println(&quot;执行到这里&quot;)&#125;
+
+🔹 无表达式 switch（🔥 高频）等价于 if-else 链
+switch &#123;case x &gt; 0:    fmt.Println(&quot;positive&quot;)case x &lt; 0:    fmt.Println(&quot;negative&quot;)&#125;
+
+🔹 Type Switch（类型判断）用于判断接口的真实类型
+switch v := i.(type) &#123;case int:    fmt.Println(&quot;int&quot;, v)case string:    fmt.Println(&quot;string&quot;, v)&#125;
+
+
+
+
+4. Struct 结构与 OOPGo 没有 class，通过 struct + 方法 实现面向对象
+💡 首字母大写 → 可导出（跨 package 可见）💡 首字母小写 → 私有
+🌈 定义与初始化type Student struct &#123;    Name string    Age  int&#125;//键值初始化(推荐)stu1 := Student&#123;    Name: &quot;fliex&quot;,    Age:  25,    // ⚠️ 最后哪怕只有一行，只要回车了，必须带逗号&#125;//顺序初始化（不推荐）stu2 := Student&#123;&quot;fliex&quot;, 25&#125;//指针初始化（常用） struct 默认是值拷贝，指针可以避免拷贝 + 修改原对象stu3 := &amp;Student&#123;    Name: &quot;fliex&quot;,    Age:  25,&#125;stu3.Name = &quot;mike&quot; // ✅ 不需要 (*stu3).Name 会自动解引用  stu3的名字就改为了 mike//返回 *Student，避免拷贝（推荐在函数中使用） 指针接收者：修改数据 + 避免拷贝(数据比较大的时候) + 保持一致性(工程规范)🔹 struct 是值类型（默认拷贝）s1 := Student&#123;&quot;a&quot;, 10&#125;s2 := s1s2.Name = &quot;b&quot;fmt.Println(s1.Name) // a ❗ 不变
+
+🌈 零值（默认值）var stu Student👉 等价于：Student&#123;    Name: &quot;&quot;,    Age:  0,&#125;
+
+🌈 方法接收者（实现面向对象）Go 没有 class，通过 struct + 方法（receiver） 实现行为
+// 1. 值接收者（拿的是副本，怎么改原本对象都不受影响）func (s Student) Read() &#123;&#125;// 2. 指针接收者（拿的是对象原件地址，里面随便改都能同步到外部对象身上）func (s *Student) Write() &#123;    s.Age = 99&#125;
+
+🌈 组合（Embedding）Go 没有继承，通过组合（embedding）实现复用和类似继承效果
+type Dog struct &#123;    Animal    name string&#125;🔹 字段遮蔽（就近原则）dog.name        // 优先用 Dog 的 namedog.Animal.name // 访问内层外层字段会遮蔽内层同名字段🔹 方法“重写”（本质是遮蔽）dog.Speak()        // 调 Dog 的 Speakdog.Animal.Speak() // 调 Animal 的 Speak子结构体同名方法会覆盖（遮蔽）内层方法🔹 初始化规则dog := Dog&#123;    name: &quot;alice&quot;,    Animal: Animal&#123;&quot;cat&quot;&#125;,&#125;❗ embedding 初始化必须写完整结构（不能展开）
+
+
+5. 数组与切片 (Slice)🌈 核心区分
+数组 定长！ [3]int 和 [4]int 是两种完全不兼容的异度类型。
+切片 引用型不定长数组视角，靠 make 生成：make([]int, 长度, 容量)
+
+切片本身是“引用类型”，但不代表所有得到切片的操作都是“引用原数据”
+append🔹 1. 加一个元素arr &#x3D; append(arr, 4)🔹 2. 拼接切片（你删除用到的）arr &#x3D; append(arr[:1], arr[2:]…)
+👉 … 表示把切片展开成多个元素
+🌈 切片与数组的关联切片是对数组的引用（共享底层数组）切片的容量 &#x3D; 从切片起始位置到数组末尾的长度 对切片使用append时 容量够 → 会修改原数组 容量不够 → 不会影响数组(会开辟出新的空间)
+🌈 切片与sring的关联string 是一个切片，切片是引用类型，string 的底层数组是只读的，不能被修改。从 string 转成 []byte → 会拷贝
+🌈 扩容解绑大坑 ⚠️通过 s[low : high] 取一段范围(low取 high不取)出来造的切片，一旦遭遇 append() 数据且原切片容量已经爆满了需要系统自动扩容时：一旦扩容(当切片的长度 + 新增元素个数 &gt; 容量（cap）时，就会扩容) → 切片就“脱离”原数组
+
+系统会强制拿走老数据在新地方重开辟一个豪华新大底。此后这个新切片跟原来的底子数组彻底一刀两断恩断义绝，修改互不干涉。
+
+
+
+
+6. Map 字典集
+⚠️ map 如果只是声明，没有 make，就是 nil，此时不能写入数据，否则会 panicmap 是引用类型，需 make 才能写，key 必须可比较(可以用 &#x3D;&#x3D; 或 !&#x3D; 比较的类型，才能当 map 的 key)，遍历无序，判断存在用 ok
+
+🌈 正确的创建与判空// 必须做 make ！map[key] = valuem := make(map[string]int)m[&quot;李四&quot;] = 18/// 判断是否真有的 经典 comma ok// 当 value 类型是：int / bool / string 👉 强烈建议用 ok  因为：这些类型都有“默认值”，很容易误判value, ok := m[&quot;王五&quot;]if !ok &#123;     // key 不存在    // ⚠️ v 是默认值（int→0，string→&quot;&quot;，bool→false）&#125;
+
+🌈 Map 严格规定 ⚠️
+你休想用 == 判断两个 Map 里面长得一模一样。
+能拿来给 Map 做前面那个 Key 头的，绝不能是：slice 动态切片、map 字典、func 函数。
+
+🔹 删除元素delete(m, &quot;李四&quot;)🔹 遍历（无序）for k, v := range m &#123;&#125;⚠️ map 遍历顺序是随机的🔹 长度len(m)🔹 map 是引用类型（重要）m1 := map[string]int&#123;&quot;a&quot;: 1&#125;m2 := m1m2[&quot;a&quot;] = 100fmt.Println(m1[&quot;a&quot;]) // 100 ✅（共用数据）🔹 判断 nil（唯一能用 == 的场景）if m == nil &#123;&#125;❗ 判断存在必须用 ok
+
+
+
+
+7. for 循环与 Range 陷阱Go的循环只有一个 for 关键字打天下。不再提旧三段式，着重提醒专门给切片Map配套遍历的黑科技：for range
+🌈 Range 是值拷贝！修改无效 ⚠️s := []int&#123;1, 2, 3&#125;// ❌ 错误示范：修改这里的 v 根本没用，v 是临时造出来的替身！for _, v := range s &#123;    v *= 10&#125;// ✅ 正确示范：永远只信任原汁原味的底层地址索引for i := range s &#123;    s[i] *= 10&#125;
+
+
+
+
+8. 函数值传递与真假指针🌈 统一都是值传递！所有的传参，一律全都是在拷贝复印件！如果你发现这复印件你在函数里涂改，咋外面的也变了？
+
+那是因为这个件印的是**“带指针锁眼的大门钥匙地址”**，拿着复印的地址你去捣腾的还是原来大马路上的那套房。
+
+🌈 彻底阉割的指针 * 和 &amp;
+取地址： &amp;变量
+去地址的房里拿真身值： *指针
+⚠️ 绝对不允许运算（如 p++），指针的唯一作用就是替值传递留一个修改实体的通道门匙。
+⚠️ 面对未初始化的虚空指针直接 *p -&gt; Panic！
+
+
+切片、Map、Channel 不需要加 * ，它三哥俩骨子里就带着原生基因“隐形指针”。
+
+
+
+
+9. Interface 接口机制只要一个类型实现了这个接口的里面的所有方法,就可以认为这个类型实现了这个接口
+在 Go，接口实现了鸭子模型的极简多态：
+
+你只要走路像鸭子，叫声像鸭子，你就算没办证书写明 implements 鸭子，它也认你是一只钦定接口鸭！
+
+接口类型的变量，可以接收任何实现了该接口的结构体实例（值或指针），但不能接收结构体类型本身a = Dog&#123;&#125; 不是传递空值，而是把一个具体值（Dog&#123;&#125;）连同类型信息一起存入接口变量type Animal interface &#123;	Speak() string&#125;type Dog struct&#123;&#125;func (d Dog) Speak() string &#123;	return &quot;wang&quot;&#125;func main() &#123;	var a Animal   // 接口变量（此时是 nil）	fmt.Println(a) // &lt;nil&gt;	a = Dog&#123;&#125;      // 把 Dog&#123;&#125; 放进接口	fmt.Println(a)        // &#123;&#125;	fmt.Println(a.Speak()) // wang&#125;接口变量不能直接访问结构体字段，因为接口只暴露方法，不包含具体类型的字段信息。//判断 a 里面是不是 Dogd, ok := a.(Dog)if ok &#123;    fmt.Println(d.Name)&#125;
+
+🌈 唯一的大坑：接收者限定如果你是用值接收者实现了方法：那么你传 值类型 或 指针类型 给接口对象都能兜住。如果你是用指针接收者实现了方法：**只有指针类型实现这个接口 ,只可以接收 &amp;地址 **才能行。
+🌈 万能的空接口与破壳所有类型不论是原始数据还是自定义奇葩类，都天生实现了 interface{} 空接口囊。所以什么类型都可以往里面传
+空接口最大问题放进去：
+var a any &#x3D; 100
+取出来：
+不能直接：
+fmt.Println(a + 10)
+错误。
+因为：
+Go 不知道它是不是 int。
+var unknown interface&#123;&#125;unknown = &quot;hello&quot;unknown = 100unknown = trueunknown = []int&#123;1, 2, 3&#125;// 类型断言：剥壳求证（也叫 comma ok 安全测试）//值num := unknown.(int)fmt.Println(num) //如果是int类型打印值 不是则panic(程序崩溃)str, ok := unknown.(string)if ok &#123;    fmt.Println(&quot;是string类型&quot;)&#125;else&#123;    fmt.Println(&quot;不是string类型&quot;)&#125;
+
+
+
+
+10. 错误捕获 (defer&#x2F;err&#x2F;panic)errors.New(“错误信息”)fmt.Errorf(“错误信息”) &#x2F;&#x2F;用法与printf一样%w 只能用于 error 类型 一个 Errorf 中只能有一个 %w , %w 只能在 fmt.Errorf 中使用
+返回 error 类型的只有这几个常用：1️⃣ errors.Newerr :&#x3D; errors.New(“出错了”)
+👉 返回：error👉 用途：创建一个最基础的错误
+2️⃣ errors.Unwrapinner :&#x3D; errors.Unwrap(err)
+👉 返回：error（被包装的原始错误）👉 如果没有被包装 → 返回 nil
+3️⃣ errors.Join（进阶）err :&#x3D; errors.Join(err1, err2)
+👉 返回：error👉 用途：把多个错误合并成一个
+每次进行错误处理都需要if err !&#x3D; nil {}
+注:fmt.Errorf()也是返回error类型🌈 错误提取断言
+判断它底层根源是不是预定义常量错（Sentinel Error）： errors.Is(err, 拿来对比的预设变量)
+强行把它破壳拿里面的特定实体类型的属性错： errors.As(err, &amp;特定的自定错误大类型)
+
+🌈 defer 的回旋镖（后进先出栈）**你写的 return 语句根本就不是一劳永逸！**它有三步曲：
+
+它先把值丢在后备箱变量里。
+逆向顺藤摸走所有预先挂着的 defer。如果此刻遇到有命名返回值的大哥搞破坏影响了后备箱，你退出的答案就被改了！
+这才退出。
+
+🌈 Panic 急救包只把 recover() 塞进提前挂着的 defer 匿名兜底函数里才能用！只要逮着了报错就吃进隐患，让上级功能安然无恙接着大踏步执行。
+
+
+
+11. 终极并发 (Goroutine &amp; Channel)
+💡 通过通信来共享系统内存。
+
+🌈 解决主死全僵的问题 (sync.WaitGroup)放弃 time.Sleep 等协程。靠精准算术下发任务数。
+Goroutine 笔记总结
+1. 什么是 goroutine
+goroutine 是 Go 的轻量级并发任务。
+
+
+开启方式：
+idgo 函数调用()
+
+
+例如：
+idgo test()
+
+
+2. goroutine 特点
+并发执行多个 goroutine：
+
+同时运行。
+
+
+执行顺序不确定例如：
+idgo fmt.Println(&quot;A&quot;)go fmt.Println(&quot;B&quot;)
+
+输出顺序随机。
+
+main 结束程序直接结束即使：
+idgoroutine
+
+没执行完。
+
+3. go 后面能写什么必须是：
+
+函数调用。
+
+
+合法：
+idgo test()go fmt.Println()go user.Print()go func() &#123;&#125;()
+
+
+不合法：
+idgo x = 10go fmt.Println
+
+
+4. goroutine 常见写法
+普通函数idgo test()
+
+
+匿名函数idgo func() &#123;	fmt.Println(&quot;hello&quot;)&#125;()
+
+
+5. WaitGroup 作用
+
+等待 goroutine 执行完成。
+
+
+防止：
+idmain
+
+提前退出。
+
+6. WaitGroup 固定流程
+idAdd → go → Done → Wait
+
+
+创建idvar wg sync.WaitGroup
+
+
+登记任务idwg.Add(1)
+
+
+goroutine 完成iddefer wg.Done()
+
+
+等待结束idwg.Wait()
+
+
+7. WaitGroup 核心规则
+Add 和 Done 次数必须一致
+错误：
+idwg.Add(2)只 Done 一次
+
+
+结果：
+程序卡住。
+
+Add 必须写在 goroutine 前正确：
+idwg.Add(1)go test()
+
+
+8. goroutine + WaitGroup 标准模板idvar wg sync.WaitGroupwg.Add(1)go func() &#123;	defer wg.Done()	fmt.Println(&quot;task&quot;)&#125;()wg.Wait()
+
+
+9. 核心理解
+goroutine：
+
+开启并发。
+
+
+WaitGroup：
+
+等待并发结束。
+
+
+10. 一句话总结
+goroutine 用 go 开启并发执行，WaitGroup 用来等待 goroutine 完成，防止 main 提前退出。
+
+
+加任务：在协程发动 go func() 之前：wg.Add(1)
+退任务：切记在协程的第一行埋死兜底：defer wg.Done()
+查结果：大主子线程结尾等收网：wg.Wait()
+⚠️ 切记协程如果外部封装函数里带着这个计数器往下发，必定全用指针 *sync.WaitGroup 传，绝不能发影子副本去糊弄。
+
+🌈 Channel 管道交互在不同的 Go 并行管线之间安全接抛快递件。不许在声明里画蛇添足加 * （它是自带原生引用指针体制的）。
+
+强同步版 make(chan int) -&gt; （无缓冲）双方不到齐就不准过，死锁堵塞。
+接活版 make(chan int, 3) -&gt; （有缓冲）放信箱不超过 3 的上限随便撒手，不用等对方拿货立马往下跑。
+读死空结案 -&gt; 如果使用 for range 去拿货，发送端用完如果不自己发 close(通道名) 倒闭关门拉电闸，那收货这段就会永久处于接收痴汉傻等死机状态 (PanicDeadlock)。
+
+goto &#x3D; 强制跳转，只在跳出多层循环时合理使用
+]]></content>
+  </entry>
+  <entry>
+    <title>LeetCode-快慢指针(链表)</title>
+    <url>/2026/01/10/LeetCode-%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88(%E9%93%BE%E8%A1%A8)/</url>
+    <content><![CDATA[🧠 核心场景：链表中的位置定位、测距与判环
+判断用哪个模板的唯一标准：
+
+是否涉及“相对位置变化 &#x2F; 追及” → 倍速循环
+是否涉及“倒数 &#x2F; 固定间距” → 定距循环
+
+
+⭐ 模板模板一：倍速循环 (Double Speed)
+核心逻辑：只有跑得快，才能根据“相对位置”算中点，或者在环里“套圈”。口诀：快走两步，慢走一步，这就叫倍速。
+ListNode slow &#x3D; head;ListNode fast &#x3D; head;
+&#x2F;&#x2F; 必须保证 fast 能走两步，否则会空指针
+while (fast !&#x3D; null &amp;&amp; fast.next !&#x3D; null) {slow &#x3D; slow.next; &#x2F;&#x2F; 慢走 1fast &#x3D; fast.next.next; &#x2F;&#x2F; 快走 2
+&#x2F;&#x2F; 【插入点】：如果有“追击&#x2F;判圈”逻辑，写在这里}&#x2F;&#x2F; 【结束点】：奇数长度 slow 在正中；偶数长度 slow 在右中点（第二个中点）
+
+👇 变型点拨 (只需改哪里)：
+找中点 (876)：不用改，循环结束后直接 return slow。
+判圈 (141)：在【插入点】加一句 if (slow &#x3D;&#x3D; fast) return true;。
+找圈入口 (142)：判圈相遇后，把一个指针扔回 head，改为同速（都走 1 步），再次相遇处即入口。
+回文 (234)：先用这套模板拿到 slow (中点)，然后把 slow 后面的链表反转，再跟 头节点对比。
+
+
+模板二：定距循环 (Fixed Gap)
+核心逻辑：只要先拉开 N 步距离，当头走到终点，尾巴就在倒数第 N 个。口诀：快先走，慢后走，维持距离到尽头
+&#x2F;&#x2F; 必须用 Dummy，防止删除的是头节点
+ListNode dummy &#x3D; new ListNode(-1, head);ListNode slow &#x3D; dummy, fast &#x3D; dummy;
+&#x2F;&#x2F; 1. 制造间距：fast 先走 N+1 步 (为了删倒数第 N 个，slow 要在它前一个)&#x2F;&#x2F;⚠️ 默认题目保证 n 合法,若 n 可能非法，需在 for 中判断 fast &#x3D;&#x3D; null
+for (int i &#x3D; 0; i &lt;&#x3D; n; i++) {fast &#x3D; fast.next;}
+&#x2F;&#x2F; 2. 保持间距同速走：直到 fast 摸到 null
+while (fast !&#x3D; null) {fast &#x3D; fast.next;slow &#x3D; slow.next;}
+&#x2F;&#x2F; 【操作点】：此时 slow 停在目标节点的前一位
+
+返回答案return dummy.next;
+
+
+👇 变型点拨 (只需改哪里)：
+删倒数第 N 个 (19)：在【操作点】执行 slow.next &#x3D; slow.next.next。
+找倒数第 K 个 (面试题)：slow、fast 都从 dummy 起步，fast 先走 K 步,循环结束时 slow 指向的就是倒数第 K 个节点, return slow 即为目标。
+
+
+
+一句话总结记忆：找中点、找环 -&gt; 用 while 同时起步，一快一慢。找倒数 -&gt; 用 for 先跑几步，保持距离。
+
+
+
+Notice:
+
+倍速循环的“判空顺序” (防爆核心)在写 while 循环条件时，顺序绝对不能颠倒。
+
+
+正确写法：while (fast !&#x3D; null &amp;&amp; fast.next !&#x3D; null)
+Java 会先判断左边，如果 fast 已经是 null，就不会去执行右边，从而避免报错
+错误写法：while (fast.next !&#x3D; null &amp;&amp; fast !&#x3D; null)
+如果 fast 已经是 null，直接访问 fast.next 会立刻报 NullPointerException
+记忆点：先判“人”在不在，再判“下一步”能不能走。
+
+
+找中点的“偶数偏右”特性用标准倍速模板
+
+
+(fast 走两步，slow 走一步) 找中点时，对于偶数长度的链表，slow 最终会停在 第二个 中间节点上。
+链表：1 -&gt; 2 -&gt; 3 -&gt; 4 标准模板结果：slow 指向 3。注意：有些题目（虽然少）要求找“左中点”（即 2），那时候循环条件要微调改为 fast.next !&#x3D; null &amp;&amp; fast.next.next !&#x3D; null。
+记忆点：默认模板是“偏右”的（LeetCode 876 标准答案）。
+
+
+定距删除时的 “N” 还是 “N+1”？
+
+
+场景：你要 删除 倒数第 N 个节点。必须做到：slow 指针必须停在 倒数第 N+1 个 节点（即目标节点的前驱），这样你才能执行 slow.next &#x3D; slow.next.next。
+操作：所以 fast 指针必须先走 N + 1 步（或者让 fast 指向 dummy，先走 N 步，效果一样
+记忆点：要删除，必须多走一步，或者从 dummy 起步多算一个身位。
+
+
+环的入口问题
+
+
+快慢指针相遇时，起点到入口的距离，正好等于相遇点到入口的距离。
+环形链表 II 的“回头位置”在 LeetCode 142 (找环入口) 中，当 slow 和 fast 第一次相遇后，开启“回马枪”阶段。新指针（或重置的 fast）必须回到 head (真正的头)，而不是 dummy。
+
+
+相关练习题1. LeetCode 19. 删除链表的倒数第 N 个结点(测距流)题意： 给你一个链表，删除链表的倒数第 n 个结点，并且返回链表的头结点。
+2. LeetCode 876. 链表的中间结点(二倍速流)题意： 给你单链表的头结点 head ，请你找出并返回链表的中间结点。如果有两个中间结点，则返回第二个中间结点
+3. LeetCode 141. 环形链表(判圈流)题意： 给你一个链表的头节点 head ，判断链表中是否有环。
+如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。注意：pos 不作为参数进行传递 。仅仅是为了标识链表的实际情况。
+如果链表中存在环 ，则返回 true 。 否则，返回 false 。
+4. LeetCode 142. 环形链表 II(判圈流)题意： 给定一个链表的头节点 head ，返回链表开始入环的第一个节点。 如果链表无环，则返回 null。
+如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。如果 pos 是 -1，则在该链表中没有环。注意：pos 不作为参数进行传递，仅仅是为了标识链表的实际情况。
+不允许修改 链表。
+5. LeetCode 234. 回文链表题意： 给你一个单链表的头节点 head ，请你判断该链表是否为回文链表。如果是，返回 true ；否则，返回 false 。
+]]></content>
+      <categories>
+        <category>LeetCode</category>
+        <category>模板</category>
+      </categories>
+      <tags>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>故都的秋</title>
+    <url>/2025/10/18/%E6%95%85%E9%83%BD%E7%9A%84%E7%A7%8B/</url>
+    <content><![CDATA[
+“秋天的光，落在旧京的屋檐上，也落在人的心里。”
+
+
+
+  夜色在延伸，风拂过故都的屋瓦。  
+  如果推理有情绪，那应当是秋天的温度。  
+  郁达夫笔下的秋，是北国的，是孤独的，是一场无人破案的寂寞。
+
+
+
+🍂 一、我喜北京的秋天我喜北京的秋天。最令人喜悦的，是那清、那静、那悲凉。秋天的颜色，不在浓艳，而在那浅淡的黄与灰里。清晨薄雾，傍晚凉风，枯叶在灰砖上低语，一切都那么寂寥、那么真切。
+在南方，秋天只是个季节；在北国，它却是一种情绪，一种生命的姿态。
+
+🌇 二、胡同里的风声那一条条深灰色的胡同，藏着老北京的灵魂。黄昏时分，炊烟与落日交织，远处传来一阵清脆的自行车铃声，便是秋的节拍。
+有人说北京的秋冷，我却觉得它冷得有分寸。像一位旧友，不言不语，却让人心生安定。
+
+🍁 三、落叶的推理故都的秋，是一首无声的诗。一阵风掠过，树叶在石阶上旋舞——那声音，如同旧琴拨弦。街角的银杏树披上金衣，枫叶燃烧在风里。行人脚下的叶，似在低语：
+
+“别忘了这座城的温柔。”
+
+
+💭 四、读后感郁达夫笔下的秋，不只是自然的描写，更是一种心境的投影。他看到了凋零之美，看到了孤独中的诗意。如今读来，仍能感受到那份淡淡的忧愁与温柔的宁静。
+
+
+📎 原文作者：郁达夫（1934）📚 赏析与再创作：Fliex
+
+
+
+.autumn-intro {
+  font-size: 1.1rem;
+  color: #dcdcdc;
+  background: linear-gradient(135deg, rgba(40,40,40,0.6), rgba(10,10,10,0.9));
+  padding: 1.2rem 1.5rem;
+  border-left: 4px solid #888;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(255,255,255,0.05);
+  line-height: 1.8;
+  font-style: italic;
+}
+
+blockquote {
+  border-left: 4px solid #666;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px 20px;
+  color: #bfbfbf;
+  font-style: italic;
+}
+
+h2 {
+  color: #f0f0f0;
+  text-shadow: 0 0 10px rgba(255,255,255,0.1);
+}
+
+p {
+  color: #ccc;
+  line-height: 1.8;
+}
+
+
+  
+  
+  
+
+
+  
+  
+  
+    import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js';
+
+init({
+  el: &#39;#waline&#39;,
+  serverURL: &#39;https://waline527.vercel.app/&#39;,
+});
+
+  
+
+]]></content>
+      <categories>
+        <category>文学随笔</category>
+      </categories>
+      <tags>
+        <tag>散文</tag>
+        <tag>郁达夫</tag>
       </tags>
   </entry>
   <entry>
@@ -2453,390 +2769,75 @@ LinkList sortList(LinkList head) &#123;    if (head == NULL || head-&gt;next == 
       </tags>
   </entry>
   <entry>
-    <title>go语法(简洁)</title>
-    <url>/2026/03/09/go%E8%AF%AD%E6%B3%95-%E7%AE%80%E6%B4%81/</url>
-    <content><![CDATA[Go 核心语法精简笔记
-核心红线： 声明了不用的变量、导入了不用的包，极必编译报错！
+    <title>LeetCode-链表过滤（dummy + prev + curr）</title>
+    <url>/2025/12/20/LeetCode-%E9%93%BE%E8%A1%A8%E8%BF%87%E6%BB%A4%EF%BC%88dummy-prev-curr%EF%BC%89/</url>
+    <content><![CDATA[🧠 链表过滤（dummy + prev + curr）通过遍历链表，将满足特定条件（如值等于 target）的节点通过修改指针“跳过”并移除，从而得到一个清洗后的新链表
+一句话结论：
+👉 LeetCode 中 所有可能删除头节点的链表题👉 本质上 都可以反向映射为同一个删除模板
 
 
-1. 变量与常量初始化🌈 变量定义🔹 基本写法var a int = 10      // 显式类型var b = 20          // 自动推断 (全局变量必须用 var)c := 30             // 简短声明（仅函数&#123;&#125;内,局部变量）
 
-🔹 多变量x, y, z := 1, 2, 3
+⭐ 模板
+建立虚拟头，处理边界
+&#x2F;&#x2F;创建 dummy 节点,dummy.next 指向 headListNode dummy &#x3D; new ListNode(0,head);
 
-⚠️ 限制（高频坑）:= 只能在函数内部使用:= 必须至少声明一个新变量a := 10a := 20 // ❌ 报错（没有新变量）a, b := 20, 30 // ✅ 可以（b 是新变量）var a inta := 10 // ❌ 不能混用（同一作用域）
+创建探险家 curr 和接线员prev 指向 dummy &#x2F;&#x2F; 当前已经确认保留链表的最后一个节点curr 指向 head &#x2F;&#x2F; 当前正在判断的节点
 
-🌈 常量与iota枚举常量的核心：编译期确定值，运行期不可修改（可以是无类型常量）。
-// 1. 普通声明const PI = 3.14//const 不能依赖变量（var / :=）x := 10const a = x*2 // ❌ 报错// 2. 批量声明const (    a = 1    b = 2)//3.自动适配类型const a = 10   // 无类型常量var b int32 = a // ✅ 自动适配类// 4. iota 枚举器 (每一行递增，遇到新的 const 块重置为 0)const (    SUCC = iota  // 0    _            // 1 (占位丢弃)    FAIL         // 2 (默认继承上一行表达式 iota))
-
-
-
-
-2. 基础内置数据类型🌈 数字与布尔
-布尔值 bool：true 和 false。（⚠️ C++ 那一套 0&#x2F;1 和空字符串当条件的技巧，在 Go 完全行不通）
-整型 int：会根据操作系统自适应变成 32&#x2F;64 位。（定长型有：int32 &#x2F; int64）
-浮点数 float64：Go 省略小数类型时的默认推断类型。
-
-🌈 字符串与字符
-字符（单引号 &#39;&#39;）：
-byte (等同 uint8) —— 存 ASCII 纯英文,按照字节处理。
-rune (等同 int32) —— 存 Unicode（中文汉字）,按照字符处理。
-
-
-字符串（双引号 &quot;&quot; &#x2F; 反引号 ``）：
-⚠️ 切记字符串不可修改！ 不能 s[0] = &#39;H&#39;。
-必须转切片修改： 处理英文（ASCII） → []byte处理中文（Unicode） → []rune 
-
-
-
-s := &quot;hello&quot;b := []byte(s)b[0] = &#x27;H&#x27;s = string(b) //[]byte(s) 是拷贝，修改不会影响原字符串，必须再转回 stringfmt.Println(s) // Hello
-
-
-💡 高频拼接字符串 → 用 strings.Builder（避免重复内存分配） 。
-
-
-
-
-3. 分支控制流
-⚠️ Go 语言中没有 a ? b : c 三元运算符。⚠️ a++ 只能当一行的独立语句，不能放进式子算数，也没 ++a。
-
-🌈 if 条件好处是自带初始化，将变量作用域锁死在 if 内部。变量作用域覆盖 整个 if &#x2F; else if &#x2F; else 结构
-if a := 10; a &gt; 0 &#123;    //变量遮蔽⚠️    a := 20 //新变量（遮蔽外层 a）    fmt.Println(a) // 20&#125;else if a == 0&#123;&#125;else&#123;&#125;
-
-🌈 switch 分支🔹 基本特性默认只执行一个 case（自动 break）支持多个匹配值：
-case 1, 2, 3:
-
-🔹 fallthrough（⚠️ 易错）强制执行下一个 case（不会判断条件）
-switch x &#123;case 1:    fallthroughcase 2:    fmt.Println(&quot;执行到这里&quot;)&#125;
-
-🔹 无表达式 switch（🔥 高频）等价于 if-else 链
-switch &#123;case x &gt; 0:    fmt.Println(&quot;positive&quot;)case x &lt; 0:    fmt.Println(&quot;negative&quot;)&#125;
-
-🔹 Type Switch（类型判断）用于判断接口的真实类型
-switch v := i.(type) &#123;case int:    fmt.Println(&quot;int&quot;, v)case string:    fmt.Println(&quot;string&quot;, v)&#125;
-
-
-
-
-4. Struct 结构与 OOPGo 没有 class，通过 struct + 方法 实现面向对象
-💡 首字母大写 → 可导出（跨 package 可见）💡 首字母小写 → 私有
-🌈 定义与初始化type Student struct &#123;    Name string    Age  int&#125;//键值初始化(推荐)stu1 := Student&#123;    Name: &quot;fliex&quot;,    Age:  25,    // ⚠️ 最后哪怕只有一行，只要回车了，必须带逗号&#125;//顺序初始化（不推荐）stu2 := Student&#123;&quot;fliex&quot;, 25&#125;//指针初始化（常用） struct 默认是值拷贝，指针可以避免拷贝 + 修改原对象stu3 := &amp;Student&#123;    Name: &quot;fliex&quot;,    Age:  25,&#125;stu3.Name = &quot;mike&quot; // ✅ 不需要 (*stu3).Name 会自动解引用  stu3的名字就改为了 mike//返回 *Student，避免拷贝（推荐在函数中使用） 指针接收者：修改数据 + 避免拷贝(数据比较大的时候) + 保持一致性(工程规范)🔹 struct 是值类型（默认拷贝）s1 := Student&#123;&quot;a&quot;, 10&#125;s2 := s1s2.Name = &quot;b&quot;fmt.Println(s1.Name) // a ❗ 不变
-
-🌈 零值（默认值）var stu Student👉 等价于：Student&#123;    Name: &quot;&quot;,    Age:  0,&#125;
-
-🌈 方法接收者（实现面向对象）Go 没有 class，通过 struct + 方法（receiver） 实现行为
-// 1. 值接收者（拿的是副本，怎么改原本对象都不受影响）func (s Student) Read() &#123;&#125;// 2. 指针接收者（拿的是对象原件地址，里面随便改都能同步到外部对象身上）func (s *Student) Write() &#123;    s.Age = 99&#125;
-
-🌈 组合（Embedding）Go 没有继承，通过组合（embedding）实现复用和类似继承效果
-type Dog struct &#123;    Animal    name string&#125;🔹 字段遮蔽（就近原则）dog.name        // 优先用 Dog 的 namedog.Animal.name // 访问内层外层字段会遮蔽内层同名字段🔹 方法“重写”（本质是遮蔽）dog.Speak()        // 调 Dog 的 Speakdog.Animal.Speak() // 调 Animal 的 Speak子结构体同名方法会覆盖（遮蔽）内层方法🔹 初始化规则dog := Dog&#123;    name: &quot;alice&quot;,    Animal: Animal&#123;&quot;cat&quot;&#125;,&#125;❗ embedding 初始化必须写完整结构（不能展开）
-
-
-5. 数组与切片 (Slice)🌈 核心区分
-数组 定长！ [3]int 和 [4]int 是两种完全不兼容的异度类型。
-切片 引用型不定长数组视角，靠 make 生成：make([]int, 长度, 容量)
-
-切片本身是“引用类型”，但不代表所有得到切片的操作都是“引用原数据”
-append🔹 1. 加一个元素arr &#x3D; append(arr, 4)🔹 2. 拼接切片（你删除用到的）arr &#x3D; append(arr[:1], arr[2:]…)
-👉 … 表示把切片展开成多个元素
-🌈 切片与数组的关联切片是对数组的引用（共享底层数组）切片的容量 &#x3D; 从切片起始位置到数组末尾的长度 对切片使用append时 容量够 → 会修改原数组 容量不够 → 不会影响数组(会开辟出新的空间)
-🌈 切片与sring的关联string 是一个切片，切片是引用类型，string 的底层数组是只读的，不能被修改。从 string 转成 []byte → 会拷贝
-🌈 扩容解绑大坑 ⚠️通过 s[low : high] 取一段范围(low取 high不取)出来造的切片，一旦遭遇 append() 数据且原切片容量已经爆满了需要系统自动扩容时：一旦扩容(当切片的长度 + 新增元素个数 &gt; 容量（cap）时，就会扩容) → 切片就“脱离”原数组
-
-系统会强制拿走老数据在新地方重开辟一个豪华新大底。此后这个新切片跟原来的底子数组彻底一刀两断恩断义绝，修改互不干涉。
-
-
-
-
-6. Map 字典集
-⚠️ map 如果只是声明，没有 make，就是 nil，此时不能写入数据，否则会 panicmap 是引用类型，需 make 才能写，key 必须可比较(可以用 &#x3D;&#x3D; 或 !&#x3D; 比较的类型，才能当 map 的 key)，遍历无序，判断存在用 ok
-
-🌈 正确的创建与判空// 必须做 make ！map[key] = valuem := make(map[string]int)m[&quot;李四&quot;] = 18/// 判断是否真有的 经典 comma ok// 当 value 类型是：int / bool / string 👉 强烈建议用 ok  因为：这些类型都有“默认值”，很容易误判value, ok := m[&quot;王五&quot;]if !ok &#123;     // key 不存在    // ⚠️ v 是默认值（int→0，string→&quot;&quot;，bool→false）&#125;
-
-🌈 Map 严格规定 ⚠️
-你休想用 == 判断两个 Map 里面长得一模一样。
-能拿来给 Map 做前面那个 Key 头的，绝不能是：slice 动态切片、map 字典、func 函数。
-
-🔹 删除元素delete(m, &quot;李四&quot;)🔹 遍历（无序）for k, v := range m &#123;&#125;⚠️ map 遍历顺序是随机的🔹 长度len(m)🔹 map 是引用类型（重要）m1 := map[string]int&#123;&quot;a&quot;: 1&#125;m2 := m1m2[&quot;a&quot;] = 100fmt.Println(m1[&quot;a&quot;]) // 100 ✅（共用数据）🔹 判断 nil（唯一能用 == 的场景）if m == nil &#123;&#125;❗ 判断存在必须用 ok
-
-
-
-
-7. for 循环与 Range 陷阱Go的循环只有一个 for 关键字打天下。不再提旧三段式，着重提醒专门给切片Map配套遍历的黑科技：for range
-🌈 Range 是值拷贝！修改无效 ⚠️s := []int&#123;1, 2, 3&#125;// ❌ 错误示范：修改这里的 v 根本没用，v 是临时造出来的替身！for _, v := range s &#123;    v *= 10&#125;// ✅ 正确示范：永远只信任原汁原味的底层地址索引for i := range s &#123;    s[i] *= 10&#125;
-
-
-
-
-8. 函数值传递与真假指针🌈 统一都是值传递！所有的传参，一律全都是在拷贝复印件！如果你发现这复印件你在函数里涂改，咋外面的也变了？
-
-那是因为这个件印的是**“带指针锁眼的大门钥匙地址”**，拿着复印的地址你去捣腾的还是原来大马路上的那套房。
-
-🌈 彻底阉割的指针 * 和 &amp;
-取地址： &amp;变量
-去地址的房里拿真身值： *指针
-⚠️ 绝对不允许运算（如 p++），指针的唯一作用就是替值传递留一个修改实体的通道门匙。
-⚠️ 面对未初始化的虚空指针直接 *p -&gt; Panic！
-
-
-切片、Map、Channel 不需要加 * ，它三哥俩骨子里就带着原生基因“隐形指针”。
-
-
-
-
-9. Interface 接口机制只要一个类型实现了这个接口的里面的所有方法,就可以认为这个类型实现了这个接口
-在 Go，接口实现了鸭子模型的极简多态：
-
-你只要走路像鸭子，叫声像鸭子，你就算没办证书写明 implements 鸭子，它也认你是一只钦定接口鸭！
-
-接口类型的变量，可以接收任何实现了该接口的结构体实例（值或指针），但不能接收结构体类型本身a = Dog&#123;&#125; 不是传递空值，而是把一个具体值（Dog&#123;&#125;）连同类型信息一起存入接口变量type Animal interface &#123;	Speak() string&#125;type Dog struct&#123;&#125;func (d Dog) Speak() string &#123;	return &quot;wang&quot;&#125;func main() &#123;	var a Animal   // 接口变量（此时是 nil）	fmt.Println(a) // &lt;nil&gt;	a = Dog&#123;&#125;      // 把 Dog&#123;&#125; 放进接口	fmt.Println(a)        // &#123;&#125;	fmt.Println(a.Speak()) // wang&#125;接口变量不能直接访问结构体字段，因为接口只暴露方法，不包含具体类型的字段信息。//判断 a 里面是不是 Dogd, ok := a.(Dog)if ok &#123;    fmt.Println(d.Name)&#125;
-
-🌈 唯一的大坑：接收者限定如果你是用值接收者实现了方法：那么你传 值类型 或 指针类型 给接口对象都能兜住。如果你是用指针接收者实现了方法：**只有指针类型实现这个接口 ,只可以接收 &amp;地址 **才能行。
-🌈 万能的空接口与破壳所有类型不论是原始数据还是自定义奇葩类，都天生实现了 interface{} 空接口囊。所以什么类型都可以往里面传
-空接口最大问题放进去：
-var a any &#x3D; 100
-取出来：
-不能直接：
-fmt.Println(a + 10)
-错误。
-因为：
-Go 不知道它是不是 int。
-var unknown interface&#123;&#125;unknown = &quot;hello&quot;unknown = 100unknown = trueunknown = []int&#123;1, 2, 3&#125;// 类型断言：剥壳求证（也叫 comma ok 安全测试）//值num := unknown.(int)fmt.Println(num) //如果是int类型打印值 不是则panic(程序崩溃)str, ok := unknown.(string)if ok &#123;    fmt.Println(&quot;是string类型&quot;)&#125;else&#123;    fmt.Println(&quot;不是string类型&quot;)&#125;
-
-
-
-
-10. 错误捕获 (defer&#x2F;err&#x2F;panic)errors.New(“错误信息”)fmt.Errorf(“错误信息”) &#x2F;&#x2F;用法与printf一样%w 只能用于 error 类型 一个 Errorf 中只能有一个 %w , %w 只能在 fmt.Errorf 中使用
-返回 error 类型的只有这几个常用：1️⃣ errors.Newerr :&#x3D; errors.New(“出错了”)
-👉 返回：error👉 用途：创建一个最基础的错误
-2️⃣ errors.Unwrapinner :&#x3D; errors.Unwrap(err)
-👉 返回：error（被包装的原始错误）👉 如果没有被包装 → 返回 nil
-3️⃣ errors.Join（进阶）err :&#x3D; errors.Join(err1, err2)
-👉 返回：error👉 用途：把多个错误合并成一个
-每次进行错误处理都需要if err !&#x3D; nil {}
-注:fmt.Errorf()也是返回error类型🌈 错误提取断言
-判断它底层根源是不是预定义常量错（Sentinel Error）： errors.Is(err, 拿来对比的预设变量)
-强行把它破壳拿里面的特定实体类型的属性错： errors.As(err, &amp;特定的自定错误大类型)
-
-🌈 defer 的回旋镖（后进先出栈）**你写的 return 语句根本就不是一劳永逸！**它有三步曲：
-
-它先把值丢在后备箱变量里。
-逆向顺藤摸走所有预先挂着的 defer。如果此刻遇到有命名返回值的大哥搞破坏影响了后备箱，你退出的答案就被改了！
-这才退出。
-
-🌈 Panic 急救包只把 recover() 塞进提前挂着的 defer 匿名兜底函数里才能用！只要逮着了报错就吃进隐患，让上级功能安然无恙接着大踏步执行。
-
-
-
-11. 终极并发 (Goroutine &amp; Channel)
-💡 通过通信来共享系统内存。
-
-🌈 解决主死全僵的问题 (sync.WaitGroup)放弃 time.Sleep 等协程。靠精准算术下发任务数。
-Goroutine 笔记总结
-1. 什么是 goroutine
-goroutine 是 Go 的轻量级并发任务。
-
-
-开启方式：
-idgo 函数调用()
-
-
-例如：
-idgo test()
-
-
-2. goroutine 特点
-并发执行多个 goroutine：
-
-同时运行。
-
-
-执行顺序不确定例如：
-idgo fmt.Println(&quot;A&quot;)go fmt.Println(&quot;B&quot;)
-
-输出顺序随机。
-
-main 结束程序直接结束即使：
-idgoroutine
-
-没执行完。
-
-3. go 后面能写什么必须是：
-
-函数调用。
-
-
-合法：
-idgo test()go fmt.Println()go user.Print()go func() &#123;&#125;()
-
-
-不合法：
-idgo x = 10go fmt.Println
-
-
-4. goroutine 常见写法
-普通函数idgo test()
-
-
-匿名函数idgo func() &#123;	fmt.Println(&quot;hello&quot;)&#125;()
-
-
-5. WaitGroup 作用
-
-等待 goroutine 执行完成。
-
-
-防止：
-idmain
-
-提前退出。
-
-6. WaitGroup 固定流程
-idAdd → go → Done → Wait
-
-
-创建idvar wg sync.WaitGroup
-
-
-登记任务idwg.Add(1)
-
-
-goroutine 完成iddefer wg.Done()
-
-
-等待结束idwg.Wait()
-
-
-7. WaitGroup 核心规则
-Add 和 Done 次数必须一致
-错误：
-idwg.Add(2)只 Done 一次
-
-
-结果：
-程序卡住。
-
-Add 必须写在 goroutine 前正确：
-idwg.Add(1)go test()
-
-
-8. goroutine + WaitGroup 标准模板idvar wg sync.WaitGroupwg.Add(1)go func() &#123;	defer wg.Done()	fmt.Println(&quot;task&quot;)&#125;()wg.Wait()
-
-
-9. 核心理解
-goroutine：
-
-开启并发。
-
-
-WaitGroup：
-
-等待并发结束。
-
-
-10. 一句话总结
-goroutine 用 go 开启并发执行，WaitGroup 用来等待 goroutine 完成，防止 main 提前退出。
-
-
-加任务：在协程发动 go func() 之前：wg.Add(1)
-退任务：切记在协程的第一行埋死兜底：defer wg.Done()
-查结果：大主子线程结尾等收网：wg.Wait()
-⚠️ 切记协程如果外部封装函数里带着这个计数器往下发，必定全用指针 *sync.WaitGroup 传，绝不能发影子副本去糊弄。
-
-🌈 Channel 管道交互在不同的 Go 并行管线之间安全接抛快递件。不许在声明里画蛇添足加 * （它是自带原生引用指针体制的）。
-
-强同步版 make(chan int) -&gt; （无缓冲）双方不到齐就不准过，死锁堵塞。
-接活版 make(chan int, 3) -&gt; （有缓冲）放信箱不超过 3 的上限随便撒手，不用等对方拿货立马往下跑。
-读死空结案 -&gt; 如果使用 for range 去拿货，发送端用完如果不自己发 close(通道名) 倒闭关门拉电闸，那收货这段就会永久处于接收痴汉傻等死机状态 (PanicDeadlock)。
-
-goto &#x3D; 强制跳转，只在跳出多层循环时合理使用
-]]></content>
-  </entry>
-  <entry>
-    <title>故都的秋</title>
-    <url>/2025/10/18/%E6%95%85%E9%83%BD%E7%9A%84%E7%A7%8B/</url>
-    <content><![CDATA[
-“秋天的光，落在旧京的屋檐上，也落在人的心里。”
-
-
-
-  夜色在延伸，风拂过故都的屋瓦。  
-  如果推理有情绪，那应当是秋天的温度。  
-  郁达夫笔下的秋，是北国的，是孤独的，是一场无人破案的寂寞。
-
-
-
-🍂 一、我喜北京的秋天我喜北京的秋天。最令人喜悦的，是那清、那静、那悲凉。秋天的颜色，不在浓艳，而在那浅淡的黄与灰里。清晨薄雾，傍晚凉风，枯叶在灰砖上低语，一切都那么寂寥、那么真切。
-在南方，秋天只是个季节；在北国，它却是一种情绪，一种生命的姿态。
-
-🌇 二、胡同里的风声那一条条深灰色的胡同，藏着老北京的灵魂。黄昏时分，炊烟与落日交织，远处传来一阵清脆的自行车铃声，便是秋的节拍。
-有人说北京的秋冷，我却觉得它冷得有分寸。像一位旧友，不言不语，却让人心生安定。
-
-🍁 三、落叶的推理故都的秋，是一首无声的诗。一阵风掠过，树叶在石阶上旋舞——那声音，如同旧琴拨弦。街角的银杏树披上金衣，枫叶燃烧在风里。行人脚下的叶，似在低语：
-
-“别忘了这座城的温柔。”
-
-
-💭 四、读后感郁达夫笔下的秋，不只是自然的描写，更是一种心境的投影。他看到了凋零之美，看到了孤独中的诗意。如今读来，仍能感受到那份淡淡的忧愁与温柔的宁静。
-
-
-📎 原文作者：郁达夫（1934）📚 赏析与再创作：Fliex
-
-
-
-.autumn-intro {
-  font-size: 1.1rem;
-  color: #dcdcdc;
-  background: linear-gradient(135deg, rgba(40,40,40,0.6), rgba(10,10,10,0.9));
-  padding: 1.2rem 1.5rem;
-  border-left: 4px solid #888;
-  border-radius: 8px;
-  box-shadow: 0 0 15px rgba(255,255,255,0.05);
-  line-height: 1.8;
-  font-style: italic;
+遍历链表
+while (curr !&#x3D; null) {
+if (curr 满足【删除条件】) {&#x2F;&#x2F;【核心动作】：剪断链接！&#x2F;&#x2F; 让 prev 的指针越过 curr，直接连到 curr 的下一位prev.next &#x3D; curr.next
+&#x2F;&#x2F; 注意：此时 prev 不要动！因为新接过来的 prev.next 还没检查过，下一轮循环要检查它}else (不需要删除):{&#x2F;&#x2F;更新 prevprev &#x3D; curr}
+&#x2F;&#x2F;【迭代】：无论删没删，探险家都要去下一个地方看看curr &#x3D; curr.next
 }
 
-blockquote {
-  border-left: 4px solid #666;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 10px 20px;
-  color: #bfbfbf;
-  font-style: italic;
-}
-
-h2 {
-  color: #f0f0f0;
-  text-shadow: 0 0 10px rgba(255,255,255,0.1);
-}
-
-p {
-  color: #ccc;
-  line-height: 1.8;
-}
+返回结果return dummy.next
 
 
-  
-  
-  
 
 
-  
-  
-  
-    import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js';
+三大角色（必须先记住）dummy -&gt; prev -&gt; curr -&gt; curr-&gt;next -&gt; …
 
-init({
-  el: &#39;#waline&#39;,
-  serverURL: &#39;https://waline527.vercel.app/&#39;,
-});
 
-  
 
+指针
+角色
+一句话职责
+
+
+
+dummy
+哨兵节点
+保住链表入口，统一头删
+
+
+prev
+接线员
+指向最后一个“已确认保留”的节点
+
+
+curr
+探险家
+当前正在判断删不删的节点
+
+
+👉 核心口诀：
+
+✅ curr 每轮都要前进
+❌ prev 只有在 curr 被保留时才前进
+
+
+
+
+相关练习题1. LeetCode 203. 移除链表元素题意： 给你一个链表的头节点 head 和一个整数 val ，请你删除链表中所有满足 Node.val &#x3D;&#x3D; val 的节点，并返回 新的头节点 。
+2. LeetCode 83. 删除排序链表中的重复元素题意： 删除排序链表中的重复元素，只保留一个元素。
+3. LeetCode 82. 删除排序链表中的重复元素 II题意： 删除排序链表中的所有重复元素，只保留没有重复的节点。
 ]]></content>
       <categories>
-        <category>文学随笔</category>
+        <category>LeetCode</category>
+        <category>模板</category>
       </categories>
       <tags>
-        <tag>散文</tag>
-        <tag>郁达夫</tag>
+        <tag>链表</tag>
       </tags>
   </entry>
 </search>

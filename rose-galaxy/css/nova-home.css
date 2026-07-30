@@ -6,6 +6,7 @@
   --violet:#806ce8;--cool-light:#8eb9d8;--line:rgba(255,255,255,.08);
   color:var(--text-main);background:var(--page-bg);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
+
 [data-theme=light] .nova-homepage {
   --page-bg:#f5f1ee;--section-bg:#fbfaf8;--card-bg:rgba(255,255,255,.88);
   --text-main:#242632;--text-secondary:#626979;--rose:#c85d78;
@@ -115,11 +116,6 @@
 .nova-home-active main#content-inner.layout{min-height:0}.nova-home-active #recent-posts{display:none!important}
 .nova-footer strong{font-size:15px}.nova-footer small,.nova-footer nav{font-size:13px}.nova-footer{min-height:0;padding-block:30px}
 .nova-fragment{background-size:105%}.nova-fragment:hover{background-size:109%}
-.nova-home-active #rightside>div>button:not(#darkmode):not(#go-up),.nova-home-active #rightside>div>a:not(.music-button){display:none!important}
-.nova-home-active #rightside-config-hide{display:block!important;transform:translate(0)!important}
-.nova-home-active #rightside-config-hide #darkmode{display:block!important}
-.nova-home-active #rightside button,.nova-home-active #rightside a{color:#eee;background:#111625!important;border:1px solid rgba(255,255,255,.08)}
-.nova-home-active #rightside button:hover,.nova-home-active #rightside a:hover{background:#38202c!important;color:#fff}
 
 [data-theme=light] .nova-homepage{
   --page-bg:#f4f1ee;--section-bg:#faf8f6;--section-bg-alt:#eef0f4;
@@ -147,8 +143,6 @@
 [data-theme=light] .nova-home-pagination #pagination .current{color:#fff}
 [data-theme=light] .nova-footer{color:#474653;background:#e9e8ec;border-color:rgba(55,48,67,.1)}
 [data-theme=light] .nova-footer strong{color:#292733}
-[data-theme=light] .nova-home-active #rightside button,[data-theme=light] .nova-home-active #rightside a{color:#575362;background:#fff!important;border-color:rgba(85,76,99,.18)}
-[data-theme=light] .nova-home-active #rightside button:hover,[data-theme=light] .nova-home-active #rightside a:hover{color:#fff;background:#c95e7b!important}
 @media(max-width:650px){.nova-home-pagination{margin-bottom:56px}.nova-home-active #rightside{right:8px}.nova-footer nav{flex-wrap:wrap}}
 
 /* Hero-only three-part cinematic grid */
@@ -1353,6 +1347,152 @@ html[data-theme="light"] body.nova-home-active .nova-observatory > .nova-now {
   }
 }
 
+/* Butterfly rightside controls: scoped styling, with a two-button homepage mode. */
+#rightside .fliex-rightside-button {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:38px;
+  height:38px;
+  margin-bottom:8px;
+  padding:0;
+  border-radius:10px;
+  line-height:1;
+  transition:
+    background-color .24s ease,
+    border-color .24s ease,
+    color .24s ease,
+    box-shadow .24s ease,
+    transform .24s ease;
+}
+
+#rightside .fliex-rightside-button:hover {
+  transform:translateY(-2px);
+}
+
+#rightside .fliex-rightside-button:active {
+  transform:translateY(0) scale(.94);
+}
+
+#rightside .fliex-rightside-button svg {
+  display:block;
+  width:17px;
+  height:17px;
+  flex:0 0 auto;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+#rightside .fliex-rightside-button i {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:18px;
+  height:18px;
+  font-size:16px;
+  line-height:1;
+  color:currentColor;
+}
+
+html[data-theme="light"] #rightside .fliex-rightside-button {
+  color:rgba(85,78,88,.9);
+  background:linear-gradient(145deg,rgba(255,252,253,.96),rgba(247,241,245,.94))!important;
+  border:1px solid rgba(204,181,193,.52);
+  box-shadow:0 6px 18px rgba(103,78,94,.1),0 2px 5px rgba(103,78,94,.05);
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
+}
+
+html[data-theme="light"] #rightside .fliex-rightside-button:hover {
+  color:rgba(181,91,129,.98);
+  background:linear-gradient(145deg,rgba(251,242,247,.98),rgba(244,233,239,.98))!important;
+  border-color:rgba(190,119,149,.48);
+}
+
+html[data-theme="dark"] #rightside .fliex-rightside-button {
+  color:rgba(214,202,211,.88);
+  background:linear-gradient(145deg,rgba(19,26,41,.95),rgba(24,22,34,.94))!important;
+  border:1px solid rgba(184,128,151,.24);
+  box-shadow:0 8px 21px rgba(0,0,0,.3),0 0 18px rgba(136,79,104,.05);
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
+}
+
+html[data-theme="dark"] #rightside .fliex-rightside-button:hover {
+  color:rgba(222,140,173,.98);
+  background:linear-gradient(145deg,rgba(31,34,50,.98),rgba(35,27,41,.98))!important;
+  border-color:rgba(193,123,151,.42);
+}
+
+#home-theme-toggle {
+  display:none!important;
+}
+
+#rightside.is-home-minimal {
+  opacity:1;
+  transform:translate(-58px,0);
+}
+
+#rightside.is-home-minimal #rightside-config-hide,
+#rightside.is-home-minimal #rightside-config {
+  display:none!important;
+}
+
+#rightside.is-home-minimal #rightside-config-show > :not(#home-theme-toggle):not(#go-up) {
+  display:none!important;
+}
+
+#rightside.is-home-minimal #home-theme-toggle {
+  display:flex!important;
+}
+
+#rightside.is-home-minimal:not(.rightside-show) #go-up {
+  display:none!important;
+}
+
+.home-theme-toggle__icons {
+  position:relative;
+  display:block;
+  width:17px;
+  height:17px;
+}
+
+#rightside .home-theme-toggle__icon {
+  position:absolute;
+  inset:0;
+  transition:opacity .24s ease,transform .24s ease;
+}
+
+html[data-theme="light"] .home-theme-toggle__icon--moon,
+html[data-theme="dark"] .home-theme-toggle__icon--sun {
+  opacity:1;
+  transform:rotate(0) scale(1);
+}
+
+html[data-theme="light"] .home-theme-toggle__icon--sun {
+  opacity:0;
+  transform:rotate(-24deg) scale(.72);
+}
+
+html[data-theme="dark"] .home-theme-toggle__icon--moon {
+  opacity:0;
+  transform:rotate(24deg) scale(.72);
+}
+
+@media(max-width:767px) {
+  #rightside.is-home-minimal #home-theme-toggle {
+    display:none!important;
+  }
+
+  #rightside.is-home-minimal:not(.rightside-show) {
+    opacity:0;
+    transform:translate(0,0);
+  }
+}
+
 @media(max-width:650px) {
   .nova-home-active .nova-observatory {
     padding-right:14px;
@@ -1428,5 +1568,104 @@ html[data-theme="light"] body.nova-home-active .nova-observatory > .nova-now {
   }
   html[data-theme="light"] body.nova-home-active .nova-observatory > .nova-now{
     margin-top:-28px;
+  }
+}
+
+/* Light-theme Hero clarity: keep the image clean and confine haze to copy. */
+html[data-theme="light"] body.nova-home-active .nova-hero-bg {
+  filter:none;
+  opacity:1;
+  transform:none!important;
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+}
+
+html[data-theme="light"] body.nova-home-active .nova-particle-softener {
+  background:none;
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+}
+
+html[data-theme="light"] body.nova-home-active .nova-hero::before {
+  background:linear-gradient(
+    90deg,
+    rgba(247,243,246,.68) 0%,
+    rgba(247,243,246,.46) 18%,
+    rgba(247,243,246,.2) 34%,
+    rgba(247,243,246,.06) 45%,
+    transparent 58%
+  );
+}
+
+html[data-theme="light"] body.nova-home-active .nova-hero::after {
+  inset:0;
+  height:auto;
+  background:linear-gradient(
+    to bottom,
+    transparent 82%,
+    rgba(246,242,246,.1) 91%,
+    var(--page-bg) 100%
+  );
+}
+
+html[data-theme="light"] body.nova-home-active .nova-hero .hero-title-nova {
+  color:rgba(39,41,52,.96);
+}
+
+html[data-theme="light"] body.nova-home-active .nova-hero .hero-title-fliex {
+  color:rgba(183,91,127,.94);
+}
+
+html[data-theme="light"] body.nova-home-active .nova-hero .nova-cn-subtitle {
+  color:rgba(43,45,55,.92);
+}
+
+html[data-theme="light"] body.nova-home-active .nova-hero .nova-en-subtitle {
+  color:rgba(66,68,80,.78);
+}
+
+html[data-theme="light"] body.nova-home-active .nova-hero .hero-title-nova,
+html[data-theme="light"] body.nova-home-active .nova-hero .hero-title-fliex,
+html[data-theme="light"] body.nova-home-active .nova-hero .nova-cn-subtitle,
+html[data-theme="light"] body.nova-home-active .nova-hero .nova-en-subtitle,
+html[data-theme="light"] body.nova-home-active .nova-hero .nova-latest-signal {
+  filter:none;
+  opacity:1;
+  text-shadow:0 1px 2px rgba(255,255,255,.3);
+}
+
+html[data-theme="light"] body.nova-home-active .nova-hero .nova-latest-signal,
+html[data-theme="light"] body.nova-home-active .nova-hero .nova-latest-signal time {
+  color:rgba(61,62,73,.78);
+}
+
+html[data-theme="light"] body.nova-home-active .nova-hero .nova-actions a:first-child {
+  color:rgba(255,251,253,.98);
+  background:rgba(187,91,128,.92);
+  border-color:rgba(168,76,113,.28);
+}
+
+html[data-theme="light"] body.nova-home-active .nova-hero .nova-actions a:first-child:hover {
+  background:rgba(174,79,116,.98);
+}
+
+html[data-theme="light"] body.nova-home-active .nova-hero .nova-actions a:last-child {
+  color:rgba(55,54,64,.92);
+  background:rgba(250,247,249,.74);
+  border-color:rgba(99,91,104,.28);
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+}
+
+@media(max-width:900px) {
+  html[data-theme="light"] body.nova-home-active .nova-hero::before {
+    background:linear-gradient(
+      90deg,
+      rgba(247,243,246,.74) 0%,
+      rgba(247,243,246,.52) 28%,
+      rgba(247,243,246,.2) 50%,
+      rgba(247,243,246,.06) 60%,
+      transparent 68%
+    );
   }
 }
