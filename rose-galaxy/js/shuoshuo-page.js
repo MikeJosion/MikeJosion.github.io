@@ -1,6 +1,11 @@
 (() => {
   'use strict'
 
+  if (window.__novaShuoshuoBootstrap) {
+    window.__novaShuoshuoBootstrap.init()
+    return
+  }
+
   function initialiseShuoshuoPage() {
     const page = document.querySelector('.nova-shuoshuo-page')
     if (!page || page.dataset.ready === 'true') return
@@ -38,7 +43,8 @@
     })
   }
 
-  document.addEventListener('DOMContentLoaded', initialiseShuoshuoPage)
+  window.__novaShuoshuoBootstrap = { init: initialiseShuoshuoPage }
+  document.addEventListener('DOMContentLoaded', initialiseShuoshuoPage, { once: true })
   document.addEventListener('pjax:complete', initialiseShuoshuoPage)
   if (document.readyState !== 'loading') initialiseShuoshuoPage()
 })()

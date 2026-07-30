@@ -1,19 +1,40 @@
 (() => {
+  'use strict'
+
+  if (window.__novaHomeBootstrap) {
+    window.__novaHomeBootstrap.init()
+    return
+  }
+
+  let reveal = null
+  const timers = new Set()
+
+  const later = (callback, delay) => {
+    const timer = window.setTimeout(() => {
+      timers.delete(timer)
+      callback()
+    }, delay)
+    timers.add(timer)
+    return timer
+  }
+
+  const destroy = () => {
+    reveal?.disconnect()
+    reveal = null
+    timers.forEach(timer => window.clearTimeout(timer))
+    timers.clear()
+  }
+
+  const init = () => {
   const root = document.querySelector('[data-nova-home]')
   if (!root || root.dataset.ready) return
+  destroy()
   root.dataset.ready = 'true'
 
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches
-  const themeButton = document.querySelector('#darkmode')
   const searchInput = document.querySelector('#nova-archive-search')
-  const terminal = root.querySelector('.nova-terminal')
-  const terminalInput = terminal.querySelector('input')
-  const terminalOutput = terminal.querySelector('output')
-  let themeClicks = 0
-  let themeTimer
-  let longPress
 
-  const reveal = new IntersectionObserver(entries => {
+  reveal = new IntersectionObserver(entries => {
     entries.forEach(entry => entry.isIntersecting && entry.target.classList.add('is-visible'))
   }, { threshold: .12 })
   root.querySelectorAll('.nova-reveal').forEach(node => reveal.observe(node))
@@ -33,7 +54,7 @@
 
   const openSearch = value => {
     document.querySelector('#search-button .search')?.click()
-    setTimeout(() => {
+    later(() => {
       const target = document.querySelector('#local-search input')
       if (target) {
         target.value = value
@@ -43,29 +64,10 @@
     }, 180)
   }
 
-  const openTerminal = () => {
-    terminal.hidden = false
-    terminalInput.value = ''
-    terminalOutput.textContent = 'Type "help" for available commands.'
-    terminalInput.focus()
-  }
-
   searchInput.addEventListener('keydown', event => {
     if (event.key !== 'Enter') return
     const value = searchInput.value.trim()
-    value === '/nova' ? openTerminal() : openSearch(value)
-  })
-
-  terminal.querySelector('button').addEventListener('click', () => { terminal.hidden = true })
-  terminalInput.addEventListener('keydown', event => {
-    if (event.key !== 'Enter') return
-    const command = terminalInput.value.trim().toLowerCase()
-    const routes = { notes: '#nova-notes', timeline: '/archives/', music: '/music/', about: '/about/' }
-    if (routes[command]) location.href = routes[command]
-    else if (command === 'clear') terminal.hidden = true
-    else terminalOutput.textContent = command === 'help'
-      ? 'notes · timeline · music · about · clear'
-      : `Unknown command: ${command}`
+    openSearch(value)
   })
 
   const bloom = event => {
@@ -81,39 +83,26 @@
       petal.style.setProperty('--y', `${40 + Math.random() * 150}px`)
       petal.style.setProperty('--r', `${Math.random() * 540 - 270}deg`)
       document.body.appendChild(petal)
-      setTimeout(() => petal.remove(), 1550)
+      later(() => petal.remove(), 1550)
     }
     const message = root.querySelector('.nova-bloom-message')
     message.classList.add('show')
-    setTimeout(() => message.classList.remove('show'), 2200)
+    later(() => message.classList.remove('show'), 2200)
   }
   root.querySelector('.nova-bloom-trigger').addEventListener('click', bloom)
   root.querySelector('.nova-letter-o').addEventListener('click', bloom)
 
-  const unlockBloodMoon = () => {
-    root.classList.add('blood-moon')
-    const toast = root.querySelector('.nova-blood-toast')
-    toast.classList.add('show')
-    setTimeout(() => toast.classList.remove('show'), 2600)
-  }
-  if (themeButton) {
-    themeButton.addEventListener('click', () => {
-      clearTimeout(themeTimer)
-      themeClicks += 1
-      if (themeClicks >= 5) {
-        themeClicks = 0
-        unlockBloodMoon()
-      }
-      themeTimer = setTimeout(() => { themeClicks = 0 }, 1800)
-      if (root.classList.contains('blood-moon')) root.classList.remove('blood-moon')
-    })
-    themeButton.addEventListener('pointerdown', () => { longPress = setTimeout(unlockBloodMoon, 2000) })
-    ;['pointerup', 'pointerleave', 'pointercancel'].forEach(type =>
-      themeButton.addEventListener(type, () => clearTimeout(longPress))
-    )
-  }
-
   const subtitle = root.querySelector('.nova-cn-subtitle')
   const hour = new Date().getHours()
   if (hour < 5) subtitle.textContent = '还没有睡的人，也许都在构建些什么。'
+  }
+
+  window.__novaHomeBootstrap = { init, destroy }
+  document.addEventListener('pjax:send', destroy)
+  document.addEventListener('pjax:complete', init)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true })
+  } else {
+    init()
+  }
 })()

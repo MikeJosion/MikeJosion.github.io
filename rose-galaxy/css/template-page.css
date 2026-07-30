@@ -1,13 +1,4 @@
 body.nova-template-route {
-  --atlas-bg: #080e1a;
-  --atlas-panel: rgba(12, 20, 38, .78);
-  --atlas-panel-soft: rgba(20, 28, 49, .68);
-  --atlas-border: rgba(219, 178, 198, .14);
-  --atlas-text: #f1edf2;
-  --atlas-secondary: rgba(225, 219, 228, .75);
-  --atlas-muted: rgba(195, 187, 201, .57);
-  --atlas-rose: #cd7190;
-  --atlas-purple: #8878cf;
   overflow-x: clip;
   color: var(--atlas-text);
   background: var(--atlas-bg);
@@ -58,7 +49,7 @@ body.nova-template-route main#content-inner.nova-template-shell {
 .nova-template-page {
   min-height: 100vh;
   background:
-    radial-gradient(circle at 80% 34%, rgba(112, 86, 154, .11), transparent 30%),
+    radial-gradient(circle at 80% 34%, rgba(78, 98, 120, .1), transparent 30%),
     radial-gradient(circle at 13% 72%, rgba(181, 86, 123, .07), transparent 26%),
     linear-gradient(180deg, #0b1427 0, var(--atlas-bg) 37%, #070c17 100%);
 }
@@ -66,7 +57,7 @@ body.nova-template-route main#content-inner.nova-template-shell {
 .nova-template-hero {
   position: relative;
   display: grid;
-  min-height: clamp(430px, 54vh, 570px);
+  min-height: clamp(410px, 51vh, 545px);
   place-items: center;
   overflow: hidden;
   background: url("/img/moban.png") center 48% / cover no-repeat;
@@ -141,7 +132,7 @@ body.nova-template-route main#content-inner.nova-template-shell {
   z-index: 2;
   width: min(1280px, calc(100% - 64px));
   margin: -52px auto 0;
-  padding-bottom: clamp(72px, 8vw, 112px);
+  padding-bottom: clamp(50px, 6vw, 82px);
   scroll-margin-top: 84px;
 }
 
@@ -194,13 +185,13 @@ body.nova-template-route main#content-inner.nova-template-shell {
 .nova-template-summary small {
   margin-top: 5px;
   color: var(--atlas-muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .nova-template-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.65fr) minmax(275px, .72fr);
-  align-items: stretch;
+  align-items: start;
   gap: clamp(24px, 3vw, 36px);
   margin-top: 32px;
 }
@@ -217,12 +208,63 @@ body.nova-template-route main#content-inner.nova-template-shell {
 
 .nova-template-module {
   display: grid;
-  grid-template-columns: minmax(190px, .72fr) minmax(0, 1.45fr);
-  gap: 25px;
+  grid-template-columns: clamp(180px, 29%, 235px) minmax(0, 1fr);
+  gap: 24px;
   min-height: 230px;
   padding: 26px;
   border-radius: 20px;
   scroll-margin-top: 94px;
+}
+
+.nova-template-module-cover {
+  position: relative;
+  min-height: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(220, 183, 201, .1);
+  border-radius: 14px;
+  background: #0a1223;
+}
+
+.nova-template-module-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(7, 13, 27, .08), rgba(7, 13, 27, .62)),
+    linear-gradient(90deg, rgba(16, 24, 40, .2), rgba(130, 57, 101, .08));
+}
+
+.nova-template-module-cover img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(.62) saturate(.72) contrast(1.06);
+  transition: transform .35s ease;
+}
+
+.nova-template-module:hover .nova-template-module-cover img {
+  transform: scale(1.025);
+}
+
+.nova-template-module-cover span {
+  position: absolute;
+  z-index: 2;
+  right: 14px;
+  bottom: 13px;
+  left: 14px;
+  color: rgba(242, 222, 231, .76);
+  font-size: 10px;
+  letter-spacing: .13em;
+}
+
+.nova-template-module-content {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(145px, .62fr) minmax(0, 1.38fr);
+  align-items: center;
+  gap: 22px;
 }
 
 .nova-template-module-intro {
@@ -251,7 +293,7 @@ body.nova-template-route main#content-inner.nova-template-shell {
   width: 30px;
   height: 30px;
   border: 1px solid rgba(202, 112, 147, .42);
-  background: linear-gradient(145deg, rgba(138, 109, 202, .31), rgba(190, 85, 132, .13));
+  background: linear-gradient(145deg, rgba(94, 119, 140, .25), rgba(190, 85, 132, .13));
   transform: rotate(30deg) skew(-4deg);
 }
 
@@ -263,7 +305,7 @@ body.nova-template-route main#content-inner.nova-template-shell {
 .nova-template-module-intro h2 {
   margin: 7px 0 2px;
   color: var(--atlas-text);
-  font: 500 25px/1.3 "Noto Serif SC", serif;
+  font: 500 26px/1.3 "Noto Serif SC", serif;
 }
 
 .nova-template-module-intro small {
@@ -275,7 +317,7 @@ body.nova-template-route main#content-inner.nova-template-shell {
 .nova-template-module-intro p {
   margin: 14px 0 16px;
   color: var(--atlas-secondary);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.75;
 }
 
@@ -308,8 +350,15 @@ body.nova-template-route main#content-inner.nova-template-shell {
   border-radius: 9px;
   color: var(--atlas-secondary);
   background: rgba(255, 255, 255, .025);
-  font-size: 12px;
+  font-size: 14px;
   transition: transform .2s ease, border-color .2s ease, color .2s ease, background .2s ease;
+}
+
+.nova-template-links > a small {
+  flex: 0 0 auto;
+  color: var(--atlas-muted);
+  font-size: 10px;
+  letter-spacing: .08em;
 }
 
 .nova-template-links > a:not(.nova-template-module-action)::before {
@@ -351,12 +400,17 @@ body.nova-template-route main#content-inner.nova-template-shell {
 
 .nova-template-sidebar {
   display: flex;
-  height: 100%;
+  height: auto;
+  min-height: 0;
+  align-self: start;
   flex-direction: column;
   gap: 18px;
 }
 
 .nova-template-side-card {
+  height: auto;
+  min-height: 0;
+  flex: none;
   padding: 22px;
   border-radius: 18px;
 }
@@ -371,6 +425,10 @@ body.nova-template-route main#content-inner.nova-template-shell {
   margin: 5px 0 0;
   color: var(--atlas-text);
   font: 500 20px/1.35 "Noto Serif SC", serif;
+}
+
+.nova-template-side-card header span {
+  font-size: 12px;
 }
 
 .nova-template-index nav {
@@ -419,7 +477,7 @@ body.nova-template-route main#content-inner.nova-template-shell {
   gap: 10px;
   padding: 9px 3px;
   color: var(--atlas-secondary);
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .nova-template-recent a + a {
@@ -434,11 +492,13 @@ body.nova-template-route main#content-inner.nova-template-shell {
 
 .nova-template-recent time {
   color: var(--atlas-muted);
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .nova-template-howto {
-  flex: 1 0 auto;
+  height: auto;
+  min-height: 0;
+  flex: none;
 }
 
 .nova-template-howto ol {
@@ -476,14 +536,14 @@ body.nova-template-route main#content-inner.nova-template-shell {
 
 .nova-template-howto b {
   color: var(--atlas-secondary);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
 }
 
 .nova-template-howto span {
   margin-top: 4px;
   color: var(--atlas-muted);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.65;
 }
 
@@ -495,22 +555,10 @@ body.nova-template-route footer#footer {
   color: var(--atlas-secondary);
 }
 
-html[data-theme="light"] body.nova-template-route {
-  --atlas-bg: #e9e7ed;
-  --atlas-panel: rgba(251, 249, 251, .78);
-  --atlas-panel-soft: rgba(242, 238, 244, .76);
-  --atlas-border: rgba(88, 69, 91, .14);
-  --atlas-text: #36313a;
-  --atlas-secondary: rgba(55, 48, 59, .72);
-  --atlas-muted: rgba(72, 63, 76, .53);
-  --atlas-rose: #b35978;
-  --atlas-purple: #7869b8;
-}
-
 html[data-theme="light"] body.nova-template-route #body-wrap,
 html[data-theme="light"] .nova-template-page {
   background:
-    radial-gradient(circle at 80% 36%, rgba(121, 96, 157, .1), transparent 30%),
+    radial-gradient(circle at 80% 36%, rgba(105, 119, 132, .08), transparent 30%),
     radial-gradient(circle at 13% 73%, rgba(181, 102, 132, .08), transparent 26%),
     linear-gradient(180deg, #dbd9e3 0, #ece9ee 38%, #e5e3e9 100%);
 }
@@ -544,16 +592,17 @@ html[data-theme="light"] body.nova-template-route footer#footer {
   }
 
   .nova-template-module {
-    grid-template-columns: minmax(160px, .6fr) minmax(0, 1.4fr);
+    grid-template-columns: minmax(165px, .58fr) minmax(0, 1.42fr);
     padding: 22px;
+  }
+
+  .nova-template-module-content {
+    grid-template-columns: minmax(135px, .58fr) minmax(0, 1.42fr);
+    gap: 18px;
   }
 }
 
 @media (max-width: 780px) {
-  .nova-template-hero {
-    min-height: 440px;
-  }
-
   .nova-template-content {
     width: calc(100% - 28px);
     margin-top: -40px;
@@ -574,6 +623,19 @@ html[data-theme="light"] body.nova-template-route footer#footer {
 
   .nova-template-layout {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nova-template-module {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nova-template-module-cover {
+    min-height: 210px;
+  }
+
+  .nova-template-module-content {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
   }
 
   .nova-template-sidebar {
@@ -609,7 +671,6 @@ html[data-theme="light"] body.nova-template-route footer#footer {
   .nova-template-module {
     grid-template-columns: minmax(0, 1fr);
     min-height: 0;
-    gap: 17px;
     padding: 19px 16px;
   }
 
@@ -630,6 +691,14 @@ html[data-theme="light"] body.nova-template-route footer#footer {
   .nova-template-links > a:not(.nova-template-module-action) {
     padding: 11px;
   }
+
+  .nova-template-module-cover {
+    min-height: 180px;
+  }
+
+  .nova-template-links > a small {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -642,172 +711,7 @@ html[data-theme="light"] body.nova-template-route footer#footer {
   .nova-template-index nav a:hover {
     transform: none;
   }
-}
 
-/* Final density pass: natural sidebar height and distinct module covers. */
-.nova-template-hero {
-  min-height: clamp(410px, 51vh, 545px);
-}
-
-.nova-template-content {
-  padding-bottom: clamp(50px, 6vw, 82px);
-}
-
-.nova-template-layout {
-  align-items: start;
-}
-
-.nova-template-sidebar {
-  height: auto;
-  min-height: 0;
-  align-self: start;
-}
-
-.nova-template-side-card,
-.nova-template-howto {
-  height: auto;
-  min-height: 0;
-  flex: none;
-}
-
-.nova-template-module {
-  grid-template-columns: clamp(180px, 29%, 235px) minmax(0, 1fr);
-  gap: 24px;
-}
-
-.nova-template-module-cover {
-  position: relative;
-  min-height: 100%;
-  overflow: hidden;
-  border: 1px solid rgba(220, 183, 201, .1);
-  border-radius: 14px;
-  background: #0a1223;
-}
-
-.nova-template-module-cover::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, rgba(7, 13, 27, .08), rgba(7, 13, 27, .62)),
-    linear-gradient(90deg, rgba(28, 22, 52, .2), rgba(130, 57, 101, .08));
-}
-
-.nova-template-module-cover img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: brightness(.62) saturate(.72) contrast(1.06);
-  transition: transform .35s ease;
-}
-
-.nova-template-module:hover .nova-template-module-cover img {
-  transform: scale(1.025);
-}
-
-.nova-template-module-cover span {
-  position: absolute;
-  z-index: 2;
-  right: 14px;
-  bottom: 13px;
-  left: 14px;
-  color: rgba(242, 222, 231, .76);
-  font-size: 10px;
-  letter-spacing: .13em;
-}
-
-.nova-template-module-content {
-  display: grid;
-  min-width: 0;
-  grid-template-columns: minmax(145px, .62fr) minmax(0, 1.38fr);
-  align-items: center;
-  gap: 22px;
-}
-
-.nova-template-module-intro h2 {
-  font-size: 26px;
-}
-
-.nova-template-module-intro p {
-  font-size: 13px;
-}
-
-.nova-template-summary small,
-.nova-template-recent time {
-  font-size: 12px;
-}
-
-.nova-template-links > a:not(.nova-template-module-action) {
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  font-size: 14px;
-}
-
-.nova-template-links > a small {
-  flex: 0 0 auto;
-  color: var(--atlas-muted);
-  font-size: 10px;
-  letter-spacing: .08em;
-}
-
-.nova-template-side-card header span {
-  font-size: 12px;
-}
-
-.nova-template-recent a {
-  font-size: 13px;
-}
-
-.nova-template-howto b {
-  font-size: 14px;
-}
-
-.nova-template-howto span {
-  font-size: 12px;
-}
-
-@media (max-width: 1000px) {
-  .nova-template-module {
-    grid-template-columns: minmax(165px, .58fr) minmax(0, 1.42fr);
-  }
-
-  .nova-template-module-content {
-    grid-template-columns: minmax(135px, .58fr) minmax(0, 1.42fr);
-    gap: 18px;
-  }
-}
-
-@media (max-width: 780px) {
-  .nova-template-module {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .nova-template-module-cover {
-    min-height: 210px;
-  }
-
-  .nova-template-module-content {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
-  }
-}
-
-@media (max-width: 560px) {
-  .nova-template-module-cover {
-    min-height: 180px;
-  }
-
-  .nova-template-links > a:not(.nova-template-module-action) {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  .nova-template-links > a small {
-    display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
   .nova-template-module-cover img {
     transition: none;
   }

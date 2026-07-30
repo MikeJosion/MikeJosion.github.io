@@ -1,6 +1,11 @@
 (function () {
   "use strict";
 
+  if (window.__novaMusicBootstrap) {
+    window.__novaMusicBootstrap.init();
+    return;
+  }
+
   const visualImages = [
     "/img/music1.png",
     "/img/music2.png",
@@ -46,6 +51,7 @@
       next: root.querySelector(".nova-music-next"),
       count: root.querySelector(".nova-music-count"),
       notesCount: root.querySelector(".nova-music-notes-count"),
+      retry: root.querySelector(".nova-music-retry"),
       cards: [...root.querySelectorAll(".nova-music-card")],
     };
 
@@ -57,6 +63,19 @@
     const songName = song => song?.name || song?.title || "未命名歌曲";
     const songArtist = song => song?.artist || song?.author || "未知歌手";
     const songCover = (song, index) => song?.cover || song?.pic || visualImages[normalizeIndex(index, visualImages.length)];
+
+    function showLoadingState() {
+      window.clearTimeout(state.timer);
+      els.title.textContent = "歌单载入中";
+      els.artist.textContent = "网易云音乐";
+      if (els.retry) els.retry.hidden = true;
+    }
+
+    function showLoadFailure(title, detail) {
+      els.title.textContent = title;
+      els.artist.textContent = detail;
+      if (els.retry) els.retry.hidden = false;
+    }
 
     function renderCurrentSong() {
       const song = state.songs[state.currentIndex];
@@ -189,11 +208,11 @@
       state.audio = aplayer.audio;
       state.songs = Array.isArray(aplayer.list?.audios) ? aplayer.list.audios : [];
       if (!state.songs.length) {
-        els.title.textContent = "歌单暂时为空";
-        els.artist.textContent = "请稍后重新载入";
+        showLoadFailure("歌单暂时为空", "请稍后重新载入");
         console.error("Nova music: the existing Meting playlist returned no songs.");
         return;
       }
+      if (els.retry) els.retry.hidden = true;
       state.currentIndex = normalizeIndex(aplayer.list.index || 0, state.songs.length);
       bindMusicControls();
       bindPlayerEvents();
@@ -203,6 +222,7 @@
     }
 
     function loadPlaylist() {
+      showLoadingState();
       let attempts = 0;
       const findPlayer = () => {
         if (state.destroyed) return;
@@ -215,8 +235,7 @@
         }
         attempts += 1;
         if (attempts >= 100) {
-          els.title.textContent = "网易云歌单加载失败";
-          els.artist.textContent = "请检查网络后刷新页面";
+          showLoadFailure("网易云歌单加载失败", "请检查网络后重新载入");
           console.error("Nova music: timed out waiting for the existing Meting/APlayer instance.");
           return;
         }
@@ -231,17 +250,34 @@
       state.listeners.splice(0).forEach(remove => remove());
     }
 
+    on(els.retry, "click", loadPlaylist);
     loadPlaylist();
-    return { destroy: destroyMusicPage };
+    return { root, destroy: destroyMusicPage };
   }
 
   function initMusicPage() {
     const root = document.querySelector(".nova-music-page");
     if (!root) return;
+    if (window.__novaMusicController?.root === root) return;
     window.__novaMusicController?.destroy();
     window.__novaMusicController = createMusicPageController(root);
   }
 
-  document.addEventListener("DOMContentLoaded", initMusicPage, { once: true });
+  function leaveMusicPage() {
+    window.__novaMusicController?.destroy();
+    window.__novaMusicController = null;
+  }
+
+  window.__novaMusicBootstrap = {
+    init: initMusicPage,
+    destroy: leaveMusicPage,
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initMusicPage, { once: true });
+  } else {
+    initMusicPage();
+  }
+  document.addEventListener("pjax:send", leaveMusicPage);
   document.addEventListener("pjax:complete", initMusicPage);
 })();

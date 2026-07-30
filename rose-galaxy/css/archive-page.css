@@ -1,14 +1,4 @@
 body.nova-archive-route{
-  --nova-archive-bg:#070b16;
-  --nova-archive-section-bg:#0a1020;
-  --nova-archive-card:rgba(12,16,31,.72);
-  --nova-archive-card-soft:rgba(17,23,42,.66);
-  --nova-archive-text:#f2edf0;
-  --nova-archive-secondary:#b7b1bb;
-  --nova-archive-muted:#898492;
-  --nova-archive-accent:#c76082;
-  --nova-archive-violet:#8e7be6;
-  --nova-archive-line:rgba(224,194,208,.1);
   --nova-archive-space-1:6px;
   --nova-archive-space-2:10px;
   --nova-archive-space-3:16px;
@@ -54,7 +44,7 @@ body.nova-archive-route #content-inner.nova-archive-main{
   padding:0 0 clamp(52px,6vw,78px)
 }
 body.nova-archive-route #body-wrap{
-  background:radial-gradient(circle at 82% 8%,rgba(142,123,230,.09),transparent 28%),radial-gradient(circle at 12% 38%,rgba(199,96,130,.065),transparent 30%),linear-gradient(180deg,var(--nova-archive-bg),var(--nova-archive-section-bg) 48%,var(--nova-archive-bg))
+  background:radial-gradient(circle at 82% 8%,rgba(112,137,158,.08),transparent 28%),radial-gradient(circle at 12% 38%,rgba(199,96,130,.065),transparent 30%),linear-gradient(180deg,var(--nova-archive-bg),var(--nova-archive-section-bg) 48%,var(--nova-archive-bg))
 }
 body.nova-archive-route #content-inner.nova-archive-main::before{content:"";position:absolute;z-index:0;inset:-20px calc(50% - 50vw) 0;pointer-events:none;background:url("/img/guidang.png") center top/cover no-repeat;opacity:.035;filter:blur(30px) saturate(.72);mask-image:linear-gradient(180deg,rgba(0,0,0,.72),transparent 54%);-webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.72),transparent 54%)}
 .nova-archive-main-card,.nova-archive-sidebar{position:relative;z-index:2}
@@ -81,7 +71,7 @@ body.nova-archive-route #content-inner.nova-archive-main::before{content:"";posi
 .nova-archive-panel-heading strong{color:var(--nova-archive-text);font-size:17px}
 .nova-archive-panel-heading small{color:var(--nova-archive-muted);font-size:11px}
 .nova-archive-panel-heading>b{color:var(--nova-archive-muted);font-size:10px;letter-spacing:.14em}
-.nova-archive-timeline .article-sort{display:flex;min-height:0;margin-left:18px;padding-left:32px;flex-direction:column;border-left:1px solid rgba(153,126,194,.42)}
+.nova-archive-timeline .article-sort{display:flex;min-height:0;margin-left:18px;padding-left:32px;flex-direction:column;border-left:1px solid rgba(171,112,137,.3)}
 .nova-archive-timeline .article-sort-title{display:none}
 .nova-archive-timeline .article-sort-item.year{
   height:auto;
@@ -95,7 +85,7 @@ body.nova-archive-route #content-inner.nova-archive-main::before{content:"";posi
   height:auto;
   margin:30px 0 14px;
   padding:0;
-  color:rgba(164,147,218,.82);
+  color:rgba(205,143,168,.82);
   font-size:11px;
   letter-spacing:.14em
 }
@@ -116,8 +106,8 @@ body.nova-archive-route #content-inner.nova-archive-main::before{content:"";posi
   width:10px;
   height:10px;
   border:2px solid #d8bed0;
-  background:#7568a8;
-  box-shadow:0 0 0 4px rgba(151,125,207,.1)
+  background:#8b6c7a;
+  box-shadow:0 0 0 4px rgba(184,111,139,.1)
 }
 .nova-archive-timeline .article-sort-item:not(.year):not(.nova-archive-month):hover{
   transform:translateY(-2px);
@@ -132,9 +122,9 @@ body.nova-archive-route #content-inner.nova-archive-main::before{content:"";posi
 .nova-archive-timeline .article-sort-item-title{overflow:hidden;color:var(--nova-archive-text);font-size:15px;font-weight:500;text-overflow:ellipsis;white-space:nowrap}
 .nova-archive-timeline .article-sort-item-time{margin-top:7px;color:var(--nova-archive-muted);font-size:11px}
 .nova-archive-card-footer{position:relative;min-height:0;padding:20px 0 0;flex:0 0 auto}
-.nova-archive-continuation{position:relative;display:grid;min-height:0;padding:22px 8px 18px 32px;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px 18px;border-top:1px solid rgba(222,189,207,.08);background:linear-gradient(90deg,rgba(194,99,135,.055),rgba(120,104,173,.025),transparent)}
+.nova-archive-continuation{position:relative;display:grid;min-height:0;padding:22px 8px 18px 32px;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px 18px;border-top:1px solid rgba(222,189,207,.08);background:linear-gradient(90deg,rgba(194,99,135,.055),rgba(105,126,145,.025),transparent)}
 .nova-archive-continuation-marker{position:absolute;top:37px;left:0;width:10px;height:10px;border:1px solid rgba(224,190,207,.64);background:var(--nova-archive-accent);transform:rotate(45deg);box-shadow:0 0 10px rgba(199,96,130,.14)}
-.nova-archive-continuation::before{content:"";position:absolute;top:-22px;bottom:46px;left:4px;width:1px;background:linear-gradient(180deg,rgba(153,126,194,.42),rgba(199,96,130,.3))}
+.nova-archive-continuation::before{content:"";position:absolute;top:-22px;bottom:46px;left:4px;width:1px;background:linear-gradient(180deg,rgba(154,112,131,.36),rgba(199,96,130,.3))}
 .nova-archive-continuation-copy>span{color:#cc839d;font-size:10px;letter-spacing:.16em}
 .nova-archive-continuation-copy p{margin:5px 0 0;color:var(--nova-archive-secondary);font-size:12px}
 .nova-archive-continuation-meta{color:var(--nova-archive-muted);font-size:10px;white-space:nowrap}
@@ -162,7 +152,7 @@ body.nova-archive-route #content-inner.nova-archive-main::before{content:"";posi
 .nova-archive-profile .site-data{margin:14px 0}
 .nova-archive-profile .site-data .headline{color:var(--nova-archive-muted);font-size:11px}
 .nova-archive-profile .site-data .length-num{color:var(--nova-archive-text);font-size:17px}
-.nova-archive-profile #card-info-btn{border:1px solid var(--nova-archive-line);border-radius:999px;background:linear-gradient(90deg,rgba(142,123,230,.12),rgba(199,96,130,.12))}
+.nova-archive-profile #card-info-btn{border:1px solid var(--nova-archive-line);border-radius:999px;background:linear-gradient(90deg,rgba(113,139,159,.12),rgba(199,96,130,.12))}
 .nova-archive-side-module>header{margin-bottom:var(--nova-archive-space-2);padding-bottom:var(--nova-archive-space-2);border-bottom:1px solid var(--nova-archive-line);color:#dca0b5;font-size:12px;line-height:1.4;letter-spacing:.12em}
 .nova-archive-side-module>.card-widget{margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
 .nova-archive-side-module>.card-widget+.card-widget{margin-top:var(--nova-archive-space-3)!important;padding-top:var(--nova-archive-space-3)!important;border-top:1px solid var(--nova-archive-line)!important}
@@ -177,29 +167,16 @@ body.nova-archive-route #content-inner.nova-archive-main::before{content:"";posi
 .nova-archive-stats .webinfo-item{padding:3px 0;color:var(--nova-archive-secondary);line-height:1.5}
 body.nova-archive-route footer#footer{margin:0;border-top:1px solid rgba(199,96,130,.12);background:#070b16}
 
-html[data-theme="light"] body.nova-archive-route{
-  --nova-archive-bg:#f1eff3;
-  --nova-archive-section-bg:#ebeaf0;
-  --nova-archive-card:rgba(255,255,255,.68);
-  --nova-archive-card-soft:rgba(248,245,249,.72);
-  --nova-archive-text:#2d2934;
-  --nova-archive-secondary:#66606d;
-  --nova-archive-muted:#8a8490;
-  --nova-archive-accent:#bd5f7c;
-  --nova-archive-violet:#7869bd;
-  --nova-archive-line:rgba(75,62,84,.11)
-}
-html[data-theme="light"] body.nova-archive-route{--nova-archive-bg:#eeebf1;--nova-archive-section-bg:#e7e5ec}
 html[data-theme="light"] body.nova-archive-route #page-header.nova-archive-hero::before{background:linear-gradient(90deg,rgba(9,12,24,.48),rgba(9,12,24,.1) 64%),linear-gradient(180deg,rgba(7,13,27,.06),rgba(7,13,27,.02) 70%,rgba(75,72,91,.08))}
 html[data-theme="light"] body.nova-archive-route #page-header.nova-archive-hero::after{background:linear-gradient(180deg,rgba(8,13,27,.03) 0%,rgba(8,13,27,.02) 60%,rgba(105,98,122,.09) 78%,rgba(211,207,218,.34) 91%,var(--nova-archive-bg) 100%)}
-html[data-theme="light"] body.nova-archive-route #body-wrap{background:radial-gradient(circle at 78% 8%,rgba(188,99,133,.055),transparent 30%),radial-gradient(circle at 18% 24%,rgba(108,98,165,.045),transparent 32%),linear-gradient(180deg,#efedf2 0%,#e9e7ee 52%,#e6e5eb 100%)}
+html[data-theme="light"] body.nova-archive-route #body-wrap{background:radial-gradient(circle at 78% 8%,rgba(188,99,133,.055),transparent 30%),radial-gradient(circle at 18% 24%,rgba(111,130,145,.04),transparent 32%),linear-gradient(180deg,#efedf2 0%,#e9e7ee 52%,#e6e5eb 100%)}
 html[data-theme="light"] .nova-archive-main-card,html[data-theme="light"] .nova-archive-side-card{border-color:rgba(255,255,255,.56)!important;background:linear-gradient(145deg,rgba(255,254,255,.82),rgba(244,241,247,.72))!important;box-shadow:0 24px 65px rgba(53,43,62,.105),inset 0 1px rgba(255,255,255,.62)!important;backdrop-filter:blur(20px) saturate(110%);-webkit-backdrop-filter:blur(20px) saturate(110%)}
-html[data-theme="light"] .nova-archive-continuation{border-top-color:rgba(79,66,87,.08);background:linear-gradient(90deg,rgba(189,95,124,.055),rgba(122,105,177,.022),transparent)}
-html[data-theme="light"] .nova-archive-timeline .nova-archive-month{color:rgba(113,96,178,.78)}
+html[data-theme="light"] .nova-archive-continuation{border-top-color:rgba(79,66,87,.08);background:linear-gradient(90deg,rgba(189,95,124,.055),rgba(111,130,145,.022),transparent)}
+html[data-theme="light"] .nova-archive-timeline .nova-archive-month{color:rgba(162,93,119,.78)}
 html[data-theme="light"] .nova-archive-timeline,html[data-theme="light"] .nova-archive-sidebar>.card-widget,html[data-theme="light"] .nova-archive-side-module{box-shadow:0 20px 55px rgba(56,45,65,.09)!important}
 html[data-theme="light"] .nova-archive-timeline .article-sort-item:not(.year):not(.nova-archive-month){background:rgba(255,255,255,.48)}
 html[data-theme="light"] .nova-archive-timeline .article-sort-item:not(.year):not(.nova-archive-month):hover{background:rgba(255,250,252,.76)}
-html[data-theme="light"] .nova-archive-profile #card-info-btn{color:#fff;background:linear-gradient(90deg,#7869bd,#bd5f7c)}
+html[data-theme="light"] .nova-archive-profile #card-info-btn{color:#fff;background:linear-gradient(90deg,#758997,#bd5f7c)}
 html[data-theme="light"] body.nova-archive-route footer#footer{border-top-color:rgba(189,96,125,.16);background:linear-gradient(180deg,#dad9e2,#d0d2dd);color:#514c59}
 
 @media(min-width:1101px) and (min-height:850px){

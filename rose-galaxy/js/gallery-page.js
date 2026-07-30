@@ -1,8 +1,10 @@
 (() => {
   'use strict'
 
-  if (window.__novaGalleryBootstrap) return
-  window.__novaGalleryBootstrap = true
+  if (window.__novaGalleryBootstrap) {
+    window.__novaGalleryBootstrap.init()
+    return
+  }
 
   const ROOT_SELECTOR = '[data-gallery-root]'
   const SLOT_PREFIX = 'nova-gallery-item--slot-'
@@ -13,10 +15,6 @@
 
     const header = document.querySelector('#page-header')
     if (header) header.classList.add('nova-gallery-nav-header')
-
-    const galleryNav = [...document.querySelectorAll('#menus a[href]')]
-      .find(link => /\/gallery\/?(?:index\.html)?$/i.test(new URL(link.href, location.href).pathname))
-    if (galleryNav) galleryNav.classList.add('nova-gallery-nav-current')
 
     const comment = document.querySelector('#post-comment')
     if (comment) {
@@ -179,6 +177,7 @@
     document.querySelector('#page-header')?.classList.remove('nova-gallery-nav-header')
   }
 
+  window.__novaGalleryBootstrap = { init: initGallery, destroy: leaveGallery }
   initGallery()
   document.addEventListener('DOMContentLoaded', initGallery, { once: true })
   document.addEventListener('pjax:send', leaveGallery)

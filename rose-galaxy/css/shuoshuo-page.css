@@ -1,15 +1,16 @@
 .nova-shuoshuo-route {
-  --shuo-bg: #080b16;
-  --shuo-panel: rgba(18, 22, 39, .76);
-  --shuo-panel-soft: rgba(24, 27, 47, .58);
-  --shuo-border: rgba(219, 170, 190, .16);
-  --shuo-text: #eee9ec;
-  --shuo-secondary: rgba(234, 226, 232, .72);
-  --shuo-muted: rgba(210, 199, 208, .52);
-  --shuo-rose: #c77894;
-  --shuo-rose-soft: #d9a6b8;
   background: var(--shuo-bg);
   overflow-x: clip;
+}
+
+.nova-shuoshuo-overview.is-compact {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 560px) {
+  .nova-shuoshuo-overview.is-compact {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 body.nova-shuoshuo-route #body-wrap {
@@ -591,19 +592,6 @@ body.nova-shuoshuo-route footer#footer {
     position: sticky;
     top: 92px;
   }
-}
-
-[data-theme="light"] .nova-shuoshuo-route,
-[data-theme="light"] .nova-shuoshuo-page {
-  --shuo-bg: #e9e5ea;
-  --shuo-panel: rgba(249, 246, 248, .78);
-  --shuo-panel-soft: rgba(241, 236, 242, .72);
-  --shuo-border: rgba(105, 77, 100, .16);
-  --shuo-text: #39323d;
-  --shuo-secondary: rgba(58, 48, 60, .72);
-  --shuo-muted: rgba(72, 59, 74, .52);
-  --shuo-rose: #a55370;
-  --shuo-rose-soft: #95546d;
 }
 
 html[data-theme="light"] body.nova-shuoshuo-route #body-wrap {

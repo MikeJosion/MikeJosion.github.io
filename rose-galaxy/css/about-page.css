@@ -1,34 +1,9 @@
 body.nova-about-route {
-  --about-page: #0b0d16;
-  --about-page-soft: #11131e;
-  --about-card: rgba(19, 20, 31, .94);
-  --about-card-soft: rgba(24, 24, 37, .78);
-  --about-line: rgba(211, 174, 189, .14);
-  --about-line-strong: rgba(203, 142, 165, .42);
-  --about-text: #eee9eb;
-  --about-muted: #aaa3ae;
-  --about-accent: #c98da3;
-  --about-accent-soft: #d7afbd;
-  --about-shadow: 0 24px 64px rgba(2, 3, 10, .28);
   overflow-x: clip;
   background:
     radial-gradient(circle at 76% 18%, rgba(111, 83, 112, .09), transparent 31rem),
     linear-gradient(180deg, var(--about-page-soft), var(--about-page) 34rem);
   color: var(--about-text);
-}
-
-html[data-theme="light"] body.nova-about-route {
-  --about-page: #ece9ee;
-  --about-page-soft: #efecf0;
-  --about-card: rgba(248, 246, 247, .96);
-  --about-card-soft: #eeeaee;
-  --about-line: rgba(86, 75, 91, .12);
-  --about-line-strong: rgba(95, 79, 96, .24);
-  --about-text: #302d36;
-  --about-muted: #55505a;
-  --about-accent: #a96379;
-  --about-accent-soft: #8f5368;
-  --about-shadow: 0 24px 60px rgba(76, 61, 73, .11);
 }
 
 body.nova-about-route #page-header.nova-about-nav-header {

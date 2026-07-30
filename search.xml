@@ -4,7 +4,7 @@
     <title>Go MySQL 数据库连接模板</title>
     <url>/2026/07/19/Go%20Mysql%20%E6%95%B0%E6%8D%AE%E5%BA%93%E9%93%BE%E6%8E%A5%E6%A8%A1%E6%9D%BF/</url>
     <content><![CDATA[
-Go MySQL 数据库连接模板在 Go 项目中，可以使用 database/sql 配合 MySQL 驱动创建数据库连接池。
+在 Go 项目中，可以使用 database/sql 配合 MySQL 驱动创建数据库连接池。
 1. 数据库启动流程1. 声明全局变量 DB，用来保存数据库连接池2. godotenv.Load() 加载 .env 文件3. os.Getenv(&quot;MYSQL_DSN&quot;) 读取 MySQL 连接字符串4. sql.Open(&quot;mysql&quot;, dsn) 创建连接池对象，先保存到局部变量 db5. db.Ping() 真正测试数据库能否连接6. 如果 Ping 失败，db.Close() 并返回错误7. DB = db，把同一个连接池保存到全局变量8. return nil，表示初始化成功
 
 整体执行顺序：
@@ -17,7 +17,10 @@ MySQL 驱动需要使用匿名导入：
 _ &quot;github.com/go-sql-driver/mysql&quot;
 
 因为代码不会直接调用该包中的函数，只需要让它完成 MySQL 驱动注册。
-3. database.go 完整模板package mainimport (	&quot;database/sql&quot;	&quot;fmt&quot;	&quot;os&quot;	_ &quot;github.com/go-sql-driver/mysql&quot;	&quot;github.com/joho/godotenv&quot;)// 一个全局变量 用来保存数据库连接池var DB *sql.DBfunc InitDB() error &#123;	// 读取项目里的 .env 文件	// godotenv.Load() 无论成功还是失败，都会返回一个 error 类型的值：加载成功：返回 nil ,加载失败：返回具体错误，赋值给 err	err := godotenv.Load()	if err != nil &#123;		fmt.Println(&quot;.env file not found, use system environment variables, the err is :&quot;, err)	&#125;	// 获取 mysql 连接信息  只想拿值：os.Getenv 还想知道存不存在：os.LookupEnv	// os.Getenv(&quot;MYSQL_DSN&quot;)从当前程序的环境变量中，读取名字叫 MYSQL_DSN 的值	dsn := os.Getenv(&quot;MYSQL_DSN&quot;)	if dsn == &quot;&quot; &#123;		return fmt.Errorf(&quot;MYSQL_DSN is empty&quot;)	&#125;	// 创建 MySQL 创建连接池对象，不一定马上真正连接数据库	db, err := sql.Open(&quot;mysql&quot;, dsn)	if err != nil &#123;		return err	&#125;	// 真正测试 MySQL 能不能连接	err = db.Ping()	if err != nil &#123;		db.Close()		return err	&#125;	// 把连接成功的局部变量 db，保存到全局变量 DB，方便其他接口使用。	DB = db	fmt.Println(&quot;MYSQL connected successfully&quot;)	return nil&#125;## 4. `.env` 配置文件在项目根目录创建：```text.env
+3. database.go 完整模板package mainimport (	&quot;database/sql&quot;	&quot;fmt&quot;	&quot;os&quot;	_ &quot;github.com/go-sql-driver/mysql&quot;	&quot;github.com/joho/godotenv&quot;)// 一个全局变量 用来保存数据库连接池var DB *sql.DBfunc InitDB() error &#123;	// 读取项目里的 .env 文件	// godotenv.Load() 无论成功还是失败，都会返回一个 error 类型的值：加载成功：返回 nil ,加载失败：返回具体错误，赋值给 err	err := godotenv.Load()	if err != nil &#123;		fmt.Println(&quot;.env file not found, use system environment variables, the err is :&quot;, err)	&#125;	// 获取 mysql 连接信息  只想拿值：os.Getenv 还想知道存不存在：os.LookupEnv	// os.Getenv(&quot;MYSQL_DSN&quot;)从当前程序的环境变量中，读取名字叫 MYSQL_DSN 的值	dsn := os.Getenv(&quot;MYSQL_DSN&quot;)	if dsn == &quot;&quot; &#123;		return fmt.Errorf(&quot;MYSQL_DSN is empty&quot;)	&#125;	// 创建 MySQL 创建连接池对象，不一定马上真正连接数据库	db, err := sql.Open(&quot;mysql&quot;, dsn)	if err != nil &#123;		return err	&#125;	// 真正测试 MySQL 能不能连接	err = db.Ping()	if err != nil &#123;		db.Close()		return err	&#125;	// 把连接成功的局部变量 db，保存到全局变量 DB，方便其他接口使用。	DB = db	fmt.Println(&quot;MySQL connected successfully&quot;)	return nil&#125;
+
+4. .env 配置文件在项目根目录创建：
+.env
 
 基本格式：
 MYSQL_DSN=用户名:密码@tcp(数据库地址:端口)/数据库名?charset=utf8mb4&amp;parseTime=True&amp;loc=Local
@@ -100,7 +103,167 @@ DELETE FROM users WHERE id = ?
 .env
 ]]></content>
       <tags>
-        <tag>MySWQL</tag>
+        <tag>MySQL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LeetCode-中心扩散</title>
+    <url>/2026/01/15/LeetCode-%E4%B8%AD%E5%BF%83%E6%89%A9%E6%95%A3/</url>
+    <content><![CDATA[🧠 枚举回文中心，用左右指针向两边扩散，专治一切回文相关问题。
+🧩 模板步骤
+枚举中心位置 i
+以 (i, i) 作为中心（奇数回文）
+以 (i, i + 1) 作为中心（偶数回文）
+左右指针同时扩散：left–、right++
+越界或不相等立即停止
+
+
+
+⭐ 模板
+中心扩散函数
+&#x2F;&#x2F; 从中心 left, right 开始向两边扩散private int expand(String s, int left, int right) {while (left &gt;&#x3D; 0 &amp;&amp; right &lt; s.length() &amp;&amp; s.charAt(left) &#x3D;&#x3D; s.charAt(right)) {left–;right++;}
+&#x2F;&#x2F; 返回当前回文长度return right - left - 1;}
+
+主流程模板
+int n &#x3D; s.length();int maxLen &#x3D; 0;
+for (int i &#x3D; 0; i &lt; n; i++) {int len1 &#x3D; expand(s, i, i); &#x2F;&#x2F; 奇数回文int len2 &#x3D; expand(s, i, i + 1); &#x2F;&#x2F; 偶数回文MaxLen &#x3D; Math.max(maxLen, Math.max(len1, len2));}
+
+
+
+
+Notice:
+
+while 条件顺序不能乱
+
+
+正确顺序：先判边界，再比字符
+while (left &gt;&#x3D; 0 &amp;&amp; right &lt; n &amp;&amp; s.charAt(left) &#x3D;&#x3D; s.charAt(right))
+❌ 错误写法（可能越界）：
+s.charAt(left) &#x3D;&#x3D; s.charAt(right) &amp;&amp; left &gt;&#x3D; 0
+
+
+注意空串 &amp; 单字符
+
+
+if (s &#x3D;&#x3D; null || s.length() &lt; 2) return s;
+
+
+固定数据
+
+
+回文子串的起始下标: start &#x3D; i - (len - 1) &#x2F; 2;
+回文子串的结束下标: end &#x3D; i + len &#x2F; 2;
+当前中心能扩散得到的「回文长度」: right - left - 1;
+left– 和 right++ 是在“字符已经相等之后”执行的,也就是说：最后一次比较 是成功的,然后左右指针 又各自多走了一步,所以 最终得到的「回文长度」是 : right - left - 1
+
+
+相关练习题1. LeetCode 5. 最长回文子串题意： 给你一个字符串 s，找到 s 中最长的回文子串。
+2. LeetCode 680. 验证回文字符串 Ⅱ题意： 给定一个非空字符串 s ，最多删除一个字符。判断是否能成为回文字符串。
+3. LeetCode 132. 分割回文串 II题意： 给你一个字符串 s，请你将 s 分割成一些子串，使每个子串都是回文串。返回符合要求的 最少分割次数 。
+]]></content>
+      <categories>
+        <category>LeetCode</category>
+        <category>模板</category>
+      </categories>
+      <tags>
+        <tag>数组</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LeetCode-前缀和</title>
+    <url>/2026/01/06/LeetCode-%E5%89%8D%E7%BC%80%E5%92%8C/</url>
+    <content><![CDATA[🧠 通过提前累计数组的“历史和”，将任意连续区间的求和问题，转化为两次前缀值的相减。
+一句话结论：👉pre 数组要比原数组的长度多一pre[0] &#x3D; 0 是为了统一公式，避免边界特判前缀和 + 哈希: 找历史区间
+
+
+
+⭐ 模板前缀和
+初始化int n &#x3D; nums.length;
+&#x2F;&#x2F; 前缀和数组，多开一位int[] pre &#x3D; new int[n + 1];pre[0] &#x3D; 0;
+&#x2F;&#x2F; [可选] 记录结果int res &#x3D; 0;
+
+循环处理（构建 &#x2F; 使用前缀和）构建前缀和for (int i &#x3D; 0; i &lt; n; i++) {pre[i + 1] &#x3D; pre[i] + nums[i];}
+使用前缀和（查询区间）&#x2F;&#x2F; 区间 [l, r] 的和int sum &#x3D; pre[r + 1] - pre[l];
+
+
+二维前缀和
+初始化int m &#x3D; matrix.length;int n &#x3D; matrix[ 0].length;
+&#x2F;&#x2F; 二维前缀和数组，多开一行一列(多开一行一列是“哨兵设计”，用空间换逻辑统一，避免所有边界特判)int[][] pre &#x3D; new int[m + 1][n + 1];
+&#x2F;&#x2F; 第 0 行、第 0 列默认都是 0
+
+循环处理（构建前缀和）for (int i &#x3D; 0; i &lt; m; i++) {for (int j &#x3D; 0; j &lt; n; j++) {pre[i + 1][j + 1] &#x3D;pre[i][j + 1] &#x2F;&#x2F; 上 + pre[i + 1][j] &#x2F;&#x2F; 左 - pre[i][j] &#x2F;&#x2F; 左上 + matrix[i][j]; &#x2F;&#x2F; 自己}}
+
+使用前缀和（查询区间）查询矩形 [r1, c1] ~ [r2, c2]（闭区间）int sum &#x3D; pre[r2 + 1][c2 + 1] - pre[r1][c2 + 1] - pre[r2 + 1][c1] + pre[r1][c1];
+
+
+前缀和 + 哈希
+初始化int n &#x3D; nums.length;
+&#x2F;&#x2F; 记录「前缀和(总距离) &lt;-&gt; 出现次数」Map&lt;Integer, Integer&gt; map &#x3D; new HashMap&lt;&gt;();
+&#x2F;&#x2F; 多开一位：表示“什么都不选”的前缀和map.put(0, 1);
+int target &#x3D; 0; &#x2F;&#x2F; 当前前缀和&#x2F;余数int res &#x3D; 0; &#x2F;&#x2F; res 代表数组中「和等于 k 的子数组（连续区间）」的个数
+
+循环处理（构建 &#x2F; 使用前缀和）for (int i &#x3D; 0; i &lt; n; i++) {
+&#x2F;&#x2F; 构建前缀和target +&#x3D; nums[i];
+&#x2F;&#x2F; target - pre &#x3D; k ,所以 target - k &#x3D; pre ,pre 代表的是之前某个位置的前缀和
+if (map.containsKey(target - k)) {res +&#x3D; map.get(target - k);}
+&#x2F;&#x2F; 更新当前前缀和出现次数map.put(target, map.getOrDefault(target, 0) + 1);}
+
+返回结果return res;
+
+
+
+
+Notice
+
+哈希表存的是「次数」，不是下标（大多数题）
+
+
+Map&lt;Integer, Integer&gt; map;含义通常是：
+key &#x3D; 前缀和 (从起点（数组下标 0）出发，走到当前位置时，累计的总距离)value &#x3D; 这个前缀和出现过多少次
+
+
+顺序非常重要（先算答案，再更新 map）
+
+
+✅ 正确顺序
+sum += nums[i];if (map.containsKey(sum - k)) &#123;    res += map.get(sum - k);&#125;map.put(sum, map.getOrDefault(sum, 0) + 1);
+
+
+
+区间元素
+
+
+区间内不能重复用同一个位置的元素,不同区间之间可以重叠，所以元素位置可以被“重复使用”
+
+
+二维前缀和
+
+
+初始化多开一行一列构建：上 + 左 − 左上 + 自己查询：大 − 上 − 左 + 左上
+
+
+什么场景用什么方法
+
+
+一维前缀和:频繁地计算数组中任意一段连续子数组的和
+二维前缀和:频繁地计算矩阵中任意矩形区域的和
+前缀和+哈希:不关心具体的区间位置，只关心“ 有多少个”或“ 是否存在”满足条件的区间
+
+
+相关练习题1. LeetCode 303. 区域和检索 - 数组不可变题意： 给定一个整数数组 nums，处理以下类型的多个查询:
+计算索引 left 和 right （包含 left 和 right）之间的 nums 元素的 和 ，其中 left &lt;&#x3D; right实现 NumArray 类：
+NumArray(int[] nums) 使用数组 nums 初始化对象int sumRange(int left, int right) 返回数组 nums 中索引 left 和 right 之间的元素的 总和 ，包含 left 和 right 两点（也就是 nums[left] + nums[left + 1] + … + nums[right] )
+2. LeetCode 560. 和为 K 的子数组题意： 给你一个整数数组 nums 和一个整数 k ，请你统计并返回 该数组中和为 k 的子数组的个数 。子数组是数组中元素的连续非空序列。
+3. LeetCode 304. 二维区域和检索 - 矩阵不可变题意： 给定一个二维矩阵 matrix，以下类型的多个请求：
+计算其子矩形范围内元素的总和，该子矩阵的 左上角 为 (row1, col1) ，右下角 为 (row2, col2) 。实现 NumMatrix 类：
+NumMatrix(int[][] matrix) 给定整数矩阵 matrix 进行初始化int sumRegion(int row1, int col1, int row2, int col2) 返回 左上角 (row1, col1) 、右下角 (row2, col2) 所描述的子矩阵的元素 总和
+]]></content>
+      <categories>
+        <category>LeetCode</category>
+        <category>模板</category>
+      </categories>
+      <tags>
+        <tag>数组</tag>
       </tags>
   </entry>
   <entry>
@@ -644,6 +807,110 @@ sql.ErrNoRows
       </tags>
   </entry>
   <entry>
+    <title>LeetCode-双指针合并 (归并法)</title>
+    <url>/2026/01/12/LeetCode-%E5%8F%8C%E6%8C%87%E9%92%88%E5%90%88%E5%B9%B6-%E5%BD%92%E5%B9%B6%E6%B3%95/</url>
+    <content><![CDATA[🧠 涉及两个有序链表的合并、排序问题一句话结论：👉 “谁小谁先走”。这就是拉链原理：同时遍历两条链表，比较当前头节点，较小的那个接在结果链表后面，然后向前走一步。
+⭐ 核心逻辑哨兵节点 (Dummy Node)：只要一个 dummy，用来挂接结果。
+拉链 (Comparison)：while 循环同时检查两个链表，谁小就把谁接上，被接走的那个指针后移，没被接走的保持不动。
+接余部 (Post-processing)：这是链表对比数组的巨大优势 —— 当一条链表遍历完，另一条链表剩下的部分不需要遍历，直接把指针指过去就行（因为剩下的肯定也是有序的）。
+
+
+⭐ 模板
+初始化
+&#x2F;&#x2F;虚拟头节点（锚点）ListNode dummy &#x3D; new ListNode(0);ListNode tail &#x3D; dummy;
+&#x2F;&#x2F;两个并行指针ListNode p1 &#x3D; l1;ListNode p2 &#x3D; l2;
+
+循环处理(控制指针移动)
+&#x2F;&#x2F;同时遍历，按规则选择while (p1 !&#x3D; null &amp;&amp; p2 !&#x3D; null) {
+if (choose(p1, p2)) {tail.next &#x3D; p1;p1 &#x3D; p1.next;} else {tail.next &#x3D; p2;p2 &#x3D; p2.next;}
+tail &#x3D; tail.next;}
+&#x2F;&#x2F;接上剩余部分tail.next &#x3D; (p1 !&#x3D; null) ? p1 : p2;
+
+返回结果return dummy.next;
+
+
+
+
+Notice:
+1.最大的优势：接余部（不要写循环！）
+
+这是链表对比数组最大的优势，也是这个模板最容易写“多余”的地方。
+直接一个 if 把剩下的整条链表挂在后面。因为剩下的部分本身就是有序的，不需要再遍历。
+✅ 正确（利用链表特性，O(1) 操作）if (l1 !&#x3D; null) tail.next &#x3D; l1;if (l2 !&#x3D; null) tail.next &#x3D; l2;
+❌ 错误&#x2F;低效（把链表当数组用了，O(N) 操作）while (l1 !&#x3D; null) {tail.next &#x3D; l1;l1 &#x3D; l1.next;tail &#x3D; tail.next;}
+
+
+相关练习题1. LeetCode 21. 合并两个有序链表题意： 将两个升序链表合并为一个新的 升序 链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。
+2. LeetCode 23. 合并 K 个升序链表题意： 给你一个链表数组，每个链表都已经按升序排列。请你将所有链表合并到一个升序链表中，返回合并后的链表。
+3. LeetCode 148. 排序链表题意： 给你链表的头结点 head ，请将其按 升序 排列并返回 排序后的链表 。
+]]></content>
+      <categories>
+        <category>LeetCode</category>
+        <category>模板</category>
+      </categories>
+      <tags>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LeetCode-BFS</title>
+    <url>/2026/01/16/LeetCode-BFS/</url>
+    <content><![CDATA[
+一句话结论： 👉 BFS 本质上只和「队列（Queue）」有关。 它依赖 FIFO（先进先出）来保证节点按照“发现顺序”被处理，从而天然形成「一层一层」的遍历效果。 栈不参与 BFS 的任何核心逻辑。
+
+
+
+⭐ 模板层序遍历
+初始化
+&#x2F;&#x2F; 队列：保存“等待被访问的节点”Deque queue &#x3D; new ArrayDeque&lt;&gt;();
+&#x2F;&#x2F; visited：防止重复访问（树可以不要）Set visited &#x3D; new HashSet&lt;&gt;();
+&#x2F;&#x2F; 如果题目有“层 &#x2F; 步数 &#x2F; 时间”int step &#x3D; 0;
+&#x2F;&#x2F; 起点入队queue.offer(start);visited.add(start); &#x2F;&#x2F; 入队即标记
+
+遍历树
+while (!queue.isEmpty()) {
+int size &#x3D; queue.size(); &#x2F;&#x2F; 当前层节点数量
+&#x2F;&#x2F; 这一轮，只处理这一层for (int i &#x3D; 0; i &lt; size; i++) {
+Node cur &#x3D; queue.poll();
+&#x2F;&#x2F; 1.当你真正走到这个节点时，要对它做的事（统计 &#x2F; 判断 &#x2F; 收集答案）process(cur);&#x2F;&#x2F; 2. 扩展下一层节点for (Node next : neighbors(cur)) {if (!visited.contains(next)) {queue.offer(next); &#x2F;&#x2F; 进队visited.add(next); &#x2F;&#x2F; 立刻标记}}
+}
+&#x2F;&#x2F; 一层处理完step++;}
+
+返回结果
+
+
+return res;
+
+
+Questions
+visited 的使用
+
+只有图&#x2F;网格才需要使用 visited,树不需要
+等待补充……
+
+
+相关练习题LeetCode 104. 二叉树的最大深度题意： 给定一个二叉树 root ，返回其最大深度。二叉树的 最大深度 是指从根节点到最远叶子节点的最长路径上的节点数。
+LeetCode 111. 二叉树的最小深度题意： 给定一个二叉树 root ，返回其最小深度。最小深度是从根节点到最近叶子节点的最短路径上的节点数。
+LeetCode 200. 岛屿数量题意： 给你一个由 ‘1’（陆地）和 ‘0’（水）组成的的二维网格，请你计算网格中岛屿的数量。岛屿总是被水包围，并且每座岛屿只能由水平方向和&#x2F;或竖直方向上相邻的陆地连接形成。此外，你可以假设该网格的四条边均被水包围。
+LeetCode 994. 腐烂的橘子**题意：**在给定的 m x n 网格 grid 中，每个单元格可以有以下三个值之一：
+值 0 代表空单元格；值 1 代表新鲜橘子；值 2 代表腐烂的橘子。每分钟，腐烂的橘子 周围 4 个方向上相邻 的新鲜橘子都会腐烂。
+返回 直到单元格中没有新鲜橘子为止所必须经过的最小分钟数。如果不可能，返回 -1 。
+LeetCode 542. 01 矩阵题意： 给定一个由 0 和 1 组成的矩阵 mat ，请输出一个大小相同的矩阵，其中每一个格子是 mat 中对应位置元素到最近的 0 的距离。两个相邻元素间的距离为 1
+LeetCode 1091. 二进制矩阵中的最短路径题意： 给你一个 n x n 的二进制矩阵 grid 中，返回矩阵中最短 畅通路径 的长度。如果不存在这样的路径，返回 -1 。
+二进制矩阵中的 畅通路径 是一条从 左上角 单元格（即，(0, 0)）到 右下角 单元格（即，(n - 1, n - 1)）的路径，该路径同时满足下述要求：
+路径途经的所有单元格的值都是 0 。路径中所有相邻的单元格应当在 8 个方向之一 上连通（即，相邻两单元之间彼此不同且共享一条边或者一个角）。畅通路径的长度 是该路径途经的单元格总数。
+LeetCode 127. 单词接龙题意： 字典 wordList 中从单词 beginWord 到 endWord 的 转换序列 是一个按下述规格形成的序列 beginWord -&gt; s1 -&gt; s2 -&gt; … -&gt; sk：
+每一对相邻的单词只差一个字母。对于 1 &lt;&#x3D; i &lt;&#x3D; k 时，每个 si 都在 wordList 中。注意， beginWord 不需要在 wordList 中。sk &#x3D;&#x3D; endWord给你两个单词 beginWord 和 endWord 和一个字典 wordList ，返回 从 beginWord 到 endWord 的 最短转换序列 中的 单词数目 。如果不存在这样的转换序列，返回 0 。
+]]></content>
+      <categories>
+        <category>LeetCode</category>
+        <category>模板</category>
+      </categories>
+      <tags>
+        <tag>栈&amp;队列</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>KMP算法</title>
     <url>/2026/03/25/KMP%E7%AE%97%E6%B3%95/</url>
     <content><![CDATA[🧠 KMP 算法 —— next 数组求法⭐ 下标从 0 开始
@@ -752,117 +1019,199 @@ next[i]
       </tags>
   </entry>
   <entry>
-    <title>LeetCode-BFS</title>
-    <url>/2026/01/16/LeetCode-BFS/</url>
-    <content><![CDATA[
-一句话结论： 👉 BFS 本质上只和「队列（Queue）」有关。 它依赖 FIFO（先进先出）来保证节点按照“发现顺序”被处理，从而天然形成「一层一层」的遍历效果。 栈不参与 BFS 的任何核心逻辑。
+    <title>LeetCode-双链表法</title>
+    <url>/2025/12/25/LeetCode-%E5%8F%8C%E9%93%BE%E8%A1%A8%E6%B3%95/</url>
+    <content><![CDATA[🧠 需要对链表节点进行分类，并且必须保持原有相对顺序的问题
+一句话结论：👉 双链表法用于 在算法中同时维护两条（或多条）逻辑链表 的问题。双链表法不是链表类型，而是一种解题模型：当题目需要对链表节点进行「筛选 &#x2F; 分类 &#x2F; 合并」，并且要求保持原有顺序时，就通过 dummy + tail 的尾插方式,所有的节点都是插在 tail 之后，然后把 tail 重新指向新的节点，最后把所有节点重新连接起来。，把节点重新组织成新链表。
+
+⭐ 模板创建 若干 dummy 头节点（每一类一个）为每个 dummy 准备一个 tail 指针
+curr 指向原链表头
+while curr 不为空:if curr 满足条件 A:A_tail.next &#x3D; curr插入完需要移动尾部的指针A_tail &#x3D; A_tail.nextelse:B_tail.next &#x3D; currB_tail &#x3D; B_tail.nextcurr &#x3D; curr.next
+断开所有尾部的 next（防止成环）
+按题意顺序拼接各个子链表
+返回第一个 dummy.next
 
 
 
-⭐ 模板层序遍历
-初始化
-&#x2F;&#x2F; 队列：保存“等待被访问的节点”Deque queue &#x3D; new ArrayDeque&lt;&gt;();
-&#x2F;&#x2F; visited：防止重复访问（树可以不要）Set visited &#x3D; new HashSet&lt;&gt;();
-&#x2F;&#x2F; 如果题目有“层 &#x2F; 步数 &#x2F; 时间”int step &#x3D; 0;
-&#x2F;&#x2F; 起点入队queue.offer(start);visited.add(start); &#x2F;&#x2F; 入队即标记
+在“重新拼一条新链表”，而不是“只改原链表的 next 关系”时，建议在进入 while 循环后,分类前先保存 next 并断开当前节点：ListNode next &#x3D; curr.next;curr.next &#x3D; null;最后拼接写 curr &#x3D; next;以防止原链表指针污染新链表结构
 
-遍历树
-while (!queue.isEmpty()) {
-int size &#x3D; queue.size(); &#x2F;&#x2F; 当前层节点数量
-&#x2F;&#x2F; 这一轮，只处理这一层for (int i &#x3D; 0; i &lt; size; i++) {
-Node cur &#x3D; queue.poll();
-&#x2F;&#x2F; 1.当你真正走到这个节点时，要对它做的事（统计 &#x2F; 判断 &#x2F; 收集答案）process(cur);&#x2F;&#x2F; 2. 扩展下一层节点for (Node next : neighbors(cur)) {if (!visited.contains(next)) {queue.offer(next); &#x2F;&#x2F; 进队visited.add(next); &#x2F;&#x2F; 立刻标记}}
-}
-&#x2F;&#x2F; 一层处理完step++;}
+class Solution &#123;    public ListNode partition(ListNode head, int x) &#123;        // 1️⃣ 两个头锚点（永远不动）        ListNode smallDummy = new ListNode(0);        ListNode bigDummy = new ListNode(0);        // 2️⃣ 两个尾指针（负责接）        ListNode small = smallDummy;        ListNode big = bigDummy;        // 3️⃣ 遍历指针（负责看）        ListNode curr = head;        while (curr != null) &#123;            if (curr.val &lt; x) &#123;                small.next = curr;                small = small.next;            &#125; else &#123;                big.next = curr;                big = big.next;            &#125;            curr = curr.next;        &#125;        // 4️⃣ 断尾（防环）        big.next = null;        // 5️⃣ 拼接        small.next = bigDummy.next;        // 6️⃣ 返回真正的头        return smallDummy.next;    &#125;&#125;
 
-返回结果
+相关练习题1. LeetCode 86 - 分隔链表题意： 给定一个链表和一个值 x，将链表分成两部分，使所有 小于 x 的节点出现在 大于等于 x 的节点之前，且两部分内部的相对顺序保持不变。
+2. LeetCode 328 - 奇偶链表题意： 将链表按节点位置的奇偶性重新排列，使所有奇数位置节点在前，偶数位置节点在后，且保持各自的相对顺序不变。
+3. LeetCode 21 - 合并两个有序链表题意： 将两个升序链表合并为一个新的升序链表，并返回新链表的头节点。
 
+双链表法解决的，是「需要分类，并且必须保持原有相对顺序」的链表问题。
 
-return res;
-
-
-Questions
-visited 的使用
-
-只有图&#x2F;网格才需要使用 visited,树不需要
-等待补充……
-
-
-相关练习题LeetCode 104. 二叉树的最大深度题意： 给定一个二叉树 root ，返回其最大深度。二叉树的 最大深度 是指从根节点到最远叶子节点的最长路径上的节点数。
-LeetCode 111. 二叉树的最小深度题意： 给定一个二叉树 root ，返回其最小深度。最小深度是从根节点到最近叶子节点的最短路径上的节点数。
-LeetCode 200. 岛屿数量题意： 给你一个由 ‘1’（陆地）和 ‘0’（水）组成的的二维网格，请你计算网格中岛屿的数量。岛屿总是被水包围，并且每座岛屿只能由水平方向和&#x2F;或竖直方向上相邻的陆地连接形成。此外，你可以假设该网格的四条边均被水包围。
-LeetCode 994. 腐烂的橘子**题意：**在给定的 m x n 网格 grid 中，每个单元格可以有以下三个值之一：
-值 0 代表空单元格；值 1 代表新鲜橘子；值 2 代表腐烂的橘子。每分钟，腐烂的橘子 周围 4 个方向上相邻 的新鲜橘子都会腐烂。
-返回 直到单元格中没有新鲜橘子为止所必须经过的最小分钟数。如果不可能，返回 -1 。
-LeetCode 542. 01 矩阵题意： 给定一个由 0 和 1 组成的矩阵 mat ，请输出一个大小相同的矩阵，其中每一个格子是 mat 中对应位置元素到最近的 0 的距离。两个相邻元素间的距离为 1
-LeetCode 1091. 二进制矩阵中的最短路径题意： 给你一个 n x n 的二进制矩阵 grid 中，返回矩阵中最短 畅通路径 的长度。如果不存在这样的路径，返回 -1 。
-二进制矩阵中的 畅通路径 是一条从 左上角 单元格（即，(0, 0)）到 右下角 单元格（即，(n - 1, n - 1)）的路径，该路径同时满足下述要求：
-路径途经的所有单元格的值都是 0 。路径中所有相邻的单元格应当在 8 个方向之一 上连通（即，相邻两单元之间彼此不同且共享一条边或者一个角）。畅通路径的长度 是该路径途经的单元格总数。
-LeetCode 127. 单词接龙题意： 字典 wordList 中从单词 beginWord 到 endWord 的 转换序列 是一个按下述规格形成的序列 beginWord -&gt; s1 -&gt; s2 -&gt; … -&gt; sk：
-每一对相邻的单词只差一个字母。对于 1 &lt;&#x3D; i &lt;&#x3D; k 时，每个 si 都在 wordList 中。注意， beginWord 不需要在 wordList 中。sk &#x3D;&#x3D; endWord给你两个单词 beginWord 和 endWord 和一个字典 wordList ，返回 从 beginWord 到 endWord 的 最短转换序列 中的 单词数目 。如果不存在这样的转换序列，返回 0 。
 ]]></content>
       <categories>
         <category>LeetCode</category>
         <category>模板</category>
       </categories>
       <tags>
-        <tag>栈&amp;队列</tag>
+        <tag>链表</tag>
       </tags>
   </entry>
   <entry>
-    <title>LeetCode-中心扩散</title>
-    <url>/2026/01/15/LeetCode-%E4%B8%AD%E5%BF%83%E6%89%A9%E6%95%A3/</url>
-    <content><![CDATA[🧠 枚举回文中心，用左右指针向两边扩散，专治一切回文相关问题。
-🧩 模板步骤
-枚举中心位置 i
-以 (i, i) 作为中心（奇数回文）
-以 (i, i + 1) 作为中心（偶数回文）
-左右指针同时扩散：left–、right++
-越界或不相等立即停止
+    <title>LeetCode-反转链表</title>
+    <url>/2026/01/11/LeetCode-%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8/</url>
+    <content><![CDATA[🧠 通过修改 next 指针方向，将链表从「顺序结构」重排为「逆序结构」
+一句话结论：👉 反转链表的本质不是换值，而是 改变指针指向。
+核心三步曲：
+
+留后路：next &#x3D; curr.next (防止链表断裂)
+改指向：curr.next &#x3D; prev (核心反转)
+同推进：prev &#x3D; curr; curr &#x3D; next (指针后移)
+
+⚠️ 结束时：curr 是 null，新头节点是 prev。
 
 
 
 ⭐ 模板
-中心扩散函数
-&#x2F;&#x2F; 从中心 left, right 开始向两边扩散private int expand(String s, int left, int right) {while (left &gt;&#x3D; 0 &amp;&amp; right &lt; s.length() &amp;&amp; s.charAt(left) &#x3D;&#x3D; s.charAt(right)) {left–;right++;}
-&#x2F;&#x2F; 返回当前回文长度return right - left - 1;}
+初始化
+&#x2F;&#x2F;prev：始终指向「已经反转完成的部分」ListNode prev &#x3D; null; (已反转部分的头（新链表）)
+&#x2F;&#x2F;curr：始终指向「下一步要处理的节点」ListNode curr &#x3D; head; (待反转部分的头（原链表）)
 
-主流程模板
-int n &#x3D; s.length();int maxLen &#x3D; 0;
-for (int i &#x3D; 0; i &lt; n; i++) {int len1 &#x3D; expand(s, i, i); &#x2F;&#x2F; 奇数回文int len2 &#x3D; expand(s, i, i + 1); &#x2F;&#x2F; 偶数回文MaxLen &#x3D; Math.max(maxLen, Math.max(len1, len2));}
-
-
-
-
-Notice:
-
-while 条件顺序不能乱
+链表处理（控制 curr 主动向后推进）
+while (curr !&#x3D; null) {
+&#x2F;&#x2F; 1. 留后路：保存下一个节点ListNode next &#x3D; curr.next;
+&#x2F;&#x2F; 2. 改指向：执行反转（核心操作）curr.next &#x3D; prev;
+&#x2F;&#x2F; 3. 同推进：更新两个指针prev &#x3D; curr;curr &#x3D; next;
 
 
-正确顺序：先判边界，再比字符
-while (left &gt;&#x3D; 0 &amp;&amp; right &lt; n &amp;&amp; s.charAt(left) &#x3D;&#x3D; s.charAt(right))
-❌ 错误写法（可能越界）：
-s.charAt(left) &#x3D;&#x3D; s.charAt(right) &amp;&amp; left &gt;&#x3D; 0
+}
+
+返回值return prev;
 
 
-注意空串 &amp; 单字符
+
+Notice
+
+🛡️ 链表通用防御模板 (Edge Case Guard)
 
 
-if (s &#x3D;&#x3D; null || s.length() &lt; 2) return s;
+🚀【防御区】：处理空链表、单节点、或无效操作
+
+如果链表为空，或者只有一个节点（通常不需要操作），直接返回
+
+if(head &#x3D;&#x3D; null || head.next &#x3D;&#x3D; null) return head;
+
+(可选) 如果是区间反转类题目：区间长度为 0，无需反转
+
+if (left &#x3D;&#x3D; right) return head;
 
 
-固定数据
+循环不变量要成立
 
 
-回文子串的起始下标: start &#x3D; i - (len - 1) &#x2F; 2;
-回文子串的结束下标: end &#x3D; i + len &#x2F; 2;
-当前中心能扩散得到的「回文长度」: right - left - 1;
-left– 和 right++ 是在“字符已经相等之后”执行的,也就是说：最后一次比较 是成功的,然后左右指针 又各自多走了一步,所以 最终得到的「回文长度」是 : right - left - 1
+在每一轮 while 开始前，必须满足：
+prev 指向「已经反转好的链表头」
+curr 指向「尚未反转的链表头」
 
 
-相关练习题1. LeetCode 5. 最长回文子串题意： 给你一个字符串 s，找到 s 中最长的回文子串。
-2. LeetCode 680. 验证回文字符串 Ⅱ题意： 给定一个非空字符串 s ，最多删除一个字符。判断是否能成为回文字符串。
-3. LeetCode 132. 分割回文串 II题意： 给你一个字符串 s，请你将 s 分割成一些子串，使每个子串都是回文串。返回符合要求的 最少分割次数 。
+判断是否需要四指针的核心问题：
+
+
+👉 反转完成后，这一段链表是否还需要接回原链表？
+🔹 场景 1：需要接回原链表时 (四指针定位 + 两指针反转)
+
+
+
+指针
+作用
+
+
+
+pre
+反转区间前一个节点
+
+
+start
+区间第一个节点（反转后会变尾）
+
+
+end
+区间最后一个节点
+
+
+next
+区间后一个节点
+
+
+1. 反转开始前 (定位)       pre      start               end       next        |         |                  |         |... --&gt; O ------&gt; O --&gt; ... --&gt; O -&gt; O ------&gt; O --&gt; ...      (前驱)   (反转头)           (反转尾)   (后继)2. 反转完成后(重连)pre       end               start      next        |         |                  |         |... --&gt; O ------&gt; O --&gt; ... --&gt; O -&gt; O ------&gt; O --&gt; ...      (前驱)    (新头)             (新尾)    (后继)
+
+Tips:缝合公式 :pre.next.next = curr; // 1. 原来的头(现尾巴) -&gt; 接住剩下的pre.next = prev; // 2. 前驱节点 -&gt; 接住新的头
+
+
+🔹 场景 2: 整段反转，不用接回(两指针反转)
+
+相关练习题1. LeetCode 206. 反转链表题意： 给你单链表的头节点 head ，请你反转链表，并返回反转后的链表。
+2. LeetCode 92. 反转链表 II题意： 给你单链表的头指针 head 和两个整数 left 和 right ，其中 left &lt;&#x3D; right 。请你反转从位置 left 到位置 right 的链表节点，返回 反转后的链表 。
+3. LeetCode 25. K 个一组翻转链表题意： 给你链表的头节点 head ，每 k 个节点一组进行翻转，请你返回修改后的链表。你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换。
+k 是一个正整数，它的值小于或等于链表的长度。如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。
+]]></content>
+      <categories>
+        <category>LeetCode</category>
+        <category>模板</category>
+      </categories>
+      <tags>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LeetCode-左右双指针</title>
+    <url>/2026/01/02/LeetCode-%E5%B7%A6%E5%8F%B3%E5%8F%8C%E6%8C%87%E9%92%88/</url>
+    <content><![CDATA[🧠 解决具有单调性（Monotonicity）或需要两端向中间收缩的问题。
+一句话结论：👉 数组有序(前提) 结构由两端点决定 可利用左右的元素的对称关系 可以排除出界元素在 while 循环内部如果还有指针移动（如跳过空格），必须再次判断 left &lt; right，否则会发生索引越界
+
+
+
+⭐ 模板
+初始化
+left &#x3D; 0 (数组的头部)right &#x3D; n - 1 (数组的尾部)[可选]res &#x3D; (记录结果，如最大面积、是否回文等)
+
+循环处理(控制指针移动)
+while (条件[Q2]) {if (条件[Q1]) {left++;}else {right–;}}
+
+返回结果return
+
+
+
+
+Questions:
+
+左右指针分别代表什么？（物理意义）
+
+
+在数组&#x2F;字符串中：它们通常代表“当前正在处理的区间的左右边界下标”。
+在某些特定问题中：它们可能代表“可选答案的最小值和最大值”（比如二分查找答案）。
+
+
+指针什么时候停下来？（循环条件）
+
+
+相遇即停 left &lt; right：当两个指针相遇时停止。适用于成对处理元素（如反转、求和）。
+错开才停 left &lt;&#x3D; right：当两个指针错过时停止。适用于必须检查“中间那个元素”的情况（如二分查找）。
+业务逻辑停止 while (sum !&#x3D; target) 题目保证一定有解，或者我们只关心找到答案的那一瞬间,特定场景才用
+
+
+什么情况下移动哪个指针？（移动逻辑）
+
+
+想让结果变大：通常是将左指针向右移（left++）。
+想让结果变小：通常是将右指针向左移（right–）。
+在找回文&#x2F;反转：两个指针同时向中间移动。
+
+
+相关练习题1. LeetCode 167. 两数之和 II - 输入有序数组题意： 给你一个下标从 1 开始的整数数组 numbers ，该数组已按 非递减顺序排列 ，请你从数组中找出满足相加之和等于目标数 target 的两个数。如果设这两个数分别是 numbers[index1] 和 numbers[index2] ，则 1 &lt;&#x3D; index1 &lt; index2 &lt;&#x3D; numbers.length 。
+Tips:最快”返回一个匿名数组：return new int[]&#123;a , b&#125;;
+
+
+2. LeetCode 977. 有序数组的平方题意： 给你一个按 非递减顺序 排序的整数数组 nums，返回 每个数字的平方 组成的新数组，要求也按 非递减顺序 排序。
+
+tips:数组两头大中间小,适合从后开始两头 PK 谁大填(需要一个临时变量来控制结果数组的下标递减)
+
+3. LeetCode 11. 盛最多水的容器题意： 给定一个长度为 n 的整数数组 height 。有 n 条垂线，第 i 条线的两个端点是 (i, 0) 和 (i, height[i]) 。找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。返回容器可以储存的最大水量
 ]]></content>
       <categories>
         <category>LeetCode</category>
@@ -1123,289 +1472,6 @@ While 条件怎么判断？
       </tags>
   </entry>
   <entry>
-    <title>LeetCode-前缀和</title>
-    <url>/2026/01/06/LeetCode-%E5%89%8D%E7%BC%80%E5%92%8C/</url>
-    <content><![CDATA[🧠 通过提前累计数组的“历史和”，将任意连续区间的求和问题，转化为两次前缀值的相减。
-一句话结论：👉pre 数组要比原数组的长度多一pre[0] &#x3D; 0 是为了统一公式，避免边界特判前缀和 + 哈希: 找历史区间
-
-
-
-⭐ 模板前缀和
-初始化int n &#x3D; nums.length;
-&#x2F;&#x2F; 前缀和数组，多开一位int[] pre &#x3D; new int[n + 1];pre[0] &#x3D; 0;
-&#x2F;&#x2F; [可选] 记录结果int res &#x3D; 0;
-
-循环处理（构建 &#x2F; 使用前缀和）构建前缀和for (int i &#x3D; 0; i &lt; n; i++) {pre[i + 1] &#x3D; pre[i] + nums[i];}
-使用前缀和（查询区间）&#x2F;&#x2F; 区间 [l, r] 的和int sum &#x3D; pre[r + 1] - pre[l];
-
-
-二维前缀和
-初始化int m &#x3D; matrix.length;int n &#x3D; matrix[ 0].length;
-&#x2F;&#x2F; 二维前缀和数组，多开一行一列(多开一行一列是“哨兵设计”，用空间换逻辑统一，避免所有边界特判)int[][] pre &#x3D; new int[m + 1][n + 1];
-&#x2F;&#x2F; 第 0 行、第 0 列默认都是 0
-
-循环处理（构建前缀和）for (int i &#x3D; 0; i &lt; m; i++) {for (int j &#x3D; 0; j &lt; n; j++) {pre[i + 1][j + 1] &#x3D;pre[i][j + 1] &#x2F;&#x2F; 上 + pre[i + 1][j] &#x2F;&#x2F; 左 - pre[i][j] &#x2F;&#x2F; 左上 + matrix[i][j]; &#x2F;&#x2F; 自己}}
-
-使用前缀和（查询区间）查询矩形 [r1, c1] ~ [r2, c2]（闭区间）int sum &#x3D; pre[r2 + 1][c2 + 1] - pre[r1][c2 + 1] - pre[r2 + 1][c1] + pre[r1][c1];
-
-
-前缀和 + 哈希
-初始化int n &#x3D; nums.length;
-&#x2F;&#x2F; 记录「前缀和(总距离) &lt;-&gt; 出现次数」Map&lt;Integer, Integer&gt; map &#x3D; new HashMap&lt;&gt;();
-&#x2F;&#x2F; 多开一位：表示“什么都不选”的前缀和map.put(0, 1);
-int target &#x3D; 0; &#x2F;&#x2F; 当前前缀和&#x2F;余数int res &#x3D; 0; &#x2F;&#x2F; res 代表数组中「和等于 k 的子数组（连续区间）」的个数
-
-循环处理（构建 &#x2F; 使用前缀和）for (int i &#x3D; 0; i &lt; n; i++) {
-&#x2F;&#x2F; 构建前缀和target +&#x3D; nums[i];
-&#x2F;&#x2F; target - pre &#x3D; k ,所以 target - k &#x3D; pre ,pre 代表的是之前某个位置的前缀和
-if (map.containsKey(target - k)) {res +&#x3D; map.get(target - k);}
-&#x2F;&#x2F; 更新当前前缀和出现次数map.put(target, map.getOrDefault(target, 0) + 1);}
-
-返回结果return res;
-
-
-
-
-Notice
-
-哈希表存的是「次数」，不是下标（大多数题）
-
-
-Map&lt;Integer, Integer&gt; map;含义通常是：
-key &#x3D; 前缀和 (从起点（数组下标 0）出发，走到当前位置时，累计的总距离)value &#x3D; 这个前缀和出现过多少次
-
-
-顺序非常重要（先算答案，再更新 map）
-
-
-✅ 正确顺序
-sum += nums[i];if (map.containsKey(sum - k)) &#123;    res += map.get(sum - k);&#125;map.put(sum, map.getOrDefault(sum, 0) + 1);
-
-
-
-区间元素
-
-
-区间内不能重复用同一个位置的元素,不同区间之间可以重叠，所以元素位置可以被“重复使用”
-
-
-二维前缀和
-
-
-初始化多开一行一列构建：上 + 左 − 左上 + 自己查询：大 − 上 − 左 + 左上
-
-
-什么场景用什么方法
-
-
-一维前缀和:频繁地计算数组中任意一段连续子数组的和
-二维前缀和:频繁地计算矩阵中任意矩形区域的和
-前缀和+哈希:不关心具体的区间位置，只关心“ 有多少个”或“ 是否存在”满足条件的区间
-
-
-相关练习题1. LeetCode 303. 区域和检索 - 数组不可变题意： 给定一个整数数组 nums，处理以下类型的多个查询:
-计算索引 left 和 right （包含 left 和 right）之间的 nums 元素的 和 ，其中 left &lt;&#x3D; right实现 NumArray 类：
-NumArray(int[] nums) 使用数组 nums 初始化对象int sumRange(int left, int right) 返回数组 nums 中索引 left 和 right 之间的元素的 总和 ，包含 left 和 right 两点（也就是 nums[left] + nums[left + 1] + … + nums[right] )
-2. LeetCode 560. 和为 K 的子数组题意： 给你一个整数数组 nums 和一个整数 k ，请你统计并返回 该数组中和为 k 的子数组的个数 。子数组是数组中元素的连续非空序列。
-3. LeetCode 304. 二维区域和检索 - 矩阵不可变题意： 给定一个二维矩阵 matrix，以下类型的多个请求：
-计算其子矩形范围内元素的总和，该子矩阵的 左上角 为 (row1, col1) ，右下角 为 (row2, col2) 。实现 NumMatrix 类：
-NumMatrix(int[][] matrix) 给定整数矩阵 matrix 进行初始化int sumRegion(int row1, int col1, int row2, int col2) 返回 左上角 (row1, col1) 、右下角 (row2, col2) 所描述的子矩阵的元素 总和
-]]></content>
-      <categories>
-        <category>LeetCode</category>
-        <category>模板</category>
-      </categories>
-      <tags>
-        <tag>数组</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>LeetCode-双指针合并 (归并法)</title>
-    <url>/2026/01/12/LeetCode-%E5%8F%8C%E6%8C%87%E9%92%88%E5%90%88%E5%B9%B6-%E5%BD%92%E5%B9%B6%E6%B3%95/</url>
-    <content><![CDATA[🧠 涉及两个有序链表的合并、排序问题一句话结论：👉 “谁小谁先走”。这就是拉链原理：同时遍历两条链表，比较当前头节点，较小的那个接在结果链表后面，然后向前走一步。
-⭐ 核心逻辑哨兵节点 (Dummy Node)：只要一个 dummy，用来挂接结果。
-拉拉链 (Comparison)：while 循环同时检查两个链表，谁小就把谁接上，被接走的那个指针后移，没被接走的保持不动。
-接余部 (Post-processing)：这是链表对比数组的巨大优势 —— 当一条链表遍历完，另一条链表剩下的部分不需要遍历，直接把指针指过去就行（因为剩下的肯定也是有序的）。
-
-
-⭐ 模板
-初始化
-&#x2F;&#x2F;虚拟头节点（锚点）ListNode dummy &#x3D; new ListNode(0);ListNode tail &#x3D; dummy;
-&#x2F;&#x2F;两个并行指针ListNode p1 &#x3D; l1;ListNode p2 &#x3D; l2;
-
-循环处理(控制指针移动)
-&#x2F;&#x2F;同时遍历，按规则选择while (p1 !&#x3D; null &amp;&amp; p2 !&#x3D; null) {
-if (choose(p1, p2)) {tail.next &#x3D; p1;p1 &#x3D; p1.next;} else {tail.next &#x3D; p2;p2 &#x3D; p2.next;}
-tail &#x3D; tail.next;}
-&#x2F;&#x2F;接上剩余部分tail.next &#x3D; (p1 !&#x3D; null) ? p1 : p2;
-
-返回结果return dummy.next;
-
-
-
-
-Notice:
-1.最大的优势：接余部（不要写循环！）
-
-这是链表对比数组最大的优势，也是这个模板最容易写“多余”的地方。
-直接一个 if 把剩下的整条链表挂在后面。因为剩下的部分本身就是有序的，不需要再遍历。
-✅ 正确（利用链表特性，O(1) 操作）if (l1 !&#x3D; null) tail.next &#x3D; l1;if (l2 !&#x3D; null) tail.next &#x3D; l2;
-❌ 错误&#x2F;低效（把链表当数组用了，O(N) 操作）while (l1 !&#x3D; null) {tail.next &#x3D; l1;l1 &#x3D; l1.next;tail &#x3D; tail.next;}
-
-
-相关练习题1. LeetCode 21. 合并两个有序链表题意： 将两个升序链表合并为一个新的 升序 链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。
-2. LeetCode 23. 合并 K 个升序链表题意： 给你一个链表数组，每个链表都已经按升序排列。请你将所有链表合并到一个升序链表中，返回合并后的链表。
-3. LeetCode 148. 排序链表题意： 给你链表的头结点 head ，请将其按 升序 排列并返回 排序后的链表 。
-]]></content>
-      <categories>
-        <category>LeetCode</category>
-        <category>模板</category>
-      </categories>
-      <tags>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>LeetCode-反转链表</title>
-    <url>/2026/01/11/LeetCode-%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8/</url>
-    <content><![CDATA[🧠 通过修改 next 指针方向，将链表从「顺序结构」重排为「逆序结构」
-一句话结论：👉 反转链表的本质不是换值，而是 改变指针指向。
-核心三步曲：
-
-留后路：next &#x3D; curr.next (防止链表断裂)
-改指向：curr.next &#x3D; prev (核心反转)
-同推进：prev &#x3D; curr; curr &#x3D; next (指针后移)
-
-⚠️ 结束时：curr 是 null，新头节点是 prev。
-
-
-
-⭐ 模板
-初始化
-&#x2F;&#x2F;prev：始终指向「已经反转完成的部分」ListNode prev &#x3D; null; (已反转部分的头（新链表）)
-&#x2F;&#x2F;curr：始终指向「下一步要处理的节点」ListNode curr &#x3D; head; (待反转部分的头（原链表）)
-
-链表处理（控制 curr 主动向后推进）
-while (curr !&#x3D; null) {
-&#x2F;&#x2F; 1. 留后路：保存下一个节点ListNode next &#x3D; curr.next;
-&#x2F;&#x2F; 2. 改指向：执行反转（核心操作）curr.next &#x3D; prev;
-&#x2F;&#x2F; 3. 同推进：更新两个指针prev &#x3D; curr;curr &#x3D; next;
-
-
-}
-
-返回值return prev;
-
-
-
-Notice
-
-🛡️ 链表通用防御模板 (Edge Case Guard)
-
-
-🚀【防御区】：处理空链表、单节点、或无效操作
-
-如果链表为空，或者只有一个节点（通常不需要操作），直接返回
-
-if(head &#x3D;&#x3D; null || head.next &#x3D;&#x3D; null) return head;
-
-(可选) 如果是区间反转类题目：区间长度为 0，无需反转
-
-if (left &#x3D;&#x3D; right) return head;
-
-
-循环不变量要成立
-
-
-在每一轮 while 开始前，必须满足：
-prev 指向「已经反转好的链表头」
-curr 指向「尚未反转的链表头」
-
-
-判断是否需要四指针的核心问题：
-
-
-👉 反转完成后，这一段链表是否还需要接回原链表？
-🔹 场景 1：需要接回原链表时 (四指针定位 + 两指针反转)
-
-
-
-指针
-作用
-
-
-
-pre
-反转区间前一个节点
-
-
-start
-区间第一个节点（反转后会变尾）
-
-
-end
-区间最后一个节点
-
-
-next
-区间后一个节点
-
-
-1. 反转开始前 (定位)       pre      start               end       next        |         |                  |         |... --&gt; O ------&gt; O --&gt; ... --&gt; O -&gt; O ------&gt; O --&gt; ...      (前驱)   (反转头)           (反转尾)   (后继)2. 反转完成后(重连)pre       end               start      next        |         |                  |         |... --&gt; O ------&gt; O --&gt; ... --&gt; O -&gt; O ------&gt; O --&gt; ...      (前驱)    (新头)             (新尾)    (后继)
-
-Tips:缝合公式 :pre.next.next = curr; // 1. 原来的头(现尾巴) -&gt; 接住剩下的pre.next = prev; // 2. 前驱节点 -&gt; 接住新的头
-
-
-🔹 场景 2: 整段反转，不用接回(两指针反转)
-
-相关练习题1. LeetCode 206. 反转链表题意： 给你单链表的头节点 head ，请你反转链表，并返回反转后的链表。
-2. LeetCode 92. 反转链表 II题意： 给你单链表的头指针 head 和两个整数 left 和 right ，其中 left &lt;&#x3D; right 。请你反转从位置 left 到位置 right 的链表节点，返回 反转后的链表 。
-3. LeetCode 25. K 个一组翻转链表题意： 给你链表的头节点 head ，每 k 个节点一组进行翻转，请你返回修改后的链表。你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换。
-k 是一个正整数，它的值小于或等于链表的长度。如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。
-]]></content>
-      <categories>
-        <category>LeetCode</category>
-        <category>模板</category>
-      </categories>
-      <tags>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>LeetCode-双链表法</title>
-    <url>/2025/12/25/LeetCode-%E5%8F%8C%E9%93%BE%E8%A1%A8%E6%B3%95/</url>
-    <content><![CDATA[🧠 需要对链表节点进行分类，并且必须保持原有相对顺序的问题
-一句话结论：👉 双链表法用于 在算法中同时维护两条（或多条）逻辑链表 的问题。双链表法不是链表类型，而是一种解题模型：当题目需要对链表节点进行「筛选 &#x2F; 分类 &#x2F; 合并」，并且要求保持原有顺序时，就通过 dummy + tail 的尾插方式,所有的节点都是插在 tail 之后，然后把 tail 重新指向新的节点，最后把所有节点重新连接起来。，把节点重新组织成新链表。
-
-⭐ 模板创建 若干 dummy 头节点（每一类一个）为每个 dummy 准备一个 tail 指针
-curr 指向原链表头
-while curr 不为空:if curr 满足条件 A:A_tail.next &#x3D; curr插入完需要移动尾部的指针A_tail &#x3D; A_tail.nextelse:B_tail.next &#x3D; currB_tail &#x3D; B_tail.nextcurr &#x3D; curr.next
-断开所有尾部的 next（防止成环）
-按题意顺序拼接各个子链表
-返回第一个 dummy.next
-
-
-
-在“重新拼一条新链表”，而不是“只改原链表的 next 关系”时，建议在进入 while 循环后,分类前先保存 next 并断开当前节点：ListNode next &#x3D; curr.next;curr.next &#x3D; null;最后拼接写 curr &#x3D; next;以防止原链表指针污染新链表结构
-
-class Solution &#123;    public ListNode partition(ListNode head, int x) &#123;        // 1️⃣ 两个头锚点（永远不动）        ListNode smallDummy = new ListNode(0);        ListNode bigDummy = new ListNode(0);        // 2️⃣ 两个尾指针（负责接）        ListNode small = smallDummy;        ListNode big = bigDummy;        // 3️⃣ 遍历指针（负责看）        ListNode curr = head;        while (curr != null) &#123;            if (curr.val &lt; x) &#123;                small.next = curr;                small = small.next;            &#125; else &#123;                big.next = curr;                big = big.next;            &#125;            curr = curr.next;        &#125;        // 4️⃣ 断尾（防环）        big.next = null;        // 5️⃣ 拼接        small.next = bigDummy.next;        // 6️⃣ 返回真正的头        return smallDummy.next;    &#125;&#125;
-
-相关练习题1. LeetCode 86 - 分隔链表题意： 给定一个链表和一个值 x，将链表分成两部分，使所有 小于 x 的节点出现在 大于等于 x 的节点之前，且两部分内部的相对顺序保持不变。
-2. LeetCode 328 - 奇偶链表题意： 将链表按节点位置的奇偶性重新排列，使所有奇数位置节点在前，偶数位置节点在后，且保持各自的相对顺序不变。
-3. LeetCode 21 - 合并两个有序链表题意： 将两个升序链表合并为一个新的升序链表，并返回新链表的头节点。
-
-双链表法解决的，是「需要分类，并且必须保持原有相对顺序」的链表问题。
-
-]]></content>
-      <categories>
-        <category>LeetCode</category>
-        <category>模板</category>
-      </categories>
-      <tags>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>LeetCode-快慢指针(数组)</title>
     <url>/2026/01/01/LeetCode-%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88(%E6%95%B0%E7%BB%84)/</url>
     <content><![CDATA[🧠 要求保持相对顺序原地修改,且要”删除&#x2F;筛选&#x2F;移动”元素
@@ -1455,66 +1521,103 @@ Tips:通用去重模板（保留 k 位）：if (slow &lt; k || nums[fast] != num
       </tags>
   </entry>
   <entry>
-    <title>LeetCode-左右双指针</title>
-    <url>/2026/01/02/LeetCode-%E5%B7%A6%E5%8F%B3%E5%8F%8C%E6%8C%87%E9%92%88/</url>
-    <content><![CDATA[🧠 解决具有单调性（Monotonicity）或需要两端向中间收缩的问题。
-一句话结论：👉 数组有序(前提) 结构由两端点决定 可利用左右的元素的对称关系 可以排除出界元素在 while 循环内部如果还有指针移动（如跳过空格），必须再次判断 left &lt; right，否则会发生索引越界
+    <title>LeetCode-快慢指针(链表)</title>
+    <url>/2026/01/10/LeetCode-%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88(%E9%93%BE%E8%A1%A8)/</url>
+    <content><![CDATA[🧠 核心场景：链表中的位置定位、测距与判环
+判断用哪个模板的唯一标准：
+
+是否涉及“相对位置变化 &#x2F; 追及” → 倍速循环
+是否涉及“倒数 &#x2F; 固定间距” → 定距循环
+
+
+⭐ 模板模板一：倍速循环 (Double Speed)
+核心逻辑：只有跑得快，才能根据“相对位置”算中点，或者在环里“套圈”。口诀：快走两步，慢走一步，这就叫倍速。
+ListNode slow &#x3D; head;ListNode fast &#x3D; head;
+&#x2F;&#x2F; 必须保证 fast 能走两步，否则会空指针
+while (fast !&#x3D; null &amp;&amp; fast.next !&#x3D; null) {slow &#x3D; slow.next; &#x2F;&#x2F; 慢走 1fast &#x3D; fast.next.next; &#x2F;&#x2F; 快走 2
+&#x2F;&#x2F; 【插入点】：如果有“追击&#x2F;判圈”逻辑，写在这里}&#x2F;&#x2F; 【结束点】：奇数长度 slow 在正中；偶数长度 slow 在右中点（第二个中点）
+
+👇 变型点拨 (只需改哪里)：
+找中点 (876)：不用改，循环结束后直接 return slow。
+判圈 (141)：在【插入点】加一句 if (slow &#x3D;&#x3D; fast) return true;。
+找圈入口 (142)：判圈相遇后，把一个指针扔回 head，改为同速（都走 1 步），再次相遇处即入口。
+回文 (234)：先用这套模板拿到 slow (中点)，然后把 slow 后面的链表反转，再跟 头节点对比。
+
+
+模板二：定距循环 (Fixed Gap)
+核心逻辑：只要先拉开 N 步距离，当头走到终点，尾巴就在倒数第 N 个。口诀：快先走，慢后走，维持距离到尽头
+&#x2F;&#x2F; 必须用 Dummy，防止删除的是头节点
+ListNode dummy &#x3D; new ListNode(-1, head);ListNode slow &#x3D; dummy, fast &#x3D; dummy;
+&#x2F;&#x2F; 1. 制造间距：fast 先走 N+1 步 (为了删倒数第 N 个，slow 要在它前一个)&#x2F;&#x2F;⚠️ 默认题目保证 n 合法,若 n 可能非法，需在 for 中判断 fast &#x3D;&#x3D; null
+for (int i &#x3D; 0; i &lt;&#x3D; n; i++) {fast &#x3D; fast.next;}
+&#x2F;&#x2F; 2. 保持间距同速走：直到 fast 摸到 null
+while (fast !&#x3D; null) {fast &#x3D; fast.next;slow &#x3D; slow.next;}
+&#x2F;&#x2F; 【操作点】：此时 slow 停在目标节点的前一位
+
+返回答案return dummy.next;
+
+
+👇 变型点拨 (只需改哪里)：
+删倒数第 N 个 (19)：在【操作点】执行 slow.next &#x3D; slow.next.next。
+找倒数第 K 个 (面试题)：slow、fast 都从 dummy 起步，fast 先走 K 步,循环结束时 slow 指向的就是倒数第 K 个节点, return slow 即为目标。
 
 
 
-⭐ 模板
-初始化
-left &#x3D; 0 (数组的头部)right &#x3D; n - 1 (数组的尾部)[可选]res &#x3D; (记录结果，如最大面积、是否回文等)
-
-循环处理(控制指针移动)
-while (条件[Q2]) {if (条件[Q1]) {left++;}else {right–;}}
-
-返回结果return
+一句话总结记忆：找中点、找环 -&gt; 用 while 同时起步，一快一慢。找倒数 -&gt; 用 for 先跑几步，保持距离。
 
 
 
+Notice:
 
-Questions:
-
-左右指针分别代表什么？（物理意义）
-
-
-在数组&#x2F;字符串中：它们通常代表“当前正在处理的区间的左右边界下标”。
-在某些特定问题中：它们可能代表“可选答案的最小值和最大值”（比如二分查找答案）。
+倍速循环的“判空顺序” (防爆核心)在写 while 循环条件时，顺序绝对不能颠倒。
 
 
-指针什么时候停下来？（循环条件）
+正确写法：while (fast !&#x3D; null &amp;&amp; fast.next !&#x3D; null)
+Java 会先判断左边，如果 fast 已经是 null，就不会去执行右边，从而避免报错
+错误写法：while (fast.next !&#x3D; null &amp;&amp; fast !&#x3D; null)
+如果 fast 已经是 null，直接访问 fast.next 会立刻报 NullPointerException
+记忆点：先判“人”在不在，再判“下一步”能不能走。
 
 
-相遇即停 left &lt; right：当两个指针相遇时停止。适用于成对处理元素（如反转、求和）。
-错开才停 left &lt;&#x3D; right：当两个指针错过时停止。适用于必须检查“中间那个元素”的情况（如二分查找）。
-业务逻辑停止 while (sum !&#x3D; target) 题目保证一定有解，或者我们只关心找到答案的那一瞬间,特定场景才用
+找中点的“偶数偏右”特性用标准倍速模板
 
 
-什么情况下移动哪个指针？（移动逻辑）
+(fast 走两步，slow 走一步) 找中点时，对于偶数长度的链表，slow 最终会停在 第二个 中间节点上。
+链表：1 -&gt; 2 -&gt; 3 -&gt; 4 标准模板结果：slow 指向 3。注意：有些题目（虽然少）要求找“左中点”（即 2），那时候循环条件要微调改为 fast.next !&#x3D; null &amp;&amp; fast.next.next !&#x3D; null。
+记忆点：默认模板是“偏右”的（LeetCode 876 标准答案）。
 
 
-想让结果变大：通常是将左指针向右移（left++）。
-想让结果变小：通常是将右指针向左移（right–）。
-在找回文&#x2F;反转：两个指针同时向中间移动。
+定距删除时的 “N” 还是 “N+1”？
 
 
-相关练习题1. LeetCode 167. 两数之和 II - 输入有序数组题意： 给你一个下标从 1 开始的整数数组 numbers ，该数组已按 非递减顺序排列 ，请你从数组中找出满足相加之和等于目标数 target 的两个数。如果设这两个数分别是 numbers[index1] 和 numbers[index2] ，则 1 &lt;&#x3D; index1 &lt; index2 &lt;&#x3D; numbers.length 。
-Tips:最快”返回一个匿名数组：return new int[]&#123;a , b&#125;;
+场景：你要 删除 倒数第 N 个节点。必须做到：slow 指针必须停在 倒数第 N+1 个 节点（即目标节点的前驱），这样你才能执行 slow.next &#x3D; slow.next.next。
+操作：所以 fast 指针必须先走 N + 1 步（或者让 fast 指向 dummy，先走 N 步，效果一样
+记忆点：要删除，必须多走一步，或者从 dummy 起步多算一个身位。
 
 
-2. LeetCode 977. 有序数组的平方题意： 给你一个按 非递减顺序 排序的整数数组 nums，返回 每个数字的平方 组成的新数组，要求也按 非递减顺序 排序。
+环的入口问题
 
-tips:数组两头大中间小,适合从后开始两头 PK 谁大填(需要一个临时变量来控制结果数组的下标递减)
 
-3. LeetCode 11. 盛最多水的容器题意： 给定一个长度为 n 的整数数组 height 。有 n 条垂线，第 i 条线的两个端点是 (i, 0) 和 (i, height[i]) 。找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。返回容器可以储存的最大水量
+快慢指针相遇时，起点到入口的距离，正好等于相遇点到入口的距离。
+环形链表 II 的“回头位置”在 LeetCode 142 (找环入口) 中，当 slow 和 fast 第一次相遇后，开启“回马枪”阶段。新指针（或重置的 fast）必须回到 head (真正的头)，而不是 dummy。
+
+
+相关练习题1. LeetCode 19. 删除链表的倒数第 N 个结点(测距流)题意： 给你一个链表，删除链表的倒数第 n 个结点，并且返回链表的头结点。
+2. LeetCode 876. 链表的中间结点(二倍速流)题意： 给你单链表的头结点 head ，请你找出并返回链表的中间结点。如果有两个中间结点，则返回第二个中间结点
+3. LeetCode 141. 环形链表(判圈流)题意： 给你一个链表的头节点 head ，判断链表中是否有环。
+如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。注意：pos 不作为参数进行传递 。仅仅是为了标识链表的实际情况。
+如果链表中存在环 ，则返回 true 。 否则，返回 false 。
+4. LeetCode 142. 环形链表 II(判圈流)题意： 给定一个链表的头节点 head ，返回链表开始入环的第一个节点。 如果链表无环，则返回 null。
+如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。如果 pos 是 -1，则在该链表中没有环。注意：pos 不作为参数进行传递，仅仅是为了标识链表的实际情况。
+不允许修改 链表。
+5. LeetCode 234. 回文链表题意： 给你一个单链表的头节点 head ，请你判断该链表是否为回文链表。如果是，返回 true ；否则，返回 false 。
 ]]></content>
       <categories>
         <category>LeetCode</category>
         <category>模板</category>
       </categories>
       <tags>
-        <tag>数组</tag>
+        <tag>链表</tag>
       </tags>
   </entry>
   <entry>
@@ -1526,7 +1629,7 @@ tips:数组两头大中间小,适合从后开始两头 PK 谁大填(需要一个
 右括号 → 弹栈并匹配
 
 最后栈必须为空
-for (cahr c : s.toCharArray()){if ch 是左括号:入栈else:if 栈空: return false;top &#x3D; 栈顶出栈;if top 与 c 不匹配:return false;}return 栈空;
+for (char c : s.toCharArray()){if ch 是左括号:入栈else:if 栈空: return false;top &#x3D; 栈顶出栈;if top 与 c 不匹配:return false;}return 栈空;
 
 
 ⭐ 模板二 最长有效括号
@@ -1683,404 +1786,6 @@ Tips: [N-4.1]
       </tags>
   </entry>
   <entry>
-    <title>go语法(简洁)</title>
-    <url>/2026/03/09/go%E8%AF%AD%E6%B3%95-%E7%AE%80%E6%B4%81/</url>
-    <content><![CDATA[Go 核心语法精简笔记
-核心红线： 声明了不用的变量、导入了不用的包，极必编译报错！
-
-
-1. 变量与常量初始化🌈 变量定义🔹 基本写法var a int = 10      // 显式类型var b = 20          // 自动推断 (全局变量必须用 var)c := 30             // 简短声明（仅函数&#123;&#125;内,局部变量）
-
-🔹 多变量x, y, z := 1, 2, 3
-
-⚠️ 限制（高频坑）:= 只能在函数内部使用:= 必须至少声明一个新变量a := 10a := 20 // ❌ 报错（没有新变量）a, b := 20, 30 // ✅ 可以（b 是新变量）var a inta := 10 // ❌ 不能混用（同一作用域）
-
-🌈 常量与iota枚举常量的核心：编译期确定值，运行期不可修改（可以是无类型常量）。
-// 1. 普通声明const PI = 3.14//const 不能依赖变量（var / :=）x := 10const a = x*2 // ❌ 报错// 2. 批量声明const (    a = 1    b = 2)//3.自动适配类型const a = 10   // 无类型常量var b int32 = a // ✅ 自动适配类// 4. iota 枚举器 (每一行递增，遇到新的 const 块重置为 0)const (    SUCC = iota  // 0    _            // 1 (占位丢弃)    FAIL         // 2 (默认继承上一行表达式 iota))
-
-
-
-
-2. 基础内置数据类型🌈 数字与布尔
-布尔值 bool：true 和 false。（⚠️ C++ 那一套 0&#x2F;1 和空字符串当条件的技巧，在 Go 完全行不通）
-整型 int：会根据操作系统自适应变成 32&#x2F;64 位。（定长型有：int32 &#x2F; int64）
-浮点数 float64：Go 省略小数类型时的默认推断类型。
-
-🌈 字符串与字符
-字符（单引号 &#39;&#39;）：
-byte (等同 uint8) —— 存 ASCII 纯英文,按照字节处理。
-rune (等同 int32) —— 存 Unicode（中文汉字）,按照字符处理。
-
-
-字符串（双引号 &quot;&quot; &#x2F; 反引号 ``）：
-⚠️ 切记字符串不可修改！ 不能 s[0] = &#39;H&#39;。
-必须转切片修改： 处理英文（ASCII） → []byte处理中文（Unicode） → []rune 
-
-
-
-s := &quot;hello&quot;b := []byte(s)b[0] = &#x27;H&#x27;s = string(b) //[]byte(s) 是拷贝，修改不会影响原字符串，必须再转回 stringfmt.Println(s) // Hello
-
-
-💡 高频拼接字符串 → 用 strings.Builder（避免重复内存分配） 。
-
-
-
-
-3. 分支控制流
-⚠️ Go 语言中没有 a ? b : c 三元运算符。⚠️ a++ 只能当一行的独立语句，不能放进式子算数，也没 ++a。
-
-🌈 if 条件好处是自带初始化，将变量作用域锁死在 if 内部。变量作用域覆盖 整个 if &#x2F; else if &#x2F; else 结构
-if a := 10; a &gt; 0 &#123;    //变量遮蔽⚠️    a := 20 //新变量（遮蔽外层 a）    fmt.Println(a) // 20&#125;else if a == 0&#123;&#125;else&#123;&#125;
-
-🌈 switch 分支🔹 基本特性默认只执行一个 case（自动 break）支持多个匹配值：
-case 1, 2, 3:
-
-🔹 fallthrough（⚠️ 易错）强制执行下一个 case（不会判断条件）
-switch x &#123;case 1:    fallthroughcase 2:    fmt.Println(&quot;执行到这里&quot;)&#125;
-
-🔹 无表达式 switch（🔥 高频）等价于 if-else 链
-switch &#123;case x &gt; 0:    fmt.Println(&quot;positive&quot;)case x &lt; 0:    fmt.Println(&quot;negative&quot;)&#125;
-
-🔹 Type Switch（类型判断）用于判断接口的真实类型
-switch v := i.(type) &#123;case int:    fmt.Println(&quot;int&quot;, v)case string:    fmt.Println(&quot;string&quot;, v)&#125;
-
-
-
-
-4. Struct 结构与 OOPGo 没有 class，通过 struct + 方法 实现面向对象
-💡 首字母大写 → 可导出（跨 package 可见）💡 首字母小写 → 私有
-🌈 定义与初始化type Student struct &#123;    Name string    Age  int&#125;//键值初始化(推荐)stu1 := Student&#123;    Name: &quot;fliex&quot;,    Age:  25,    // ⚠️ 最后哪怕只有一行，只要回车了，必须带逗号&#125;//顺序初始化（不推荐）stu2 := Student&#123;&quot;fliex&quot;, 25&#125;//指针初始化（常用） struct 默认是值拷贝，指针可以避免拷贝 + 修改原对象stu3 := &amp;Student&#123;    Name: &quot;fliex&quot;,    Age:  25,&#125;stu3.Name = &quot;mike&quot; // ✅ 不需要 (*stu3).Name 会自动解引用  stu3的名字就改为了 mike//返回 *Student，避免拷贝（推荐在函数中使用） 指针接收者：修改数据 + 避免拷贝(数据比较大的时候) + 保持一致性(工程规范)🔹 struct 是值类型（默认拷贝）s1 := Student&#123;&quot;a&quot;, 10&#125;s2 := s1s2.Name = &quot;b&quot;fmt.Println(s1.Name) // a ❗ 不变
-
-🌈 零值（默认值）var stu Student👉 等价于：Student&#123;    Name: &quot;&quot;,    Age:  0,&#125;
-
-🌈 方法接收者（实现面向对象）Go 没有 class，通过 struct + 方法（receiver） 实现行为
-// 1. 值接收者（拿的是副本，怎么改原本对象都不受影响）func (s Student) Read() &#123;&#125;// 2. 指针接收者（拿的是对象原件地址，里面随便改都能同步到外部对象身上）func (s *Student) Write() &#123;    s.Age = 99&#125;
-
-🌈 组合（Embedding）Go 没有继承，通过组合（embedding）实现复用和类似继承效果
-type Dog struct &#123;    Animal    name string&#125;🔹 字段遮蔽（就近原则）dog.name        // 优先用 Dog 的 namedog.Animal.name // 访问内层外层字段会遮蔽内层同名字段🔹 方法“重写”（本质是遮蔽）dog.Speak()        // 调 Dog 的 Speakdog.Animal.Speak() // 调 Animal 的 Speak子结构体同名方法会覆盖（遮蔽）内层方法🔹 初始化规则dog := Dog&#123;    name: &quot;alice&quot;,    Animal: Animal&#123;&quot;cat&quot;&#125;,&#125;❗ embedding 初始化必须写完整结构（不能展开）
-
-
-5. 数组与切片 (Slice)🌈 核心区分
-数组 定长！ [3]int 和 [4]int 是两种完全不兼容的异度类型。
-切片 引用型不定长数组视角，靠 make 生成：make([]int, 长度, 容量)
-
-切片本身是“引用类型”，但不代表所有得到切片的操作都是“引用原数据”
-append🔹 1. 加一个元素arr &#x3D; append(arr, 4)🔹 2. 拼接切片（你删除用到的）arr &#x3D; append(arr[:1], arr[2:]…)
-👉 … 表示把切片展开成多个元素
-🌈 切片与数组的关联切片是对数组的引用（共享底层数组）切片的容量 &#x3D; 从切片起始位置到数组末尾的长度 对切片使用append时 容量够 → 会修改原数组 容量不够 → 不会影响数组(会开辟出新的空间)
-🌈 切片与sring的关联string 是一个切片，切片是引用类型，string 的底层数组是只读的，不能被修改。从 string 转成 []byte → 会拷贝
-🌈 扩容解绑大坑 ⚠️通过 s[low : high] 取一段范围(low取 high不取)出来造的切片，一旦遭遇 append() 数据且原切片容量已经爆满了需要系统自动扩容时：一旦扩容(当切片的长度 + 新增元素个数 &gt; 容量（cap）时，就会扩容) → 切片就“脱离”原数组
-
-系统会强制拿走老数据在新地方重开辟一个豪华新大底。此后这个新切片跟原来的底子数组彻底一刀两断恩断义绝，修改互不干涉。
-
-
-
-
-6. Map 字典集
-⚠️ map 如果只是声明，没有 make，就是 nil，此时不能写入数据，否则会 panicmap 是引用类型，需 make 才能写，key 必须可比较(可以用 &#x3D;&#x3D; 或 !&#x3D; 比较的类型，才能当 map 的 key)，遍历无序，判断存在用 ok
-
-🌈 正确的创建与判空// 必须做 make ！map[key] = valuem := make(map[string]int)m[&quot;李四&quot;] = 18/// 判断是否真有的 经典 comma ok// 当 value 类型是：int / bool / string 👉 强烈建议用 ok  因为：这些类型都有“默认值”，很容易误判value, ok := m[&quot;王五&quot;]if !ok &#123;     // key 不存在    // ⚠️ v 是默认值（int→0，string→&quot;&quot;，bool→false）&#125;
-
-🌈 Map 严格规定 ⚠️
-你休想用 == 判断两个 Map 里面长得一模一样。
-能拿来给 Map 做前面那个 Key 头的，绝不能是：slice 动态切片、map 字典、func 函数。
-
-🔹 删除元素delete(m, &quot;李四&quot;)🔹 遍历（无序）for k, v := range m &#123;&#125;⚠️ map 遍历顺序是随机的🔹 长度len(m)🔹 map 是引用类型（重要）m1 := map[string]int&#123;&quot;a&quot;: 1&#125;m2 := m1m2[&quot;a&quot;] = 100fmt.Println(m1[&quot;a&quot;]) // 100 ✅（共用数据）🔹 判断 nil（唯一能用 == 的场景）if m == nil &#123;&#125;❗ 判断存在必须用 ok
-
-
-
-
-7. for 循环与 Range 陷阱Go的循环只有一个 for 关键字打天下。不再提旧三段式，着重提醒专门给切片Map配套遍历的黑科技：for range
-🌈 Range 是值拷贝！修改无效 ⚠️s := []int&#123;1, 2, 3&#125;// ❌ 错误示范：修改这里的 v 根本没用，v 是临时造出来的替身！for _, v := range s &#123;    v *= 10&#125;// ✅ 正确示范：永远只信任原汁原味的底层地址索引for i := range s &#123;    s[i] *= 10&#125;
-
-
-
-
-8. 函数值传递与真假指针🌈 统一都是值传递！所有的传参，一律全都是在拷贝复印件！如果你发现这复印件你在函数里涂改，咋外面的也变了？
-
-那是因为这个件印的是**“带指针锁眼的大门钥匙地址”**，拿着复印的地址你去捣腾的还是原来大马路上的那套房。
-
-🌈 彻底阉割的指针 * 和 &amp;
-取地址： &amp;变量
-去地址的房里拿真身值： *指针
-⚠️ 绝对不允许运算（如 p++），指针的唯一作用就是替值传递留一个修改实体的通道门匙。
-⚠️ 面对未初始化的虚空指针直接 *p -&gt; Panic！
-
-
-切片、Map、Channel 不需要加 * ，它三哥俩骨子里就带着原生基因“隐形指针”。
-
-
-
-
-9. Interface 接口机制只要一个类型实现了这个接口的里面的所有方法,就可以认为这个类型实现了这个接口
-在 Go，接口实现了鸭子模型的极简多态：
-
-你只要走路像鸭子，叫声像鸭子，你就算没办证书写明 implements 鸭子，它也认你是一只钦定接口鸭！
-
-接口类型的变量，可以接收任何实现了该接口的结构体实例（值或指针），但不能接收结构体类型本身a = Dog&#123;&#125; 不是传递空值，而是把一个具体值（Dog&#123;&#125;）连同类型信息一起存入接口变量type Animal interface &#123;	Speak() string&#125;type Dog struct&#123;&#125;func (d Dog) Speak() string &#123;	return &quot;wang&quot;&#125;func main() &#123;	var a Animal   // 接口变量（此时是 nil）	fmt.Println(a) // &lt;nil&gt;	a = Dog&#123;&#125;      // 把 Dog&#123;&#125; 放进接口	fmt.Println(a)        // &#123;&#125;	fmt.Println(a.Speak()) // wang&#125;接口变量不能直接访问结构体字段，因为接口只暴露方法，不包含具体类型的字段信息。//判断 a 里面是不是 Dogd, ok := a.(Dog)if ok &#123;    fmt.Println(d.Name)&#125;
-
-🌈 唯一的大坑：接收者限定如果你是用值接收者实现了方法：那么你传 值类型 或 指针类型 给接口对象都能兜住。如果你是用指针接收者实现了方法：**只有指针类型实现这个接口 ,只可以接收 &amp;地址 **才能行。
-🌈 万能的空接口与破壳所有类型不论是原始数据还是自定义奇葩类，都天生实现了 interface{} 空接口囊。所以什么类型都可以往里面传
-空接口最大问题放进去：
-var a any &#x3D; 100
-取出来：
-不能直接：
-fmt.Println(a + 10)
-错误。
-因为：
-Go 不知道它是不是 int。
-var unknown interface&#123;&#125;unknown = &quot;hello&quot;unknown = 100unknown = trueunknown = []int&#123;1, 2, 3&#125;// 类型断言：剥壳求证（也叫 comma ok 安全测试）//值num := unknown.(int)fmt.Println(num) //如果是int类型打印值 不是则panic(程序崩溃)str, ok := unknown.(string)if ok &#123;    fmt.Println(&quot;是string类型&quot;)&#125;else&#123;    fmt.Println(&quot;不是string类型&quot;)&#125;
-
-
-
-
-10. 错误捕获 (defer&#x2F;err&#x2F;panic)errors.New(“错误信息”)fmt.Errorf(“错误信息”) &#x2F;&#x2F;用法与printf一样%w 只能用于 error 类型 一个 Errorf 中只能有一个 %w , %w 只能在 fmt.Errorf 中使用
-返回 error 类型的只有这几个常用：1️⃣ errors.Newerr :&#x3D; errors.New(“出错了”)
-👉 返回：error👉 用途：创建一个最基础的错误
-2️⃣ errors.Unwrapinner :&#x3D; errors.Unwrap(err)
-👉 返回：error（被包装的原始错误）👉 如果没有被包装 → 返回 nil
-3️⃣ errors.Join（进阶）err :&#x3D; errors.Join(err1, err2)
-👉 返回：error👉 用途：把多个错误合并成一个
-每次进行错误处理都需要if err !&#x3D; nil {}
-注:fmt.Errorf()也是返回error类型🌈 错误提取断言
-判断它底层根源是不是预定义常量错（Sentinel Error）： errors.Is(err, 拿来对比的预设变量)
-强行把它破壳拿里面的特定实体类型的属性错： errors.As(err, &amp;特定的自定错误大类型)
-
-🌈 defer 的回旋镖（后进先出栈）**你写的 return 语句根本就不是一劳永逸！**它有三步曲：
-
-它先把值丢在后备箱变量里。
-逆向顺藤摸走所有预先挂着的 defer。如果此刻遇到有命名返回值的大哥搞破坏影响了后备箱，你退出的答案就被改了！
-这才退出。
-
-🌈 Panic 急救包只把 recover() 塞进提前挂着的 defer 匿名兜底函数里才能用！只要逮着了报错就吃进隐患，让上级功能安然无恙接着大踏步执行。
-
-
-
-11. 终极并发 (Goroutine &amp; Channel)
-💡 通过通信来共享系统内存。
-
-🌈 解决主死全僵的问题 (sync.WaitGroup)放弃 time.Sleep 等协程。靠精准算术下发任务数。
-Goroutine 笔记总结
-1. 什么是 goroutine
-goroutine 是 Go 的轻量级并发任务。
-
-
-开启方式：
-idgo 函数调用()
-
-
-例如：
-idgo test()
-
-
-2. goroutine 特点
-并发执行多个 goroutine：
-
-同时运行。
-
-
-执行顺序不确定例如：
-idgo fmt.Println(&quot;A&quot;)go fmt.Println(&quot;B&quot;)
-
-输出顺序随机。
-
-main 结束程序直接结束即使：
-idgoroutine
-
-没执行完。
-
-3. go 后面能写什么必须是：
-
-函数调用。
-
-
-合法：
-idgo test()go fmt.Println()go user.Print()go func() &#123;&#125;()
-
-
-不合法：
-idgo x = 10go fmt.Println
-
-
-4. goroutine 常见写法
-普通函数idgo test()
-
-
-匿名函数idgo func() &#123;	fmt.Println(&quot;hello&quot;)&#125;()
-
-
-5. WaitGroup 作用
-
-等待 goroutine 执行完成。
-
-
-防止：
-idmain
-
-提前退出。
-
-6. WaitGroup 固定流程
-idAdd → go → Done → Wait
-
-
-创建idvar wg sync.WaitGroup
-
-
-登记任务idwg.Add(1)
-
-
-goroutine 完成iddefer wg.Done()
-
-
-等待结束idwg.Wait()
-
-
-7. WaitGroup 核心规则
-Add 和 Done 次数必须一致
-错误：
-idwg.Add(2)只 Done 一次
-
-
-结果：
-程序卡住。
-
-Add 必须写在 goroutine 前正确：
-idwg.Add(1)go test()
-
-
-8. goroutine + WaitGroup 标准模板idvar wg sync.WaitGroupwg.Add(1)go func() &#123;	defer wg.Done()	fmt.Println(&quot;task&quot;)&#125;()wg.Wait()
-
-
-9. 核心理解
-goroutine：
-
-开启并发。
-
-
-WaitGroup：
-
-等待并发结束。
-
-
-10. 一句话总结
-goroutine 用 go 开启并发执行，WaitGroup 用来等待 goroutine 完成，防止 main 提前退出。
-
-
-加任务：在协程发动 go func() 之前：wg.Add(1)
-退任务：切记在协程的第一行埋死兜底：defer wg.Done()
-查结果：大主子线程结尾等收网：wg.Wait()
-⚠️ 切记协程如果外部封装函数里带着这个计数器往下发，必定全用指针 *sync.WaitGroup 传，绝不能发影子副本去糊弄。
-
-🌈 Channel 管道交互在不同的 Go 并行管线之间安全接抛快递件。不许在声明里画蛇添足加 * （它是自带原生引用指针体制的）。
-
-强同步版 make(chan int) -&gt; （无缓冲）双方不到齐就不准过，死锁堵塞。
-接活版 make(chan int, 3) -&gt; （有缓冲）放信箱不超过 3 的上限随便撒手，不用等对方拿货立马往下跑。
-读死空结案 -&gt; 如果使用 for range 去拿货，发送端用完如果不自己发 close(通道名) 倒闭关门拉电闸，那收货这段就会永久处于接收痴汉傻等死机状态 (PanicDeadlock)。
-
-goto &#x3D; 强制跳转，只在跳出多层循环时合理使用
-]]></content>
-  </entry>
-  <entry>
-    <title>LeetCode-快慢指针(链表)</title>
-    <url>/2026/01/10/LeetCode-%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88(%E9%93%BE%E8%A1%A8)/</url>
-    <content><![CDATA[🧠 核心场景：链表中的位置定位、测距与判环
-判断用哪个模板的唯一标准：
-
-是否涉及“相对位置变化 &#x2F; 追及” → 倍速循环
-是否涉及“倒数 &#x2F; 固定间距” → 定距循环
-
-
-⭐ 模板模板一：倍速循环 (Double Speed)
-核心逻辑：只有跑得快，才能根据“相对位置”算中点，或者在环里“套圈”。口诀：快走两步，慢走一步，这就叫倍速。
-ListNode slow &#x3D; head;ListNode fast &#x3D; head;
-&#x2F;&#x2F; 必须保证 fast 能走两步，否则会空指针
-while (fast !&#x3D; null &amp;&amp; fast.next !&#x3D; null) {slow &#x3D; slow.next; &#x2F;&#x2F; 慢走 1fast &#x3D; fast.next.next; &#x2F;&#x2F; 快走 2
-&#x2F;&#x2F; 【插入点】：如果有“追击&#x2F;判圈”逻辑，写在这里}&#x2F;&#x2F; 【结束点】：奇数长度 slow 在正中；偶数长度 slow 在右中点（第二个中点）
-
-👇 变型点拨 (只需改哪里)：
-找中点 (876)：不用改，循环结束后直接 return slow。
-判圈 (141)：在【插入点】加一句 if (slow &#x3D;&#x3D; fast) return true;。
-找圈入口 (142)：判圈相遇后，把一个指针扔回 head，改为同速（都走 1 步），再次相遇处即入口。
-回文 (234)：先用这套模板拿到 slow (中点)，然后把 slow 后面的链表反转，再跟 头节点对比。
-
-
-模板二：定距循环 (Fixed Gap)
-核心逻辑：只要先拉开 N 步距离，当头走到终点，尾巴就在倒数第 N 个。口诀：快先走，慢后走，维持距离到尽头
-&#x2F;&#x2F; 必须用 Dummy，防止删除的是头节点
-ListNode dummy &#x3D; new ListNode(-1, head);ListNode slow &#x3D; dummy, fast &#x3D; dummy;
-&#x2F;&#x2F; 1. 制造间距：fast 先走 N+1 步 (为了删倒数第 N 个，slow 要在它前一个)&#x2F;&#x2F;⚠️ 默认题目保证 n 合法,若 n 可能非法，需在 for 中判断 fast &#x3D;&#x3D; null
-for (int i &#x3D; 0; i &lt;&#x3D; n; i++) {fast &#x3D; fast.next;}
-&#x2F;&#x2F; 2. 保持间距同速走：直到 fast 摸到 null
-while (fast !&#x3D; null) {fast &#x3D; fast.next;slow &#x3D; slow.next;}
-&#x2F;&#x2F; 【操作点】：此时 slow 停在目标节点的前一位
-
-返回答案return dummy.next;
-
-
-👇 变型点拨 (只需改哪里)：
-删倒数第 N 个 (19)：在【操作点】执行 slow.next &#x3D; slow.next.next。
-找倒数第 K 个 (面试题)：slow、fast 都从 dummy 起步，fast 先走 K 步,循环结束时 slow 指向的就是倒数第 K 个节点, return slow 即为目标。
-
-
-
-一句话总结记忆：找中点、找环 -&gt; 用 while 同时起步，一快一慢。找倒数 -&gt; 用 for 先跑几步，保持距离。
-
-
-
-Notice:
-
-倍速循环的“判空顺序” (防爆核心)在写 while 循环条件时，顺序绝对不能颠倒。
-
-
-正确写法：while (fast !&#x3D; null &amp;&amp; fast.next !&#x3D; null)
-Java 会先判断左边，如果 fast 已经是 null，就不会去执行右边，从而避免报错
-错误写法：while (fast.next !&#x3D; null &amp;&amp; fast !&#x3D; null)
-如果 fast 已经是 null，直接访问 fast.next 会立刻报 NullPointerException
-记忆点：先判“人”在不在，再判“下一步”能不能走。
-
-
-找中点的“偶数偏右”特性用标准倍速模板
-
-
-(fast 走两步，slow 走一步) 找中点时，对于偶数长度的链表，slow 最终会停在 第二个 中间节点上。
-链表：1 -&gt; 2 -&gt; 3 -&gt; 4 标准模板结果：slow 指向 3。注意：有些题目（虽然少）要求找“左中点”（即 2），那时候循环条件要微调改为 fast.next !&#x3D; null &amp;&amp; fast.next.next !&#x3D; null。
-记忆点：默认模板是“偏右”的（LeetCode 876 标准答案）。
-
-
-定距删除时的 “N” 还是 “N+1”？
-
-
-场景：你要 删除 倒数第 N 个节点。必须做到：slow 指针必须停在 倒数第 N+1 个 节点（即目标节点的前驱），这样你才能执行 slow.next &#x3D; slow.next.next。
-操作：所以 fast 指针必须先走 N + 1 步（或者让 fast 指向 dummy，先走 N 步，效果一样
-记忆点：要删除，必须多走一步，或者从 dummy 起步多算一个身位。
-
-
-环的入口问题
-
-
-快慢指针相遇时，起点到入口的距离，正好等于相遇点到入口的距离。
-环形链表 II 的“回头位置”在 LeetCode 142 (找环入口) 中，当 slow 和 fast 第一次相遇后，开启“回马枪”阶段。新指针（或重置的 fast）必须回到 head (真正的头)，而不是 dummy。
-
-
-相关练习题1. LeetCode 19. 删除链表的倒数第 N 个结点(测距流)题意： 给你一个链表，删除链表的倒数第 n 个结点，并且返回链表的头结点。
-2. LeetCode 876. 链表的中间结点(二倍速流)题意： 给你单链表的头结点 head ，请你找出并返回链表的中间结点。如果有两个中间结点，则返回第二个中间结点
-3. LeetCode 141. 环形链表(判圈流)题意： 给你一个链表的头节点 head ，判断链表中是否有环。
-如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。注意：pos 不作为参数进行传递 。仅仅是为了标识链表的实际情况。
-如果链表中存在环 ，则返回 true 。 否则，返回 false 。
-4. LeetCode 142. 环形链表 II(判圈流)题意： 给定一个链表的头节点 head ，返回链表开始入环的第一个节点。 如果链表无环，则返回 null。
-如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。如果 pos 是 -1，则在该链表中没有环。注意：pos 不作为参数进行传递，仅仅是为了标识链表的实际情况。
-不允许修改 链表。
-5. LeetCode 234. 回文链表题意： 给你一个单链表的头节点 head ，请你判断该链表是否为回文链表。如果是，返回 true ；否则，返回 false 。
-]]></content>
-      <categories>
-        <category>LeetCode</category>
-        <category>模板</category>
-      </categories>
-      <tags>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>故都的秋</title>
     <url>/2025/10/18/%E6%95%85%E9%83%BD%E7%9A%84%E7%A7%8B/</url>
     <content><![CDATA[
@@ -2167,6 +1872,184 @@ init({
       <tags>
         <tag>散文</tag>
         <tag>郁达夫</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>链表模板速览</title>
+    <url>/2026/03/28/%E9%93%BE%E8%A1%A8%E6%A8%A1%E6%9D%BF%E9%80%9F%E8%A7%88/</url>
+    <content><![CDATA[🧌 链表模板速览📦 基础结构typedef struct LNode &#123;    int data;    struct LNode *next;&#125; LNode, *LinkList;
+
+
+1️⃣ 反转整个链表思路： 三指针 prev / curr / next，逐个改指向。结束时 prev 就是新头。
+
+
+LinkList reverseList(LinkList head) &#123;    if (head == NULL || head-&gt;next == NULL) return head;    LNode *prev = NULL, *curr = head;    while (curr != NULL) &#123;        LNode *next = curr-&gt;next;        curr-&gt;next = prev;        prev = curr;        curr = next;    &#125;    return prev;&#125;
+
+
+2️⃣ 删除指定值节点思路： 用 dummy 哨兵节点统一处理头节点删除。遍历时判断 curr-&gt;next 的值，命中就跳过并 free。
+
+
+LinkList Del_x(LinkList head, int x) &#123;    if (head == NULL) return NULL;    LNode dummy = &#123;0, NULL&#125;;    dummy.next = head;    LNode *curr = &amp;dummy;    while (curr != NULL) &#123;        if (curr-&gt;next != NULL &amp;&amp; curr-&gt;next-&gt;data == x) &#123;            LNode *del = curr-&gt;next;            curr-&gt;next = curr-&gt;next-&gt;next;            free(del);        &#125; else &#123;            curr = curr-&gt;next;        &#125;    &#125;    return dummy.next;&#125;
+
+
+3️⃣ 删除倒数第 k 个节点思路： 快慢指针。fast 先走 k 步拉开间距，再走一步让 slow 停在被删节点的前驱，然后一起走到底。
+
+
+LinkList Del_k(LinkList head, int k) &#123;    if (head == NULL || k &lt;= 0) return head;    LNode dummy = &#123;0, head&#125;;    LNode *fast = &amp;dummy, *slow = &amp;dummy;    // fast 先走 k 步    for (int i = 0; i &lt; k; i++) &#123;        if (fast == NULL) return head; // k 大于链表长度        fast = fast-&gt;next;    &#125;    // fast 再走 1 步，让 slow 停在被删节点的前驱    fast = fast-&gt;next;    while (fast != NULL) &#123;        fast = fast-&gt;next;        slow = slow-&gt;next;    &#125;    LNode *del = slow-&gt;next;    if (del != NULL) &#123;        slow-&gt;next = del-&gt;next;        free(del);    &#125;    return dummy.next;&#125;
+
+
+4️⃣ 反转前 n 个节点思路： 和全反转一样，但只反转 n 个。反转结束后把原头的 next 接上剩余部分。
+
+
+LinkList reserve_n(LinkList head, int n) &#123;    if (head == NULL || n &lt;= 0) return head;    LNode *curr = head, *prev = NULL;    int count = 0;    while (curr != NULL &amp;&amp; count &lt; n) &#123;        count++;        LNode *next = curr-&gt;next;        curr-&gt;next = prev;        prev = curr;        curr = next;    &#125;    head-&gt;next = curr; // 原头接上剩余    return prev;&#125;
+
+
+5️⃣ 反转 m ~ n 区间（头插法）思路： 找到第 m-1 个节点 pre，从 m+1 开始逐个头插到 pre 后面，循环 n-m 次。
+
+
+// 反转m~nLinkList reverseBetween(LinkList head, int m, int n) &#123;  if (head == NULL || m &gt;= n) &#123;    return head;  &#125;  LNode dummy = &#123;0, head&#125;;  LNode *pre = &amp;dummy;  for (int i = 1; i &lt; m; i++) &#123;    if (pre-&gt;next == NULL) &#123;      return head;    &#125;    pre = pre-&gt;next;  &#125;  // 第m个  LNode *start = pre-&gt;next;  if (start == NULL)    return head;  // 第m+1个  LNode *curr = start-&gt;next;  for (int i = 0; i &lt; n - m; i++) &#123;    start-&gt;next = curr-&gt;next;    curr-&gt;next = pre-&gt;next;    pre-&gt;next = curr;    curr = start-&gt;next;  &#125;  return dummy.next;&#125;
+
+
+6️⃣ 合并两个有序链表思路： 双指针比较，小的先接到 tail 后，剩余直接拼。
+
+
+LinkList merge(LinkList head1, LinkList head2) &#123;    LNode dummy = &#123;0, NULL&#125;;    LNode *tail = &amp;dummy;    LNode *p = head1, *q = head2;    while (p != NULL &amp;&amp; q != NULL) &#123;        if (p-&gt;data &lt;= q-&gt;data) &#123;            tail-&gt;next = p; p = p-&gt;next;        &#125; else &#123;            tail-&gt;next = q; q = q-&gt;next;        &#125;        tail = tail-&gt;next;    &#125;    tail-&gt;next = (p != NULL) ? p : q;    return dummy.next;&#125;
+
+
+7️⃣ 判断环思路： 快慢指针，fast 走两步、slow 走一步，相遇即有环。
+
+
+bool is_circle(LinkList head) &#123;    LNode *slow = head, *fast = head;    while (fast != NULL &amp;&amp; fast-&gt;next != NULL) &#123;        slow = slow-&gt;next;        fast = fast-&gt;next-&gt;next;        if (slow == fast) return true;    &#125;    return false;&#125;
+
+
+8️⃣ 找中点思路： 快慢指针，fast 到底时 slow 在中间。
+
+
+⚠️ 左中点 vs 右中点（极度重要！）
+以 1-&gt;2-&gt;3-&gt;4 为例：
+
+
+
+写法
+fast 初始化
+slow 停在
+适用场景
+
+
+
+右中点
+fast = head
+3（偏后）
+回文链表等
+
+
+左中点
+fast = head-&gt;next
+2（偏前）
+归并排序 &#x2F; 链表分割
+
+
+🚨 归并排序必须用左中点！ 右中点在 2 个节点时会导致死循环（切不开）。
+
+
+// 右中点（默认）LinkList find_mid(LinkList head) &#123;    LNode *slow = head, *fast = head;    while (fast != NULL &amp;&amp; fast-&gt;next != NULL) &#123;        slow = slow-&gt;next;        fast = fast-&gt;next-&gt;next;    &#125;    return slow;&#125;// 左中点（归并排序用这个）LinkList find_mid_left(LinkList head) &#123;    LNode *slow = head, *fast = head-&gt;next;    while (fast != NULL &amp;&amp; fast-&gt;next != NULL) &#123;        slow = slow-&gt;next;        fast = fast-&gt;next-&gt;next;    &#125;    return slow;&#125;
+
+
+9️⃣ 判断回文链表思路： ① 快慢指针找中点 → ② 反转后半段 → ③ 前后逐个比较。
+💡 注意：此做法会修改原链表结构（反转了后半段）。工程中判断结束后通常需要再反转一次后半段复原链表。
+
+
+bool isPalindrome(LinkList head) &#123;    if (head == NULL || head-&gt;next == NULL) return true;    // 1. 找中点    LNode *slow = head, *fast = head;    while (fast != NULL &amp;&amp; fast-&gt;next != NULL) &#123;        slow = slow-&gt;next;        fast = fast-&gt;next-&gt;next;    &#125;    // 奇数长度，跳过中点    if (fast != NULL) &#123;      slow = slow-&gt;next;    &#125;    // 2. 反转后半段    LNode *prev = NULL, *curr = slow;    while (curr != NULL) &#123;        LNode *next = curr-&gt;next;        curr-&gt;next = prev;        prev = curr;        curr = next;    &#125;    // 3. 比较    LNode *p = head, *q = prev;    while (q != NULL) &#123;        if (p-&gt;data != q-&gt;data) return false;        p = p-&gt;next; q = q-&gt;next;    &#125;    return true;&#125;
+
+
+🔟 K 个一组反转思路： 找 k 个 → 断开 → 反转 → 接回 → 移动 pre，不足 k 个直接返回。
+
+
+LinkList reverseKGroup(LinkList head, int k) &#123;    if (head == NULL || k &lt;= 1) return head;    LNode dummy = &#123;0, head&#125;;    LNode *pre = &amp;dummy;    while (1) &#123;        LNode *tail = pre;        for (int i = 0; i &lt; k; i++) &#123;            tail = tail-&gt;next;            if (tail == NULL) return dummy.next;        &#125;        LNode *start = pre-&gt;next;        LNode *next = tail-&gt;next;        tail-&gt;next = NULL;        LNode *newHead = reverseList(start);        pre-&gt;next = newHead;        start-&gt;next = next;        pre = start;    &#125;&#125;
+
+
+1️⃣1️⃣ 链表归并排序思路： 找中点 → 断开 → 递归排序左右 → merge 合并。经典分治。
+
+
+LinkList sortList(LinkList head) &#123;    if (head == NULL || head-&gt;next == NULL) return head;    // 1. 找中点并断开    LNode *slow = head, *fast = head-&gt;next;    while (fast != NULL &amp;&amp; fast-&gt;next != NULL) &#123;        slow = slow-&gt;next;        fast = fast-&gt;next-&gt;next;    &#125;    LNode *mid = slow-&gt;next;    slow-&gt;next = NULL;    // 2. 递归    LNode *left = sortList(head);    LNode *right = sortList(mid);    // 3. 合并    return merge(left, right);&#125;
+]]></content>
+      <categories>
+        <category>模板</category>
+      </categories>
+      <tags>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LeetCode-链表过滤（dummy + prev + curr）</title>
+    <url>/2025/12/20/LeetCode-%E9%93%BE%E8%A1%A8%E8%BF%87%E6%BB%A4%EF%BC%88dummy-prev-curr%EF%BC%89/</url>
+    <content><![CDATA[🧠 链表过滤（dummy + prev + curr）通过遍历链表，将满足特定条件（如值等于 target）的节点通过修改指针“跳过”并移除，从而得到一个清洗后的新链表
+一句话结论：
+👉 LeetCode 中 所有可能删除头节点的链表题👉 本质上 都可以反向映射为同一个删除模板
+
+
+
+⭐ 模板
+建立虚拟头，处理边界
+&#x2F;&#x2F;创建 dummy 节点,dummy.next 指向 headListNode dummy &#x3D; new ListNode(0,head);
+
+创建探险家 curr 和接线员prev 指向 dummy &#x2F;&#x2F; 当前已经确认保留链表的最后一个节点curr 指向 head &#x2F;&#x2F; 当前正在判断的节点
+
+遍历链表
+while (curr !&#x3D; null) {
+if (curr 满足【删除条件】) {&#x2F;&#x2F;【核心动作】：剪断链接！&#x2F;&#x2F; 让 prev 的指针越过 curr，直接连到 curr 的下一位prev.next &#x3D; curr.next
+&#x2F;&#x2F; 注意：此时 prev 不要动！因为新接过来的 prev.next 还没检查过，下一轮循环要检查它}else (不需要删除):{&#x2F;&#x2F;更新 prevprev &#x3D; curr}
+&#x2F;&#x2F;【迭代】：无论删没删，探险家都要去下一个地方看看curr &#x3D; curr.next
+}
+
+返回结果return dummy.next
+
+
+
+
+三大角色（必须先记住）dummy -&gt; prev -&gt; curr -&gt; curr-&gt;next -&gt; …
+
+
+
+指针
+角色
+一句话职责
+
+
+
+dummy
+哨兵节点
+保住链表入口，统一头删
+
+
+prev
+接线员
+指向最后一个“已确认保留”的节点
+
+
+curr
+探险家
+当前正在判断删不删的节点
+
+
+👉 核心口诀：
+
+✅ curr 每轮都要前进
+❌ prev 只有在 curr 被保留时才前进
+
+
+
+
+相关练习题1. LeetCode 203. 移除链表元素题意： 给你一个链表的头节点 head 和一个整数 val ，请你删除链表中所有满足 Node.val &#x3D;&#x3D; val 的节点，并返回 新的头节点 。
+2. LeetCode 83. 删除排序链表中的重复元素题意： 删除排序链表中的重复元素，只保留一个元素。
+3. LeetCode 82. 删除排序链表中的重复元素 II题意： 删除排序链表中的所有重复元素，只保留没有重复的节点。
+]]></content>
+      <categories>
+        <category>LeetCode</category>
+        <category>模板</category>
+      </categories>
+      <tags>
+        <tag>链表</tag>
       </tags>
   </entry>
   <entry>
@@ -2663,181 +2546,301 @@ func CheckInt(x interface&#123;&#125;) bool &#123;    // 尝试将接口 x 断�
 ]]></content>
   </entry>
   <entry>
-    <title>链表模板速览</title>
-    <url>/2026/03/28/%E9%93%BE%E8%A1%A8%E6%A8%A1%E6%9D%BF%E9%80%9F%E8%A7%88/</url>
-    <content><![CDATA[🧌 链表模板速览📦 基础结构typedef struct LNode &#123;    int data;    struct LNode *next;&#125; LNode, *LinkList;
+    <title>go语法(简洁)</title>
+    <url>/2026/03/09/go%E8%AF%AD%E6%B3%95-%E7%AE%80%E6%B4%81/</url>
+    <content><![CDATA[Go 核心语法精简笔记
+核心红线： 声明了不用的变量、导入了不用的包，极必编译报错！
 
 
-1️⃣ 反转整个链表思路： 三指针 prev / curr / next，逐个改指向。结束时 prev 就是新头。
+1. 变量与常量初始化🌈 变量定义🔹 基本写法var a int = 10      // 显式类型var b = 20          // 自动推断 (全局变量必须用 var)c := 30             // 简短声明（仅函数&#123;&#125;内,局部变量）
 
+🔹 多变量x, y, z := 1, 2, 3
 
-LinkList reverseList(LinkList head) &#123;    if (head == NULL || head-&gt;next == NULL) return head;    LNode *prev = NULL, *curr = head;    while (curr != NULL) &#123;        LNode *next = curr-&gt;next;        curr-&gt;next = prev;        prev = curr;        curr = next;    &#125;    return prev;&#125;
+⚠️ 限制（高频坑）:= 只能在函数内部使用:= 必须至少声明一个新变量a := 10a := 20 // ❌ 报错（没有新变量）a, b := 20, 30 // ✅ 可以（b 是新变量）var a inta := 10 // ❌ 不能混用（同一作用域）
 
-
-2️⃣ 删除指定值节点思路： 用 dummy 哨兵节点统一处理头节点删除。遍历时判断 curr-&gt;next 的值，命中就跳过并 free。
-
-
-LinkList Del_x(LinkList head, int x) &#123;    if (head == NULL) return NULL;    LNode dummy = &#123;0, NULL&#125;;    dummy.next = head;    LNode *curr = &amp;dummy;    while (curr != NULL) &#123;        if (curr-&gt;next != NULL &amp;&amp; curr-&gt;next-&gt;data == x) &#123;            LNode *del = curr-&gt;next;            curr-&gt;next = curr-&gt;next-&gt;next;            free(del);        &#125; else &#123;            curr = curr-&gt;next;        &#125;    &#125;    return dummy.next;&#125;
-
-
-3️⃣ 删除倒数第 k 个节点思路： 快慢指针。fast 先走 k 步拉开间距，再走一步让 slow 停在被删节点的前驱，然后一起走到底。
-
-
-LinkList Del_k(LinkList head, int k) &#123;    if (head == NULL || k &lt;= 0) return head;    LNode dummy = &#123;0, head&#125;;    LNode *fast = &amp;dummy, *slow = &amp;dummy;    // fast 先走 k 步    for (int i = 0; i &lt; k; i++) &#123;        if (fast == NULL) return head; // k 大于链表长度        fast = fast-&gt;next;    &#125;    // fast 再走 1 步，让 slow 停在被删节点的前驱    fast = fast-&gt;next;    while (fast != NULL) &#123;        fast = fast-&gt;next;        slow = slow-&gt;next;    &#125;    LNode *del = slow-&gt;next;    if (del != NULL) &#123;        slow-&gt;next = del-&gt;next;        free(del);    &#125;    return dummy.next;&#125;
-
-
-4️⃣ 反转前 n 个节点思路： 和全反转一样，但只反转 n 个。反转结束后把原头的 next 接上剩余部分。
-
-
-LinkList reserve_n(LinkList head, int n) &#123;    if (head == NULL || n &lt;= 0) return head;    LNode *curr = head, *prev = NULL;    int count = 0;    while (curr != NULL &amp;&amp; count &lt; n) &#123;        count++;        LNode *next = curr-&gt;next;        curr-&gt;next = prev;        prev = curr;        curr = next;    &#125;    head-&gt;next = curr; // 原头接上剩余    return prev;&#125;
-
-
-5️⃣ 反转 m ~ n 区间（头插法）思路： 找到第 m-1 个节点 pre，从 m+1 开始逐个头插到 pre 后面，循环 n-m 次。
-
-
-// 反转m~nLinkList reverseBetween(LinkList head, int m, int n) &#123;  if (head == NULL || m &gt;= n) &#123;    return head;  &#125;  LNode dummy = &#123;0, head&#125;;  LNode *pre = &amp;dummy;  for (int i = 1; i &lt; m; i++) &#123;    if (pre-&gt;next == NULL) &#123;      return head;    &#125;    pre = pre-&gt;next;  &#125;  // 第m个  LNode *start = pre-&gt;next;  if (start == NULL)    return head;  // 第m+1个  LNode *curr = start-&gt;next;  for (int i = 0; i &lt; n - m; i++) &#123;    start-&gt;next = curr-&gt;next;    curr-&gt;next = pre-&gt;next;    pre-&gt;next = curr;    curr = start-&gt;next;  &#125;  return dummy.next;&#125;
-
-
-6️⃣ 合并两个有序链表思路： 双指针比较，小的先接到 tail 后，剩余直接拼。
-
-
-LinkList merge(LinkList head1, LinkList head2) &#123;    LNode dummy = &#123;0, NULL&#125;;    LNode *tail = &amp;dummy;    LNode *p = head1, *q = head2;    while (p != NULL &amp;&amp; q != NULL) &#123;        if (p-&gt;data &lt;= q-&gt;data) &#123;            tail-&gt;next = p; p = p-&gt;next;        &#125; else &#123;            tail-&gt;next = q; q = q-&gt;next;        &#125;        tail = tail-&gt;next;    &#125;    tail-&gt;next = (p != NULL) ? p : q;    return dummy.next;&#125;
-
-
-7️⃣ 判断环思路： 快慢指针，fast 走两步、slow 走一步，相遇即有环。
-
-
-bool is_circle(LinkList head) &#123;    LNode *slow = head, *fast = head;    while (fast != NULL &amp;&amp; fast-&gt;next != NULL) &#123;        slow = slow-&gt;next;        fast = fast-&gt;next-&gt;next;        if (slow == fast) return true;    &#125;    return false;&#125;
-
-
-8️⃣ 找中点思路： 快慢指针，fast 到底时 slow 在中间。
-
-
-⚠️ 左中点 vs 右中点（极度重要！）
-以 1-&gt;2-&gt;3-&gt;4 为例：
+🌈 常量与iota枚举常量的核心：编译期确定值，运行期不可修改（可以是无类型常量）。
+// 1. 普通声明const PI = 3.14//const 不能依赖变量（var / :=）x := 10const a = x*2 // ❌ 报错// 2. 批量声明const (    a = 1    b = 2)//3.自动适配类型const a = 10   // 无类型常量var b int32 = a // ✅ 自动适配类// 4. iota 枚举器 (每一行递增，遇到新的 const 块重置为 0)const (    SUCC = iota  // 0    _            // 1 (占位丢弃)    FAIL         // 2 (默认继承上一行表达式 iota))
 
 
 
-写法
-fast 初始化
-slow 停在
-适用场景
+
+2. 基础内置数据类型🌈 数字与布尔
+布尔值 bool：true 和 false。（⚠️ C++ 那一套 0&#x2F;1 和空字符串当条件的技巧，在 Go 完全行不通）
+整型 int：会根据操作系统自适应变成 32&#x2F;64 位。（定长型有：int32 &#x2F; int64）
+浮点数 float64：Go 省略小数类型时的默认推断类型。
+
+🌈 字符串与字符
+字符（单引号 &#39;&#39;）：
+byte (等同 uint8) —— 存 ASCII 纯英文,按照字节处理。
+rune (等同 int32) —— 存 Unicode（中文汉字）,按照字符处理。
+
+
+字符串（双引号 &quot;&quot; &#x2F; 反引号 ``）：
+⚠️ 切记字符串不可修改！ 不能 s[0] = &#39;H&#39;。
+必须转切片修改： 处理英文（ASCII） → []byte处理中文（Unicode） → []rune 
 
 
 
-右中点
-fast = head
-3（偏后）
-回文链表等
+s := &quot;hello&quot;b := []byte(s)b[0] = &#x27;H&#x27;s = string(b) //[]byte(s) 是拷贝，修改不会影响原字符串，必须再转回 stringfmt.Println(s) // Hello
 
 
-左中点
-fast = head-&gt;next
-2（偏前）
-归并排序 &#x2F; 链表分割
+💡 高频拼接字符串 → 用 strings.Builder（避免重复内存分配） 。
 
 
-🚨 归并排序必须用左中点！ 右中点在 2 个节点时会导致死循环（切不开）。
 
 
-// 右中点（默认）LinkList find_mid(LinkList head) &#123;    LNode *slow = head, *fast = head;    while (fast != NULL &amp;&amp; fast-&gt;next != NULL) &#123;        slow = slow-&gt;next;        fast = fast-&gt;next-&gt;next;    &#125;    return slow;&#125;// 左中点（归并排序用这个）LinkList find_mid_left(LinkList head) &#123;    LNode *slow = head, *fast = head-&gt;next;    while (fast != NULL &amp;&amp; fast-&gt;next != NULL) &#123;        slow = slow-&gt;next;        fast = fast-&gt;next-&gt;next;    &#125;    return slow;&#125;
+3. 分支控制流
+⚠️ Go 语言中没有 a ? b : c 三元运算符。⚠️ a++ 只能当一行的独立语句，不能放进式子算数，也没 ++a。
+
+🌈 if 条件好处是自带初始化，将变量作用域锁死在 if 内部。变量作用域覆盖 整个 if &#x2F; else if &#x2F; else 结构
+if a := 10; a &gt; 0 &#123;    //变量遮蔽⚠️    a := 20 //新变量（遮蔽外层 a）    fmt.Println(a) // 20&#125;else if a == 0&#123;&#125;else&#123;&#125;
+
+🌈 switch 分支🔹 基本特性默认只执行一个 case（自动 break）支持多个匹配值：
+case 1, 2, 3:
+
+🔹 fallthrough（⚠️ 易错）强制执行下一个 case（不会判断条件）
+switch x &#123;case 1:    fallthroughcase 2:    fmt.Println(&quot;执行到这里&quot;)&#125;
+
+🔹 无表达式 switch（🔥 高频）等价于 if-else 链
+switch &#123;case x &gt; 0:    fmt.Println(&quot;positive&quot;)case x &lt; 0:    fmt.Println(&quot;negative&quot;)&#125;
+
+🔹 Type Switch（类型判断）用于判断接口的真实类型
+switch v := i.(type) &#123;case int:    fmt.Println(&quot;int&quot;, v)case string:    fmt.Println(&quot;string&quot;, v)&#125;
 
 
-9️⃣ 判断回文链表思路： ① 快慢指针找中点 → ② 反转后半段 → ③ 前后逐个比较。
-💡 注意：此做法会修改原链表结构（反转了后半段）。工程中判断结束后通常需要再反转一次后半段复原链表。
 
 
-bool isPalindrome(LinkList head) &#123;    if (head == NULL || head-&gt;next == NULL) return true;    // 1. 找中点    LNode *slow = head, *fast = head;    while (fast != NULL &amp;&amp; fast-&gt;next != NULL) &#123;        slow = slow-&gt;next;        fast = fast-&gt;next-&gt;next;    &#125;    // 奇数长度，跳过中点    if (fast != NULL) &#123;      slow = slow-&gt;next;    &#125;    // 2. 反转后半段    LNode *prev = NULL, *curr = slow;    while (curr != NULL) &#123;        LNode *next = curr-&gt;next;        curr-&gt;next = prev;        prev = curr;        curr = next;    &#125;    // 3. 比较    LNode *p = head, *q = prev;    while (q != NULL) &#123;        if (p-&gt;data != q-&gt;data) return false;        p = p-&gt;next; q = q-&gt;next;    &#125;    return true;&#125;
+4. Struct 结构与 OOPGo 没有 class，通过 struct + 方法 实现面向对象
+💡 首字母大写 → 可导出（跨 package 可见）💡 首字母小写 → 私有
+🌈 定义与初始化type Student struct &#123;    Name string    Age  int&#125;//键值初始化(推荐)stu1 := Student&#123;    Name: &quot;fliex&quot;,    Age:  25,    // ⚠️ 最后哪怕只有一行，只要回车了，必须带逗号&#125;//顺序初始化（不推荐）stu2 := Student&#123;&quot;fliex&quot;, 25&#125;//指针初始化（常用） struct 默认是值拷贝，指针可以避免拷贝 + 修改原对象stu3 := &amp;Student&#123;    Name: &quot;fliex&quot;,    Age:  25,&#125;stu3.Name = &quot;mike&quot; // ✅ 不需要 (*stu3).Name 会自动解引用  stu3的名字就改为了 mike//返回 *Student，避免拷贝（推荐在函数中使用） 指针接收者：修改数据 + 避免拷贝(数据比较大的时候) + 保持一致性(工程规范)🔹 struct 是值类型（默认拷贝）s1 := Student&#123;&quot;a&quot;, 10&#125;s2 := s1s2.Name = &quot;b&quot;fmt.Println(s1.Name) // a ❗ 不变
+
+🌈 零值（默认值）var stu Student👉 等价于：Student&#123;    Name: &quot;&quot;,    Age:  0,&#125;
+
+🌈 方法接收者（实现面向对象）Go 没有 class，通过 struct + 方法（receiver） 实现行为
+// 1. 值接收者（拿的是副本，怎么改原本对象都不受影响）func (s Student) Read() &#123;&#125;// 2. 指针接收者（拿的是对象原件地址，里面随便改都能同步到外部对象身上）func (s *Student) Write() &#123;    s.Age = 99&#125;
+
+🌈 组合（Embedding）Go 没有继承，通过组合（embedding）实现复用和类似继承效果
+type Dog struct &#123;    Animal    name string&#125;🔹 字段遮蔽（就近原则）dog.name        // 优先用 Dog 的 namedog.Animal.name // 访问内层外层字段会遮蔽内层同名字段🔹 方法“重写”（本质是遮蔽）dog.Speak()        // 调 Dog 的 Speakdog.Animal.Speak() // 调 Animal 的 Speak子结构体同名方法会覆盖（遮蔽）内层方法🔹 初始化规则dog := Dog&#123;    name: &quot;alice&quot;,    Animal: Animal&#123;&quot;cat&quot;&#125;,&#125;❗ embedding 初始化必须写完整结构（不能展开）
 
 
-🔟 K 个一组反转思路： 找 k 个 → 断开 → 反转 → 接回 → 移动 pre，不足 k 个直接返回。
+5. 数组与切片 (Slice)🌈 核心区分
+数组 定长！ [3]int 和 [4]int 是两种完全不兼容的异度类型。
+切片 引用型不定长数组视角，靠 make 生成：make([]int, 长度, 容量)
+
+切片本身是“引用类型”，但不代表所有得到切片的操作都是“引用原数据”
+append🔹 1. 加一个元素arr &#x3D; append(arr, 4)🔹 2. 拼接切片（你删除用到的）arr &#x3D; append(arr[:1], arr[2:]…)
+👉 … 表示把切片展开成多个元素
+🌈 切片与数组的关联切片是对数组的引用（共享底层数组）切片的容量 &#x3D; 从切片起始位置到数组末尾的长度 对切片使用append时 容量够 → 会修改原数组 容量不够 → 不会影响数组(会开辟出新的空间)
+🌈 切片与sring的关联string 是一个切片，切片是引用类型，string 的底层数组是只读的，不能被修改。从 string 转成 []byte → 会拷贝
+🌈 扩容解绑大坑 ⚠️通过 s[low : high] 取一段范围(low取 high不取)出来造的切片，一旦遭遇 append() 数据且原切片容量已经爆满了需要系统自动扩容时：一旦扩容(当切片的长度 + 新增元素个数 &gt; 容量（cap）时，就会扩容) → 切片就“脱离”原数组
+
+系统会强制拿走老数据在新地方重开辟一个豪华新大底。此后这个新切片跟原来的底子数组彻底一刀两断恩断义绝，修改互不干涉。
 
 
-LinkList reverseKGroup(LinkList head, int k) &#123;    if (head == NULL || k &lt;= 1) return head;    LNode dummy = &#123;0, head&#125;;    LNode *pre = &amp;dummy;    while (1) &#123;        LNode *tail = pre;        for (int i = 0; i &lt; k; i++) &#123;            tail = tail-&gt;next;            if (tail == NULL) return dummy.next;        &#125;        LNode *start = pre-&gt;next;        LNode *next = tail-&gt;next;        tail-&gt;next = NULL;        LNode *newHead = reverseList(start);        pre-&gt;next = newHead;        start-&gt;next = next;        pre = start;    &#125;&#125;
 
 
-1️⃣1️⃣ 链表归并排序思路： 找中点 → 断开 → 递归排序左右 → merge 合并。经典分治。
+6. Map 字典集
+⚠️ map 如果只是声明，没有 make，就是 nil，此时不能写入数据，否则会 panicmap 是引用类型，需 make 才能写，key 必须可比较(可以用 &#x3D;&#x3D; 或 !&#x3D; 比较的类型，才能当 map 的 key)，遍历无序，判断存在用 ok
+
+🌈 正确的创建与判空// 必须做 make ！map[key] = valuem := make(map[string]int)m[&quot;李四&quot;] = 18/// 判断是否真有的 经典 comma ok// 当 value 类型是：int / bool / string 👉 强烈建议用 ok  因为：这些类型都有“默认值”，很容易误判value, ok := m[&quot;王五&quot;]if !ok &#123;     // key 不存在    // ⚠️ v 是默认值（int→0，string→&quot;&quot;，bool→false）&#125;
+
+🌈 Map 严格规定 ⚠️
+你休想用 == 判断两个 Map 里面长得一模一样。
+能拿来给 Map 做前面那个 Key 头的，绝不能是：slice 动态切片、map 字典、func 函数。
+
+🔹 删除元素delete(m, &quot;李四&quot;)🔹 遍历（无序）for k, v := range m &#123;&#125;⚠️ map 遍历顺序是随机的🔹 长度len(m)🔹 map 是引用类型（重要）m1 := map[string]int&#123;&quot;a&quot;: 1&#125;m2 := m1m2[&quot;a&quot;] = 100fmt.Println(m1[&quot;a&quot;]) // 100 ✅（共用数据）🔹 判断 nil（唯一能用 == 的场景）if m == nil &#123;&#125;❗ 判断存在必须用 ok
 
 
-LinkList sortList(LinkList head) &#123;    if (head == NULL || head-&gt;next == NULL) return head;    // 1. 找中点并断开    LNode *slow = head, *fast = head-&gt;next;    while (fast != NULL &amp;&amp; fast-&gt;next != NULL) &#123;        slow = slow-&gt;next;        fast = fast-&gt;next-&gt;next;    &#125;    LNode *mid = slow-&gt;next;    slow-&gt;next = NULL;    // 2. 递归    LNode *left = sortList(head);    LNode *right = sortList(mid);    // 3. 合并    return merge(left, right);&#125;
+
+
+7. for 循环与 Range 陷阱Go的循环只有一个 for 关键字打天下。不再提旧三段式，着重提醒专门给切片Map配套遍历的黑科技：for range
+🌈 Range 是值拷贝！修改无效 ⚠️s := []int&#123;1, 2, 3&#125;// ❌ 错误示范：修改这里的 v 根本没用，v 是临时造出来的替身！for _, v := range s &#123;    v *= 10&#125;// ✅ 正确示范：永远只信任原汁原味的底层地址索引for i := range s &#123;    s[i] *= 10&#125;
+
+
+
+
+8. 函数值传递与真假指针🌈 统一都是值传递！所有的传参，一律全都是在拷贝复印件！如果你发现这复印件你在函数里涂改，咋外面的也变了？
+
+那是因为这个件印的是**“带指针锁眼的大门钥匙地址”**，拿着复印的地址你去捣腾的还是原来大马路上的那套房。
+
+🌈 彻底阉割的指针 * 和 &amp;
+取地址： &amp;变量
+去地址的房里拿真身值： *指针
+⚠️ 绝对不允许运算（如 p++），指针的唯一作用就是替值传递留一个修改实体的通道门匙。
+⚠️ 面对未初始化的虚空指针直接 *p -&gt; Panic！
+
+
+切片、Map、Channel 不需要加 * ，它三哥俩骨子里就带着原生基因“隐形指针”。
+
+
+
+
+9. Interface 接口机制只要一个类型实现了这个接口的里面的所有方法,就可以认为这个类型实现了这个接口
+在 Go，接口实现了鸭子模型的极简多态：
+
+你只要走路像鸭子，叫声像鸭子，你就算没办证书写明 implements 鸭子，它也认你是一只钦定接口鸭！
+
+接口类型的变量，可以接收任何实现了该接口的结构体实例（值或指针），但不能接收结构体类型本身a = Dog&#123;&#125; 不是传递空值，而是把一个具体值（Dog&#123;&#125;）连同类型信息一起存入接口变量type Animal interface &#123;	Speak() string&#125;type Dog struct&#123;&#125;func (d Dog) Speak() string &#123;	return &quot;wang&quot;&#125;func main() &#123;	var a Animal   // 接口变量（此时是 nil）	fmt.Println(a) // &lt;nil&gt;	a = Dog&#123;&#125;      // 把 Dog&#123;&#125; 放进接口	fmt.Println(a)        // &#123;&#125;	fmt.Println(a.Speak()) // wang&#125;接口变量不能直接访问结构体字段，因为接口只暴露方法，不包含具体类型的字段信息。//判断 a 里面是不是 Dogd, ok := a.(Dog)if ok &#123;    fmt.Println(d.Name)&#125;
+
+🌈 唯一的大坑：接收者限定如果你是用值接收者实现了方法：那么你传 值类型 或 指针类型 给接口对象都能兜住。如果你是用指针接收者实现了方法：**只有指针类型实现这个接口 ,只可以接收 &amp;地址 **才能行。
+🌈 万能的空接口与破壳所有类型不论是原始数据还是自定义奇葩类，都天生实现了 interface{} 空接口囊。所以什么类型都可以往里面传
+空接口最大问题放进去：
+var a any &#x3D; 100
+取出来：
+不能直接：
+fmt.Println(a + 10)
+错误。
+因为：
+Go 不知道它是不是 int。
+var unknown interface&#123;&#125;unknown = &quot;hello&quot;unknown = 100unknown = trueunknown = []int&#123;1, 2, 3&#125;// 类型断言：剥壳求证（也叫 comma ok 安全测试）//值num := unknown.(int)fmt.Println(num) //如果是int类型打印值 不是则panic(程序崩溃)str, ok := unknown.(string)if ok &#123;    fmt.Println(&quot;是string类型&quot;)&#125;else&#123;    fmt.Println(&quot;不是string类型&quot;)&#125;
+
+
+
+
+10. 错误捕获 (defer&#x2F;err&#x2F;panic)errors.New(“错误信息”)fmt.Errorf(“错误信息”) &#x2F;&#x2F;用法与printf一样%w 只能用于 error 类型 一个 Errorf 中只能有一个 %w , %w 只能在 fmt.Errorf 中使用
+返回 error 类型的只有这几个常用：1️⃣ errors.Newerr :&#x3D; errors.New(“出错了”)
+👉 返回：error👉 用途：创建一个最基础的错误
+2️⃣ errors.Unwrapinner :&#x3D; errors.Unwrap(err)
+👉 返回：error（被包装的原始错误）👉 如果没有被包装 → 返回 nil
+3️⃣ errors.Join（进阶）err :&#x3D; errors.Join(err1, err2)
+👉 返回：error👉 用途：把多个错误合并成一个
+每次进行错误处理都需要if err !&#x3D; nil {}
+注:fmt.Errorf()也是返回error类型🌈 错误提取断言
+判断它底层根源是不是预定义常量错（Sentinel Error）： errors.Is(err, 拿来对比的预设变量)
+强行把它破壳拿里面的特定实体类型的属性错： errors.As(err, &amp;特定的自定错误大类型)
+
+🌈 defer 的回旋镖（后进先出栈）**你写的 return 语句根本就不是一劳永逸！**它有三步曲：
+
+它先把值丢在后备箱变量里。
+逆向顺藤摸走所有预先挂着的 defer。如果此刻遇到有命名返回值的大哥搞破坏影响了后备箱，你退出的答案就被改了！
+这才退出。
+
+🌈 Panic 急救包只把 recover() 塞进提前挂着的 defer 匿名兜底函数里才能用！只要逮着了报错就吃进隐患，让上级功能安然无恙接着大踏步执行。
+
+
+
+11. 终极并发 (Goroutine &amp; Channel)
+💡 通过通信来共享系统内存。
+
+🌈 解决主死全僵的问题 (sync.WaitGroup)放弃 time.Sleep 等协程。靠精准算术下发任务数。
+Goroutine 笔记总结
+1. 什么是 goroutine
+goroutine 是 Go 的轻量级并发任务。
+
+
+开启方式：
+idgo 函数调用()
+
+
+例如：
+idgo test()
+
+
+2. goroutine 特点
+并发执行多个 goroutine：
+
+同时运行。
+
+
+执行顺序不确定例如：
+idgo fmt.Println(&quot;A&quot;)go fmt.Println(&quot;B&quot;)
+
+输出顺序随机。
+
+main 结束程序直接结束即使：
+idgoroutine
+
+没执行完。
+
+3. go 后面能写什么必须是：
+
+函数调用。
+
+
+合法：
+idgo test()go fmt.Println()go user.Print()go func() &#123;&#125;()
+
+
+不合法：
+idgo x = 10go fmt.Println
+
+
+4. goroutine 常见写法
+普通函数idgo test()
+
+
+匿名函数idgo func() &#123;	fmt.Println(&quot;hello&quot;)&#125;()
+
+
+5. WaitGroup 作用
+
+等待 goroutine 执行完成。
+
+
+防止：
+idmain
+
+提前退出。
+
+6. WaitGroup 固定流程
+idAdd → go → Done → Wait
+
+
+创建idvar wg sync.WaitGroup
+
+
+登记任务idwg.Add(1)
+
+
+goroutine 完成iddefer wg.Done()
+
+
+等待结束idwg.Wait()
+
+
+7. WaitGroup 核心规则
+Add 和 Done 次数必须一致
+错误：
+idwg.Add(2)只 Done 一次
+
+
+结果：
+程序卡住。
+
+Add 必须写在 goroutine 前正确：
+idwg.Add(1)go test()
+
+
+8. goroutine + WaitGroup 标准模板idvar wg sync.WaitGroupwg.Add(1)go func() &#123;	defer wg.Done()	fmt.Println(&quot;task&quot;)&#125;()wg.Wait()
+
+
+9. 核心理解
+goroutine：
+
+开启并发。
+
+
+WaitGroup：
+
+等待并发结束。
+
+
+10. 一句话总结
+goroutine 用 go 开启并发执行，WaitGroup 用来等待 goroutine 完成，防止 main 提前退出。
+
+
+加任务：在协程发动 go func() 之前：wg.Add(1)
+退任务：切记在协程的第一行埋死兜底：defer wg.Done()
+查结果：大主子线程结尾等收网：wg.Wait()
+⚠️ 切记协程如果外部封装函数里带着这个计数器往下发，必定全用指针 *sync.WaitGroup 传，绝不能发影子副本去糊弄。
+
+🌈 Channel 管道交互在不同的 Go 并行管线之间安全接抛快递件。不许在声明里画蛇添足加 * （它是自带原生引用指针体制的）。
+
+强同步版 make(chan int) -&gt; （无缓冲）双方不到齐就不准过，死锁堵塞。
+接活版 make(chan int, 3) -&gt; （有缓冲）放信箱不超过 3 的上限随便撒手，不用等对方拿货立马往下跑。
+读死空结案 -&gt; 如果使用 for range 去拿货，发送端用完如果不自己发 close(通道名) 倒闭关门拉电闸，那收货这段就会永久处于接收痴汉傻等死机状态 (PanicDeadlock)。
+
+goto &#x3D; 强制跳转，只在跳出多层循环时合理使用
 ]]></content>
-      <categories>
-        <category>模板</category>
-      </categories>
-      <tags>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>LeetCode-链表过滤（dummy + prev + curr）</title>
-    <url>/2025/12/20/LeetCode-%E9%93%BE%E8%A1%A8%E8%BF%87%E6%BB%A4%EF%BC%88dummy-prev-curr%EF%BC%89/</url>
-    <content><![CDATA[🧠 链表过滤（dummy + prev + curr）通过遍历链表，将满足特定条件（如值等于 target）的节点通过修改指针“跳过”并移除，从而得到一个清洗后的新链表
-一句话结论：
-👉 LeetCode 中 所有可能删除头节点的链表题👉 本质上 都可以反向映射为同一个删除模板
-
-
-
-⭐ 模板
-建立虚拟头，处理边界
-&#x2F;&#x2F;创建 dummy 节点,dummy.next 指向 headListNode dummy &#x3D; new ListNode(0,head);
-
-创建探险家 curr 和接线员prev 指向 dummy &#x2F;&#x2F; 当前已经确认保留链表的最后一个节点curr 指向 head &#x2F;&#x2F; 当前正在判断的节点
-
-遍历链表
-while (curr !&#x3D; null) {
-if (curr 满足【删除条件】) {&#x2F;&#x2F;【核心动作】：剪断链接！&#x2F;&#x2F; 让 prev 的指针越过 curr，直接连到 curr 的下一位prev.next &#x3D; curr.next
-&#x2F;&#x2F; 注意：此时 prev 不要动！因为新接过来的 prev.next 还没检查过，下一轮循环要检查它}else (不需要删除):{&#x2F;&#x2F;更新 prevprev &#x3D; curr}
-&#x2F;&#x2F;【迭代】：无论删没删，探险家都要去下一个地方看看curr &#x3D; curr.next
-}
-
-返回结果return dummy.next
-
-
-
-
-三大角色（必须先记住）dummy -&gt; prev -&gt; curr -&gt; curr-&gt;next -&gt; …
-
-
-
-指针
-角色
-一句话职责
-
-
-
-dummy
-哨兵节点
-保住链表入口，统一头删
-
-
-prev
-接线员
-指向最后一个“已确认保留”的节点
-
-
-curr
-探险家
-当前正在判断删不删的节点
-
-
-👉 核心口诀：
-
-✅ curr 每轮都要前进
-❌ prev 只有在 curr 被保留时才前进
-
-
-
-
-相关练习题1. LeetCode 203. 移除链表元素题意： 给你一个链表的头节点 head 和一个整数 val ，请你删除链表中所有满足 Node.val &#x3D;&#x3D; val 的节点，并返回 新的头节点 。
-2. LeetCode 83. 删除排序链表中的重复元素题意： 删除排序链表中的重复元素，只保留一个元素。
-3. LeetCode 82. 删除排序链表中的重复元素 II题意： 删除排序链表中的所有重复元素，只保留没有重复的节点。
-]]></content>
-      <categories>
-        <category>LeetCode</category>
-        <category>模板</category>
-      </categories>
-      <tags>
-        <tag>链表</tag>
-      </tags>
   </entry>
 </search>

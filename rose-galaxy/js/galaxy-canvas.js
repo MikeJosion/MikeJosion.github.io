@@ -1,8 +1,10 @@
 (function () {
   "use strict";
 
-  if (window.__novaRoseGalaxy?.running) return;
-  window.__novaRoseGalaxy = { running: true, rafId: 0 };
+  if (window.__novaRoseGalaxy?.init) {
+    window.__novaRoseGalaxy.init();
+    return;
+  }
 
   /**
    * Rose Galaxy — real visible motion version
@@ -128,6 +130,13 @@
       }
 
       this.resize();
+    }
+
+    destroy() {
+      clearTimeout(this.idleTimer);
+      this.observer?.disconnect();
+      this.host.removeEventListener("pointermove", this.onPointerMove);
+      this.host.removeEventListener("pointerleave", this.onPointerLeave);
     }
 
     motionScale() {
@@ -715,6 +724,7 @@
   }
 
   function resizeAll() {
+    if (!scenes.length) return;
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
       for (const scene of scenes) scene.resize();
@@ -727,21 +737,54 @@
 
   function restart() {
     window.cancelAnimationFrame(rafId);
+    rafId = 0;
+    window.__novaRoseGalaxy.rafId = 0;
+    if (!scenes.length) return;
     for (const scene of scenes) scene.resize();
     rafId = window.requestAnimationFrame(loop);
+    window.__novaRoseGalaxy.rafId = rafId;
   }
 
   function handleVisibility() {
-    if (!document.hidden && !rafId) {
+    if (!document.hidden && !rafId && scenes.length) {
       rafId = window.requestAnimationFrame(loop);
       window.__novaRoseGalaxy.rafId = rafId;
     }
   }
 
-  setupScenes();
+  function destroy() {
+    window.cancelAnimationFrame(rafId);
+    window.clearTimeout(resizeTimer);
+    rafId = 0;
+    resizeTimer = 0;
+    scenes.splice(0).forEach((scene) => scene.destroy());
+    window.__novaRoseGalaxy.running = false;
+    window.__novaRoseGalaxy.rafId = 0;
+  }
+
+  function init() {
+    const hero = document.getElementById("hero");
+    if (
+      scenes.length &&
+      scenes.some((scene) => scene.host === hero) &&
+      scenes.every((scene) => scene.host.isConnected)
+    ) {
+      return;
+    }
+    destroy();
+    setupScenes();
+    if (!scenes.length) return;
+    window.__novaRoseGalaxy.running = true;
+    rafId = window.requestAnimationFrame(loop);
+    window.__novaRoseGalaxy.rafId = rafId;
+  }
+
+  window.__novaRoseGalaxy = { running: false, rafId: 0, init, destroy };
   window.addEventListener("resize", resizeAll, { passive: true });
   window.addEventListener("scroll", updateTextRectsForScroll, { passive: true });
   document.addEventListener("visibilitychange", handleVisibility);
+  document.addEventListener("pjax:send", destroy);
+  document.addEventListener("pjax:complete", init);
 
   if (reducedMotionQuery.addEventListener) {
     reducedMotionQuery.addEventListener("change", restart);
@@ -749,6 +792,5 @@
     reducedMotionQuery.addListener(restart);
   }
 
-  rafId = window.requestAnimationFrame(loop);
-  window.__novaRoseGalaxy.rafId = rafId;
+  init();
 })();

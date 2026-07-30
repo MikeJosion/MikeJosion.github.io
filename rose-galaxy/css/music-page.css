@@ -15,46 +15,10 @@ body.nova-music-route footer#footer{margin:0;border-top:1px solid rgba(199,96,13
 body.nova-music-route footer#footer #footer-wrap{padding-block:34px}
 
 .nova-music-page{
-  --nova-music-page-bg:#080c17;
-  --nova-music-section-bg:#0c111e;
-  --nova-music-card-bg:rgba(13,18,34,.72);
-  --nova-music-card-solid:#101626;
-  --nova-music-card-hover:#141b2d;
-  --nova-music-text-primary:#f2edf0;
-  --nova-music-text-secondary:#bcb5bf;
-  --nova-music-text-muted:#898493;
-  --nova-music-border:rgba(224,194,208,.12);
-  --nova-music-accent:#c76082;
-  --nova-music-accent-hover:#d36f90;
-  --nova-music-accent-soft:rgba(199,96,130,.14);
-  --nova-music-shadow:0 24px 70px rgba(0,0,0,.34);
-  --nova-music-hero-primary:#f7f2f4;
-  --nova-music-hero-secondary:rgba(238,231,237,.78);
   position:relative;
   background:var(--nova-music-page-bg);
   color:var(--nova-music-text-primary)
 }
-html[data-theme="light"] .nova-music-page{
-  --nova-music-page-bg:#f0edf3;
-  --nova-music-section-bg:#ebeaf0;
-  --nova-music-card-bg:rgba(255,255,255,.72);
-  --nova-music-card-solid:#fff;
-  --nova-music-card-hover:#fffafb;
-  --nova-music-text-primary:#292631;
-  --nova-music-text-secondary:#5f5b69;
-  --nova-music-text-muted:#898492;
-  --nova-music-border:rgba(75,62,84,.12);
-  --nova-music-accent:#bd5f7c;
-  --nova-music-accent-hover:#a94e6c;
-  --nova-music-accent-soft:rgba(189,95,124,.12);
-  --nova-music-shadow:0 20px 55px rgba(56,45,65,.1);
-  --nova-music-player-title:#312c39;
-  --nova-music-player-artist:#66606f;
-  --nova-music-player-muted:#888290;
-  --nova-music-player-line:rgba(74,64,84,.14);
-  --nova-music-player-accent:#c65f82
-}
-
 .nova-music-hero{position:relative;min-height:100svh;overflow:hidden;color:var(--nova-music-hero-primary)}
 .nova-music-background{position:absolute;inset:0;background:url("/img/music_back.png") center/cover no-repeat}
 .nova-music-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,8,18,.84),rgba(8,10,24,.52) 43%,rgba(10,8,26,.18) 74%),linear-gradient(180deg,rgba(5,8,18,.06),rgba(7,10,22,.16) 72%,var(--nova-music-page-bg) 100%)}
@@ -73,6 +37,9 @@ html[data-theme="light"] .nova-music-hero::after{content:"";position:absolute;z-
 .nova-music-heading-rule img{width:22px;height:22px;object-fit:contain}
 
 .nova-music-player{padding:26px;border:1px solid rgba(225,195,210,.12);border-radius:20px;background:rgba(12,16,31,.66);box-shadow:var(--nova-music-shadow);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.nova-music-retry{display:block;margin:14px auto 0;padding:8px 14px;border:1px solid rgba(215,117,150,.42);border-radius:999px;color:#eadce4;background:rgba(205,105,143,.1);font-size:12px;letter-spacing:.04em;cursor:pointer}
+.nova-music-retry[hidden]{display:none}
+.nova-music-retry:hover{border-color:rgba(222,126,159,.72);background:rgba(205,105,143,.18)}
 .nova-music-current{display:grid;grid-template-columns:88px minmax(0,1fr);align-items:center;gap:20px}
 .nova-music-current-cover{width:88px;height:88px;border-radius:10px;object-fit:cover;box-shadow:0 12px 26px rgba(0,0,0,.34)}
 .nova-music-current h2{overflow:hidden;margin:0 0 8px;color:#f5edf1;font:500 21px/1.3 "Noto Serif SC","Songti SC",serif;text-overflow:ellipsis;white-space:nowrap}
@@ -87,6 +54,7 @@ html[data-theme="light"] .nova-music-hero::after{content:"";position:absolute;z-
 .nova-music-toggle{width:68px;height:68px;border-color:rgba(224,134,169,.76);background:rgba(199,96,130,.14);box-shadow:0 0 28px rgba(200,101,134,.13);font-size:20px}
 .nova-music-meta{display:flex;justify-content:space-between;gap:16px;padding-top:17px;border-top:1px solid rgba(255,255,255,.1);color:rgba(219,210,221,.68);font-size:12.5px}
 html[data-theme="light"] .nova-music-player{border-color:rgba(255,255,255,.46);background:linear-gradient(145deg,rgba(242,239,245,.78),rgba(219,216,228,.62));box-shadow:0 24px 64px rgba(26,22,39,.2),inset 0 1px rgba(255,255,255,.42);backdrop-filter:blur(22px) saturate(115%);-webkit-backdrop-filter:blur(22px) saturate(115%)}
+html[data-theme="light"] .nova-music-retry{color:#6c5060;background:rgba(198,95,130,.08)}
 html[data-theme="light"] .nova-music-current h2{color:var(--nova-music-player-title)}
 html[data-theme="light"] .nova-music-current p{color:var(--nova-music-player-artist)}
 html[data-theme="light"] .nova-music-time,html[data-theme="light"] .nova-music-meta{color:var(--nova-music-player-muted)}

@@ -1,260 +1,276 @@
-/* ==========================================================================
-   ❄️ Butterfly Note 深度阅读专用版 (Deep Cold Reading v7.0)
-   核心色板: 冰蓝(#4facfe) / 靛蓝(#5352ed) / 冷灰(#ced6e0)
-   设计理念: 低亮度、低饱和、高透明度 (0.10~0.15)、无暖色干扰
-   ========================================================================== */
-
-/* ==========================================================================
-   Part 1: ☀️ 浅色模式 (Light Mode)
-   背景统一使用提供的淡灰白 #f1f3f5 混入微量主色，极度柔和
-   ========================================================================== */
-
-/* 1. 📝 Summary (总结/核心) - 靛蓝 (Indigo) 
-   [对应色]: #5352ed
-   */
-#article-container .note.primary.flat,
-#article-container .note.primary,
-.note.primary.flat,
-.note.primary {
-  /* 背景：淡灰底色 + 极微量靛蓝，不抢眼 */
-  background: rgba(83, 82, 237, 0.06) !important;
-  /* 边框：靛蓝，标识存在感 */
-  border-left-color: #5352ed !important;
-  /* 文字：使用较深的靛蓝色，保证阅读舒适 */
-  color: #4040b0 !important;
-}
-#article-container .note.primary.flat::before,
-#article-container .note.primary i,
-.note.primary::before {
-  color: #5352ed !important;
-}
-
-/* 2. ℹ️ Info (信息) - 冰蓝 (Ice Blue)
-   [对应色]: #4facfe
-   */
-#article-container .note.info.flat,
-#article-container .note.info,
-.note.info.flat,
-.note.info {
-  background: rgba(79, 172, 254, 0.06) !important;
-  border-left-color: #4facfe !important;
-  color: #357abd !important; /* 压低亮度的深蓝 */
-}
-#article-container .note.info.flat::before,
-#article-container .note.info i,
-.note.info::before {
-  color: #4facfe !important;
-}
-
-/* 3. 💡 Tip (提示) - 冷灰 (Cold Grey)
-   [对应色]: #ced6e0 / #bfc7d1
-   */
-#article-container .note.tip.flat,
-#article-container .note.tip,
-.note.tip.flat,
-.note.tip {
-  /* 背景：纯粹的淡灰冷调 */
-  background: rgba(206, 214, 224, 0.15) !important;
-  border-left-color: #bfc7d1 !important; /* 深一点的灰边框 */
-  color: #57606f !important; /* 深灰文字 */
-}
-#article-container .note.tip.flat::before,
-#article-container .note.tip i,
-.note.tip::before {
-  color: #bfc7d1 !important;
-}
-
-/* 4. ✅ Success (完成) - 柔和靛青 (Soft Indigo)
-   [对应色]: #6b6fd6 (替代绿色)
-   */
-#article-container .note.success.flat,
-#article-container .note.success,
-#article-container .note.done,
-.note.success.flat,
-.note.success,
-.note.done {
-  background: rgba(107, 111, 214, 0.06) !important;
-  border-left-color: #6b6fd6 !important;
-  color: #484c99 !important;
-}
-#article-container .note.success.flat::before,
-#article-container .note.success i,
-.note.done i {
-  color: #6b6fd6 !important;
-}
-
-/* 5. ⚠️ Warning (注意) - 雾霾蓝灰 (Haze Blue)
-   [对应色]: #8faecc (替代黄色/紫色)
-   */
-#article-container .note.warning.flat,
-#article-container .note.warning,
-.note.warning.flat,
-.note.warning {
-  background: rgba(143, 174, 204, 0.1) !important;
-  border-left-color: #8faecc !important;
-  color: #536d80 !important;
-}
-#article-container .note.warning.flat::before,
-#article-container .note.warning i,
-.note.warning::before {
-  color: #8faecc !important;
-}
-
-/* 6. ❌ Danger (警示) - 深邃靛蓝 (Deep Indigo)
-   [对应色]: #5352ed (最深的强调色，替代红色)
-   */
-#article-container .note.danger.flat,
-#article-container .note.danger,
-.note.danger.flat,
-.note.danger {
-  background: rgba(83, 82, 237, 0.1) !important;
-  border-left-color: #5352ed !important;
-  color: #2f2f80 !important;
-}
-#article-container .note.danger.flat::before,
-#article-container .note.danger i,
-.note.danger::before {
-  color: #5352ed !important;
-}
-
-/* ==========================================================================
-   Part 2: 🌑 深色模式 (Dark Mode)
-   核心策略: 背景透明度控制在 0.10~0.12，文字使用冷灰(#ced6e0)而非纯白
-   ========================================================================== */
-
-/* 通用文字颜色设置：压低亮度，使用冷灰 */
-[data-theme="dark"] .note p,
-[data-theme="dark"] .note {
-  color: #ced6e0 !important; /* 关键：不是刺眼的纯白 */
-}
-
-/* 1. Summary - 低亮度靛蓝 */
-[data-theme="dark"] #article-container .note.primary.flat,
-[data-theme="dark"] .note.primary {
-  background: rgba(83, 82, 237, 0.12) !important; /* 严格控制透明度 */
-  border-left-color: #5352ed !important;
-  color: #f1f3f5 !important; /* 标题稍微亮一点 */
-}
-[data-theme="dark"] #article-container .note.primary.flat::before,
-[data-theme="dark"] .note.primary i {
-  color: #5352ed !important;
-}
-
-/* 2. Info - 低亮度冰蓝 */
-[data-theme="dark"] #article-container .note.info.flat,
-[data-theme="dark"] .note.info {
-  /* 明亮的浅紫色背景 */
-  background: rgba(162, 155, 254, 0.15) !important;
-  /* 边框色 */
-  border-left-color: #a29bfe !important;
-  /* 文字色 */
-  color: #ede7f6 !important;
-}
-[data-theme="dark"] #article-container .note.info.flat::before,
-[data-theme="dark"] .note.info i {
-  color: #a29bfe !important;
-}
-
-/* 3. Tip - 低亮度冷灰 */
-[data-theme="dark"] #article-container .note.tip.flat,
-[data-theme="dark"] .note.tip {
-  background: rgba(206, 214, 224, 0.1) !important;
-  border-left-color: #ced6e0 !important;
-  color: #bfc7d1 !important; /* 更暗一点的灰文字 */
-}
-[data-theme="dark"] #article-container .note.tip.flat::before,
-[data-theme="dark"] .note.tip i {
-  color: #ced6e0 !important;
-}
-
-/* 4. Success - 低亮度柔蓝 */
-[data-theme="dark"] #article-container .note.success.flat,
-[data-theme="dark"] #article-container .note.done,
-[data-theme="dark"] .note.success {
-  background: rgba(107, 111, 214, 0.1) !important;
-  border-left-color: #6b6fd6 !important;
-  color: #ced6e0 !important;
-}
-[data-theme="dark"] #article-container .note.success.flat::before,
-[data-theme="dark"] .note.success i {
-  color: #6b6fd6 !important;
-}
-
-/* 5. Warning - 低亮度蓝灰 */
-[data-theme="dark"] #article-container .note.warning.flat,
-[data-theme="dark"] .note.warning {
-  background: rgba(143, 174, 204, 0.12) !important;
-  border-left-color: #8faecc !important;
-  color: #ced6e0 !important;
-}
-[data-theme="dark"] #article-container .note.warning.flat::before,
-[data-theme="dark"] .note.warning i {
-  color: #8faecc !important;
-}
-
-/* 6. Danger - 低亮度深靛 */
-[data-theme="dark"] #article-container .note.danger.flat,
-[data-theme="dark"] .note.danger {
-  background: rgba(83, 82, 237, 0.15) !important; /* 稍微高一点点提示重要性 */
-  border-left-color: #5352ed !important;
-  color: #f1f3f5 !important;
-}
-[data-theme="dark"] #article-container .note.danger.flat::before,
-[data-theme="dark"] .note.danger i {
-  color: #5352ed !important;
-}
-
-/* ==========================================================================
-   Part 3: 行内代码 (Inline Code) 样式覆盖
-   替换默认的红色，统一为冷色调
-   ========================================================================== */
-
-/* ☀️ 浅色模式 */
-.container code {
-  color: #4a4a8a !important;           /* 深靛蓝文字 */
-  background: rgba(83, 82, 237, 0.07) !important; /* 极淡靛蓝背景 */
-  border-radius: 4px !important;
-  padding: 2px 6px !important;
-}
-
-/* 🌑 深色模式 */
-[data-theme="dark"] .container code {
-  color: #a9b4f0 !important;           /* 柔和浅蓝紫文字 */
-  background: rgba(99, 102, 241, 0.15) !important; /* 低透明度靛蓝背景 */
-}
-
-/* 代码块内的 code 不受影响 */
-.container pre code {
-  color: var(--hl-color) !important;
-  background: none !important;
-  padding: 0 !important;
-}
-
-/* Nova UX finishing: shared tokens, scoped comments and delayed PJAX loading. */
+/* Nova visual authority: the only source for shared dark/light palette values. */
 :root {
   --nova-radius-control: 8px;
   --nova-focus: #b86a83;
   --nova-focus-ring: rgba(184, 106, 131, .14);
-}
 
-.nova-music-comments,
-body.nova-gallery-route .nova-gallery-comments,
-.nova-shuoshuo-comments {
+  /* Shared comments. */
   --nova-comment-panel: rgba(20, 25, 39, .78);
   --nova-comment-field: rgba(31, 33, 49, .68);
   --nova-comment-border: rgba(222, 203, 214, .12);
   --nova-comment-text: #d8d1da;
   --nova-comment-accent: #bd7189;
+
+  /* Homepage. */
+  --nova-home-bg: #080c16;
+  --nova-home-section-bg: #0c1220;
+  --nova-home-section-bg-alt: #101727;
+  --nova-home-card-bg: rgba(15, 21, 35, .92);
+  --nova-home-card-hover: rgba(18, 25, 41, .96);
+  --nova-home-text: #eee9e8;
+  --nova-home-text-secondary: #aaa6b1;
+  --nova-home-text-muted: #918a99;
+  --nova-home-rose: #d85b7d;
+  --nova-home-steel: #7890a3;
+  --nova-home-cool: #82a9c7;
+  --nova-home-line: rgba(226, 218, 226, .09);
+
+  /* Archive. */
+  --nova-archive-bg: #070b16;
+  --nova-archive-section-bg: #0a1020;
+  --nova-archive-card: rgba(12, 16, 31, .72);
+  --nova-archive-card-soft: rgba(17, 23, 42, .66);
+  --nova-archive-text: #f2edf0;
+  --nova-archive-secondary: #b7b1bb;
+  --nova-archive-muted: #898492;
+  --nova-archive-accent: #c76082;
+  --nova-archive-line: rgba(224, 194, 208, .1);
+
+  /* Category and tag indexes. */
+  --nova-category-page-bg: #080e1a;
+  --nova-category-page-bg-soft: #0b1424;
+  --nova-category-card-bg: rgba(12, 18, 34, .76);
+  --nova-category-text-primary: #f1edf2;
+  --nova-category-text-secondary: rgba(224, 219, 227, .76);
+  --nova-category-text-muted: rgba(194, 188, 202, .64);
+  --nova-category-text-faint: rgba(174, 168, 183, .52);
+  --nova-category-accent: #ce718f;
+  --nova-category-border: rgba(229, 198, 213, .11);
+  --nova-tag-bg: #080e1a;
+  --nova-tag-bg-soft: #0a1322;
+  --nova-tag-card: rgba(11, 18, 34, .78);
+  --nova-tag-text: #f1edf2;
+  --nova-tag-secondary: rgba(224, 219, 227, .76);
+  --nova-tag-muted: rgba(195, 189, 202, .64);
+  --nova-tag-accent: #ce718f;
+  --nova-tag-slate: #8196aa;
+  --nova-tag-line: rgba(229, 198, 213, .11);
+
+  /* About. */
+  --about-page: #0b0d16;
+  --about-page-soft: #11131e;
+  --about-card: rgba(19, 20, 31, .94);
+  --about-card-soft: rgba(24, 24, 37, .78);
+  --about-line: rgba(211, 174, 189, .14);
+  --about-line-strong: rgba(203, 142, 165, .42);
+  --about-text: #eee9eb;
+  --about-muted: #aaa3ae;
+  --about-accent: #c98da3;
+  --about-accent-soft: #d7afbd;
+  --about-shadow: 0 24px 64px rgba(2, 3, 10, .28);
+
+  /* Shuoshuo. */
+  --shuo-bg: #080b16;
+  --shuo-panel: rgba(18, 22, 39, .76);
+  --shuo-panel-soft: rgba(24, 27, 47, .58);
+  --shuo-border: rgba(219, 170, 190, .16);
+  --shuo-text: #eee9ec;
+  --shuo-secondary: rgba(234, 226, 232, .72);
+  --shuo-muted: rgba(210, 199, 208, .52);
+  --shuo-rose: #c77894;
+  --shuo-rose-soft: #d9a6b8;
+
+  /* Template atlas. */
+  --atlas-bg: #080e1a;
+  --atlas-panel: rgba(12, 20, 38, .78);
+  --atlas-panel-soft: rgba(20, 28, 49, .68);
+  --atlas-border: rgba(219, 178, 198, .14);
+  --atlas-text: #f1edf2;
+  --atlas-secondary: rgba(225, 219, 228, .75);
+  --atlas-muted: rgba(195, 187, 201, .57);
+  --atlas-rose: #cd7190;
+
+  /* Gallery. */
+  --nova-gallery-bg: #08101d;
+  --nova-gallery-bg-deep: #060c16;
+  --nova-gallery-text: #eee9e6;
+  --nova-gallery-muted: rgba(220, 213, 211, .62);
+  --nova-gallery-faint: rgba(205, 198, 198, .42);
+  --nova-gallery-rose: #d1849d;
+  --nova-gallery-line: rgba(215, 204, 207, .1);
+
+  /* Music. */
+  --nova-music-page-bg: #080c17;
+  --nova-music-section-bg: #0c111e;
+  --nova-music-card-bg: rgba(13, 18, 34, .72);
+  --nova-music-card-solid: #101626;
+  --nova-music-card-hover: #141b2d;
+  --nova-music-text-primary: #f2edf0;
+  --nova-music-text-secondary: #bcb5bf;
+  --nova-music-text-muted: #898493;
+  --nova-music-border: rgba(224, 194, 208, .12);
+  --nova-music-accent: #c76082;
+  --nova-music-accent-hover: #d36f90;
+  --nova-music-accent-soft: rgba(199, 96, 130, .14);
+  --nova-music-shadow: 0 24px 70px rgba(0, 0, 0, .34);
+  --nova-music-hero-primary: #f7f2f4;
+  --nova-music-hero-secondary: rgba(238, 231, 237, .78);
+
+  /* Article and Note. */
+  --post-page-bg: #101620;
+  --post-page-bg-secondary: #141b26;
+  --post-surface: #18212d;
+  --post-surface-secondary: #1c2633;
+  --post-surface-raised: #222d3b;
+  --post-surface-soft: #263241;
+  --post-text: #e7e3e9;
+  --post-text-secondary: #bbb5bf;
+  --post-text-muted: #918b96;
+  --post-border: rgba(213, 203, 211, .11);
+  --post-border-strong: rgba(213, 203, 211, .18);
+  --post-accent: #a47789;
+  --post-accent-hover: #bc899d;
+  --post-accent-soft: rgba(164, 119, 137, .16);
+  --post-code-bg: #131a24;
+  --post-code-header-bg: #1b2430;
+  --post-code-gutter-bg: #161e29;
+  --post-code-text: #d9d6dc;
+  --post-inline-code-bg: rgba(164, 119, 137, .15);
+  --post-shadow: 0 16px 42px rgba(0, 0, 0, .24);
+  --post-shadow-soft: 0 7px 20px rgba(0, 0, 0, .16);
+  --nova-note-warning: #a98a69;
+  --nova-note-danger: #9f6175;
+  --nova-note-success: #6f908a;
 }
 
-html[data-theme="light"] .nova-music-comments,
-html[data-theme="light"] body.nova-gallery-route .nova-gallery-comments,
-html[data-theme="light"] .nova-shuoshuo-comments {
+html[data-theme="light"] {
   --nova-comment-panel: rgba(241, 237, 243, .82);
   --nova-comment-field: rgba(232, 227, 235, .72);
   --nova-comment-border: rgba(83, 66, 86, .13);
   --nova-comment-text: #47404b;
   --nova-comment-accent: #a75f77;
+
+  --nova-home-bg: #ebe7e9;
+  --nova-home-section-bg: #f2eff0;
+  --nova-home-section-bg-alt: #e9e8ed;
+  --nova-home-card-bg: rgba(242, 239, 244, .88);
+  --nova-home-card-hover: #f4f1f3;
+  --nova-home-text: #292733;
+  --nova-home-text-secondary: #5f6170;
+  --nova-home-text-muted: #858492;
+  --nova-home-rose: #c95e7b;
+  --nova-home-steel: #718492;
+  --nova-home-cool: #6f91aa;
+  --nova-home-line: rgba(55, 48, 67, .1);
+
+  --nova-archive-bg: #eeebf1;
+  --nova-archive-section-bg: #e7e5ec;
+  --nova-archive-card: rgba(255, 255, 255, .68);
+  --nova-archive-card-soft: rgba(248, 245, 249, .72);
+  --nova-archive-text: #2d2934;
+  --nova-archive-secondary: #66606d;
+  --nova-archive-muted: #8a8490;
+  --nova-archive-accent: #bd5f7c;
+  --nova-archive-line: rgba(75, 62, 84, .11);
+
+  --nova-category-page-bg: #eeebf1;
+  --nova-category-page-bg-soft: #e7e5ec;
+  --nova-category-card-bg: rgba(255, 253, 255, .76);
+  --nova-category-text-primary: #302c36;
+  --nova-category-text-secondary: #655f6b;
+  --nova-category-text-muted: #87818d;
+  --nova-category-text-faint: #a19aa6;
+  --nova-category-accent: #bd607d;
+  --nova-category-border: rgba(75, 62, 83, .1);
+  --nova-tag-bg: #eeebf1;
+  --nova-tag-bg-soft: #e7e5ec;
+  --nova-tag-card: rgba(255, 253, 255, .78);
+  --nova-tag-text: #302c36;
+  --nova-tag-secondary: #655f6b;
+  --nova-tag-muted: #87818d;
+  --nova-tag-accent: #bd607d;
+  --nova-tag-slate: #748896;
+  --nova-tag-line: rgba(75, 62, 83, .11);
+
+  --about-page: #ece9ee;
+  --about-page-soft: #efecf0;
+  --about-card: rgba(248, 246, 247, .96);
+  --about-card-soft: #eeeaee;
+  --about-line: rgba(86, 75, 91, .12);
+  --about-line-strong: rgba(95, 79, 96, .24);
+  --about-text: #302d36;
+  --about-muted: #55505a;
+  --about-accent: #a96379;
+  --about-accent-soft: #8f5368;
+  --about-shadow: 0 24px 60px rgba(76, 61, 73, .11);
+
+  --shuo-bg: #e9e5ea;
+  --shuo-panel: rgba(249, 246, 248, .78);
+  --shuo-panel-soft: rgba(241, 236, 242, .72);
+  --shuo-border: rgba(105, 77, 100, .16);
+  --shuo-text: #39323d;
+  --shuo-secondary: rgba(58, 48, 60, .72);
+  --shuo-muted: rgba(72, 59, 74, .52);
+  --shuo-rose: #a55370;
+  --shuo-rose-soft: #95546d;
+
+  --atlas-bg: #e9e7ed;
+  --atlas-panel: rgba(251, 249, 251, .78);
+  --atlas-panel-soft: rgba(242, 238, 244, .76);
+  --atlas-border: rgba(88, 69, 91, .14);
+  --atlas-text: #36313a;
+  --atlas-secondary: rgba(55, 48, 59, .72);
+  --atlas-muted: rgba(72, 63, 76, .53);
+  --atlas-rose: #b35978;
+
+  --nova-gallery-bg: #e7e4e3;
+  --nova-gallery-bg-deep: #d9d5d5;
+  --nova-gallery-text: #3d3739;
+  --nova-gallery-muted: rgba(67, 58, 61, .64);
+  --nova-gallery-faint: rgba(79, 68, 72, .45);
+  --nova-gallery-rose: #a65f76;
+  --nova-gallery-line: rgba(95, 77, 82, .13);
+
+  --nova-music-page-bg: #f0edf3;
+  --nova-music-section-bg: #ebeaf0;
+  --nova-music-card-bg: rgba(255, 255, 255, .72);
+  --nova-music-card-solid: #fff;
+  --nova-music-card-hover: #fffafb;
+  --nova-music-text-primary: #292631;
+  --nova-music-text-secondary: #5f5b69;
+  --nova-music-text-muted: #898492;
+  --nova-music-border: rgba(75, 62, 84, .12);
+  --nova-music-accent: #bd5f7c;
+  --nova-music-accent-hover: #a94e6c;
+  --nova-music-accent-soft: rgba(189, 95, 124, .12);
+  --nova-music-shadow: 0 20px 55px rgba(56, 45, 65, .1);
+  --nova-music-player-title: #312c39;
+  --nova-music-player-artist: #66606f;
+  --nova-music-player-muted: #888290;
+  --nova-music-player-line: rgba(74, 64, 84, .14);
+  --nova-music-player-accent: #c65f82;
+
+  --post-page-bg: #eef0f3;
+  --post-page-bg-secondary: #e8ebef;
+  --post-surface: #fbfafc;
+  --post-surface-secondary: #f6f4f7;
+  --post-surface-raised: #f1eef3;
+  --post-surface-soft: #ece8ee;
+  --post-text: #30323a;
+  --post-text-secondary: #5d6069;
+  --post-text-muted: #838690;
+  --post-border: rgba(72, 62, 73, .12);
+  --post-border-strong: rgba(72, 62, 73, .19);
+  --post-accent: #93697b;
+  --post-accent-hover: #795365;
+  --post-accent-soft: rgba(147, 105, 123, .11);
+  --post-code-bg: #f3f1f5;
+  --post-code-header-bg: #ebe8ee;
+  --post-code-gutter-bg: #eeebf0;
+  --post-code-text: #303540;
+  --post-inline-code-bg: #eee9ef;
+  --post-shadow: 0 12px 32px rgba(47, 40, 48, .08);
+  --post-shadow-soft: 0 5px 16px rgba(47, 40, 48, .05);
 }
 
 :is(.nova-music-comments, body.nova-gallery-route .nova-gallery-comments, .nova-shuoshuo-comments) #waline-wrap {
@@ -307,64 +323,159 @@ html[data-theme="light"] .nova-shuoshuo-comments {
   outline-offset: 2px;
 }
 
+/* Full-screen first-visit loading layer. */
+body.nova-loading-active {
+  overflow: hidden;
+}
+
+body.nova-loading-active > :not(.nova-page-loading) {
+  visibility: hidden;
+}
+
 .nova-page-loading {
   position: fixed;
   z-index: 2147483000;
   inset: 0;
-  display: grid;
-  place-items: center;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
   visibility: hidden;
   opacity: 0;
-  background: rgba(8, 14, 27, .97);
-  transition: opacity 180ms ease, visibility 0s linear 180ms;
+  background:
+    radial-gradient(circle at 50% 42%,rgba(92,39,57,.1) 0%,rgba(10,16,28,.98) 36%,#050912 78%);
+  transform: scale(1.01);
+  transition: opacity 560ms ease, visibility 0s linear 560ms, transform 560ms ease;
   pointer-events: none;
-}
-
-html[data-theme="light"] .nova-page-loading {
-  background: rgba(236, 232, 239, .97);
+  isolation: isolate;
 }
 
 .nova-page-loading.is-visible {
   visibility: visible;
   opacity: 1;
-  transition: opacity 180ms ease;
+  transform: scale(1);
+  transition: opacity 220ms ease, transform 220ms ease;
+  pointer-events: auto;
+}
+
+.nova-page-loading.is-leaving {
+  visibility: visible;
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+.nova-page-loading__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  max-width: calc(100vw - 40px);
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 460ms ease, transform 460ms ease;
+}
+
+.nova-page-loading.is-leaving .nova-page-loading__inner {
+  opacity: 0;
+  transform: translateY(-2px) scale(.985);
 }
 
 .nova-page-loading__mark {
-  display: grid;
+  position: relative;
+  display: block;
   width: 44px;
   height: 44px;
-  grid-template-columns: repeat(3, 8px);
-  place-content: center;
-  gap: 4px;
+  flex: none;
 }
 
-.nova-page-loading__mark i {
-  width: 8px;
-  height: 8px;
-  border: 1px solid rgba(245, 235, 239, .58);
-  background: #b96c85;
-  transform: rotate(45deg);
-  animation: nova-loading-breathe 900ms ease-in-out infinite alternate;
+.nova-page-loading__mark::before,
+.nova-page-loading__mark::after {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  content: "";
 }
 
-.nova-page-loading__mark i:nth-child(2) {
-  background: #80749b;
-  animation-delay: 120ms;
+.nova-page-loading__mark::before {
+  border: 1px solid rgba(137,67,91,.44);
+  box-shadow: 0 0 16px rgba(105,46,67,.08);
+  animation: nova-loading-breathe 2.2s ease-in-out infinite;
 }
 
-.nova-page-loading__mark i:nth-child(3) {
-  background: #e3d9dc;
-  animation-delay: 240ms;
+.nova-page-loading__mark::after {
+  border: 1.5px solid transparent;
+  border-top-color: rgba(169,82,111,.72);
+  border-right-color: rgba(169,82,111,.12);
+  animation: nova-loading-turn 2.2s linear infinite;
+}
+
+.nova-page-loading__inner strong {
+  margin-top: 16px;
+  color: rgba(224,218,223,.84);
+  font: 500 1rem/1.2 "Cormorant Garamond",Georgia,serif;
+  letter-spacing: .26em;
+}
+
+.nova-page-loading__inner small {
+  margin-top: 7px;
+  color: rgba(143,137,146,.58);
+  font-size: .66rem;
+  letter-spacing: .22em;
 }
 
 @keyframes nova-loading-breathe {
-  to { opacity: .42; transform: rotate(45deg) translateY(-2px); }
+  0%,100% { opacity:.42; transform:scale(.96); }
+  50% { opacity:.9; transform:scale(1.03); }
+}
+
+@keyframes nova-loading-turn {
+  to { transform:rotate(360deg); }
+}
+
+@media (max-width: 480px) {
+  .nova-page-loading__mark {
+    width: 38px;
+    height: 38px;
+  }
+
+  .nova-page-loading__inner strong {
+    margin-top: 14px;
+    font-size: .94rem;
+  }
+
+  .nova-page-loading__inner small {
+    font-size: .58rem;
+    letter-spacing: .18em;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nova-page-loading { transition-duration: 80ms; }
-  .nova-page-loading__mark i { animation: none; }
+  .nova-page-loading {
+    transition: opacity 450ms ease, visibility 0s linear 450ms;
+  }
+
+  .nova-page-loading.is-visible {
+    transition: opacity 120ms ease;
+  }
+
+  .nova-page-loading__inner {
+    transition-duration: 120ms;
+  }
+
+  .nova-page-loading__mark::before,
+  .nova-page-loading__mark::after {
+    animation: none;
+  }
+
+  .nova-page-loading__mark::after {
+    transform: rotate(38deg);
+  }
+
+  #local-search .search-dialog { animation-duration:100ms !important; }
 }
 
 /* Native-feeling midnight search dialog. */
@@ -664,119 +775,12 @@ html[data-theme="light"] #local-search .local-search-hit-item:hover {
   background:rgba(130,103,125,.055);
 }
 
-/* Branded page-transition layer. */
-.nova-page-loading {
-  background:
-    radial-gradient(circle at 50% 44%,rgba(126,96,145,.1),transparent 28%),
-    linear-gradient(180deg,#080d18,#0b1120) !important;
-}
-
-.nova-page-loading__inner {
-  display:flex;
-  align-items:center;
-  flex-direction:column;
-}
-
-.nova-page-loading__inner strong {
-  margin-top:18px;
-  color:#e5dee2;
-  font:500 1rem/1.2 "Cormorant Garamond",Georgia,serif;
-  letter-spacing:.24em;
-}
-
-.nova-page-loading__inner small {
-  margin-top:8px;
-  color:#817a87;
-  font-size:.66rem;
-  letter-spacing:.08em;
-}
-
-.nova-page-loading__mark {
-  position:relative;
-  display:flex;
-  width:48px;
-  height:28px;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-}
-
-.nova-page-loading__mark::before {
-  position:absolute;
-  width:42px;
-  height:1px;
-  content:"";
-  background:linear-gradient(90deg,transparent,rgba(190,112,138,.42),transparent);
-}
-
-.nova-page-loading__mark i {
-  z-index:1;
-  width:4px;
-  height:4px;
-  border:0;
-  border-radius:50%;
-  background:#a7667c;
-  box-shadow:0 0 8px rgba(184,103,131,.18);
-  transform:none;
-  animation:nova-loading-pulse 1.1s ease-in-out infinite;
-}
-
-.nova-page-loading__mark i:nth-child(2) {
-  width:7px;
-  height:7px;
-  background:#d8bdc6;
-}
-
-.nova-page-loading__mark i:nth-child(3) {
-  background:#796f91;
-}
-
-@keyframes nova-loading-pulse {
-  0%,100% { opacity:.36; transform:translateY(1px); }
-  50% { opacity:1; transform:translateY(-1px); }
-}
-
-html[data-theme="light"] .nova-page-loading {
-  background:
-    radial-gradient(circle at 50% 44%,rgba(149,102,133,.1),transparent 28%),
-    linear-gradient(180deg,#ece8ee,#e5e2e9) !important;
-}
-
-html[data-theme="light"] .nova-page-loading__inner strong { color:#4a424e; }
-html[data-theme="light"] .nova-page-loading__inner small { color:#7c7380; }
-
-@media(prefers-reduced-motion:reduce) {
-  #local-search .search-dialog { animation-duration:100ms !important; }
-  .nova-page-loading__mark i { animation:none; }
-}
-
 /* ========================================================================== 
    Article detail — Night Rose reading system
    Scope deliberately starts at #body-wrap.post so archive, category, music
    and other custom routes keep their own visual systems.
    ========================================================================== */
 #body-wrap.post {
-  --post-page-bg: #101620;
-  --post-page-bg-secondary: #141b26;
-  --post-surface: #18212d;
-  --post-surface-secondary: #1c2633;
-  --post-surface-raised: #222d3b;
-  --post-surface-soft: #263241;
-  --post-text: #e7e3e9;
-  --post-text-secondary: #bbb5bf;
-  --post-text-muted: #918b96;
-  --post-border: rgba(213, 203, 211, .11);
-  --post-border-strong: rgba(213, 203, 211, .18);
-  --post-accent: #a47789;
-  --post-accent-hover: #bc899d;
-  --post-accent-soft: rgba(164, 119, 137, .16);
-  --post-code-bg: #131a24;
-  --post-code-header-bg: #1b2430;
-  --post-code-gutter-bg: #161e29;
-  --post-code-text: #d9d6dc;
-  --post-inline-code-bg: rgba(164, 119, 137, .15);
-  --post-shadow: 0 16px 42px rgba(0, 0, 0, .24);
-  --post-shadow-soft: 0 7px 20px rgba(0, 0, 0, .16);
   --page-bg: var(--post-page-bg);
   --page-bg-secondary: var(--post-page-bg-secondary);
   --surface-primary: var(--post-surface);
@@ -985,7 +989,7 @@ html[data-theme="light"] .nova-page-loading__inner small { color:#7c7380; }
 #body-wrap.post #article-container .highlight .string,
 #body-wrap.post #article-container .highlight .attribute { color: #9eaf91; }
 #body-wrap.post #article-container .highlight .number,
-#body-wrap.post #article-container .highlight .literal { color: #a99bcd; }
+#body-wrap.post #article-container .highlight .literal { color: #b99aa8; }
 #body-wrap.post #article-container .highlight .title,
 #body-wrap.post #article-container .highlight .function { color: #8eabc2; }
 #body-wrap.post #article-container .highlight .type,
@@ -1006,23 +1010,63 @@ html[data-theme="light"] .nova-page-loading__inner small { color:#7c7380; }
 
 #body-wrap.post #article-container blockquote,
 #body-wrap.post #article-container .note {
+  --nova-note-tone: var(--accent-primary);
+  position: relative;
   margin: 1.5em 0;
   padding: 16px 18px;
   border: 1px solid var(--border-default);
-  border-left: 3px solid var(--accent-primary);
+  border-left: 3px solid var(--nova-note-tone);
   border-radius: 11px;
   color: var(--text-secondary);
   background: var(--surface-soft);
   box-shadow: none;
 }
 
-#body-wrap.post #article-container .note.warning { border-left-color: #a98a69; }
-#body-wrap.post #article-container .note.danger { border-left-color: #9f6175; }
+#body-wrap.post #article-container .note.warning { --nova-note-tone: var(--nova-note-warning); }
+#body-wrap.post #article-container .note.danger { --nova-note-tone: var(--nova-note-danger); }
 #body-wrap.post #article-container .note.success,
-#body-wrap.post #article-container .note.done { border-left-color: #6f908a; }
-#body-wrap.post #article-container .note.primary { border-left-color: var(--accent-primary); }
-#body-wrap.post #article-container .note i,
-#body-wrap.post #article-container .note::before { color: inherit !important; }
+#body-wrap.post #article-container .note.done { --nova-note-tone: var(--nova-note-success); }
+
+#body-wrap.post #article-container .note h2,
+#body-wrap.post #article-container .note h3,
+#body-wrap.post #article-container .note h4,
+#body-wrap.post #article-container .note h5,
+#body-wrap.post #article-container .note h6 {
+  margin-top: 3px;
+  margin-bottom: 0;
+  padding-top: 0;
+  border-bottom: 0;
+  color: var(--text-primary);
+}
+
+#body-wrap.post #article-container .note > :first-child { margin-top: 0; }
+#body-wrap.post #article-container .note > :last-child { margin-bottom: 0; }
+#body-wrap.post #article-container .note .img-alt { margin: 5px 0 10px; }
+
+#body-wrap.post #article-container .note.icon-padding { padding-left: 3em; }
+#body-wrap.post #article-container .note > .note-icon,
+#body-wrap.post #article-container .note:not(.no-icon)::before {
+  position: absolute;
+  top: calc(50% - .95em);
+  left: .8em;
+  display: inline-block;
+  color: var(--text-secondary);
+  font: 600 1.15em/1 "Font Awesome 7 Free", "Font Awesome 6 Free";
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+#body-wrap.post #article-container .note > .note-icon {
+  top: calc(50% - .5em);
+}
+
+#body-wrap.post #article-container .note.primary:not(.no-icon)::before { content: "\f055"; }
+#body-wrap.post #article-container .note.info:not(.no-icon)::before { content: "\f05a"; }
+#body-wrap.post #article-container .note.success:not(.no-icon)::before,
+#body-wrap.post #article-container .note.done:not(.no-icon)::before { content: "\f058"; }
+#body-wrap.post #article-container .note.warning:not(.no-icon)::before { content: "\f06a"; }
+#body-wrap.post #article-container .note.danger:not(.no-icon)::before { content: "\f056"; }
+
 #body-wrap.post #article-container .note p:last-child,
 #body-wrap.post #article-container blockquote p:last-child { margin-bottom: 0; }
 
@@ -1145,27 +1189,6 @@ html[data-theme="light"] .nova-page-loading__inner small { color:#7c7380; }
 
 /* Clean light theme; code remains dark for syntax clarity. */
 html[data-theme="light"] #body-wrap.post {
-  --post-page-bg: #eef0f3;
-  --post-page-bg-secondary: #e8ebef;
-  --post-surface: #fbfafc;
-  --post-surface-secondary: #f6f4f7;
-  --post-surface-raised: #f1eef3;
-  --post-surface-soft: #ece8ee;
-  --post-text: #30323a;
-  --post-text-secondary: #5d6069;
-  --post-text-muted: #838690;
-  --post-border: rgba(72, 62, 73, .12);
-  --post-border-strong: rgba(72, 62, 73, .19);
-  --post-accent: #93697b;
-  --post-accent-hover: #795365;
-  --post-accent-soft: rgba(147, 105, 123, .11);
-  --post-code-bg: #f3f1f5;
-  --post-code-header-bg: #ebe8ee;
-  --post-code-gutter-bg: #eeebf0;
-  --post-code-text: #303540;
-  --post-inline-code-bg: #eee9ef;
-  --post-shadow: 0 12px 32px rgba(47, 40, 48, .08);
-  --post-shadow-soft: 0 5px 16px rgba(47, 40, 48, .05);
   background: var(--page-bg);
 }
 html[data-theme="light"] #body-wrap.post #article-container :not(pre) > code {
@@ -1186,7 +1209,7 @@ html[data-theme="light"] #body-wrap.post #article-container .highlight .selector
 html[data-theme="light"] #body-wrap.post #article-container .highlight .string,
 html[data-theme="light"] #body-wrap.post #article-container .highlight .attribute { color: #65785f; }
 html[data-theme="light"] #body-wrap.post #article-container .highlight .number,
-html[data-theme="light"] #body-wrap.post #article-container .highlight .literal { color: #76699c; }
+html[data-theme="light"] #body-wrap.post #article-container .highlight .literal { color: #966f80; }
 html[data-theme="light"] #body-wrap.post #article-container .highlight .title,
 html[data-theme="light"] #body-wrap.post #article-container .highlight .function { color: #526f8b; }
 html[data-theme="light"] #body-wrap.post #article-container .highlight .type,
@@ -1245,6 +1268,7 @@ html[data-theme="light"] #body-wrap.post #pagination .pagination-related {
   #body-wrap.post *::before,
   #body-wrap.post *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+/* Navigation */
 /* Navigation search uses an inline SVG so it never depends on icon fonts. */
 #search-button .search-nav-link {
   display: inline-flex;
@@ -1271,6 +1295,7 @@ html[data-theme="light"] #body-wrap.post #pagination .pagination-related {
     display: flex;
     height: 32px;
     align-items: center;
+    overflow: visible;
   }
 
   #nav #search-button .search-nav-link,
@@ -1295,6 +1320,103 @@ html[data-theme="light"] #body-wrap.post #pagination .pagination-related {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+
+/* Navigation dropdown */
+@media (min-width: 769px) {
+  #nav .menus_items .menus_item_child {
+    box-sizing: border-box;
+    top: 100%;
+    right: 0;
+    z-index: 100;
+    min-width: 108px;
+    height: auto;
+    max-height: none;
+    margin-top: 8px;
+    padding: 6px;
+    overflow: visible;
+    border-radius: 10px;
+  }
+
+  #nav .menus_item_child > li {
+    display: block;
+    margin: 0;
+  }
+
+  #nav .menus_item_child .site-page {
+    box-sizing: border-box;
+    display: flex;
+    min-height: 38px;
+    padding: 0 12px;
+    align-items: center;
+    gap: 8px;
+    border-radius: 7px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  #nav .menus_item_child .site-page > i {
+    width: 1em;
+    margin: 0;
+    text-align: center;
+  }
+}
+
+/* Navigation dark theme */
+@media (min-width: 769px) {
+  html[data-theme="dark"] #nav .menus_item_child {
+    border: 1px solid rgba(185, 128, 153, .24);
+    background: linear-gradient(145deg, rgba(16, 22, 35, .97), rgba(25, 22, 33, .97));
+    box-shadow: 0 14px 34px rgba(0, 0, 0, .36), 0 0 18px rgba(137, 79, 105, .05);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  html[data-theme="dark"] #nav .menus_item_child .site-page {
+    color: rgba(225, 216, 223, .88);
+  }
+
+  html[data-theme="dark"] #nav .menus_item_child .site-page:hover {
+    color: rgba(232, 151, 183, .98);
+    background: rgba(194, 122, 151, .10);
+  }
+}
+
+/* Navigation light theme */
+@media (min-width: 769px) {
+  html[data-theme="light"] #nav .menus_item_child {
+    border: 1px solid rgba(207, 183, 195, .50);
+    background: linear-gradient(145deg, rgba(255, 252, 253, .98), rgba(247, 241, 245, .97));
+    box-shadow: 0 12px 28px rgba(104, 79, 94, .12), 0 2px 7px rgba(104, 79, 94, .05);
+    -webkit-backdrop-filter: blur(9px);
+    backdrop-filter: blur(9px);
+  }
+
+  html[data-theme="light"] #nav .menus_item_child .site-page {
+    color: rgba(65, 59, 68, .92);
+  }
+
+  html[data-theme="light"] #nav .menus_item_child .site-page:hover {
+    color: rgba(181, 91, 129, .98);
+    background: rgba(205, 142, 168, .11);
+  }
+}
+
+@media (min-width: 769px) {
+  body.nova-template-route #nav .menus_item_child a[href="/templates/"],
+  body.nova-shuoshuo-route #nav .menus_item_child a[href="/shuoshuo/"],
+  body.nova-gallery-route #nav .menus_item_child a[href="/Gallery/"] {
+    color: rgba(234, 155, 186, .98);
+    background: rgba(194, 122, 151, .13);
+  }
+
+  html[data-theme="light"] body.nova-template-route #nav .menus_item_child a[href="/templates/"],
+  html[data-theme="light"] body.nova-shuoshuo-route #nav .menus_item_child a[href="/shuoshuo/"],
+  html[data-theme="light"] body.nova-gallery-route #nav .menus_item_child a[href="/Gallery/"] {
+    color: rgba(174, 82, 121, .98);
+    background: rgba(205, 142, 168, .15);
+  }
+}
+
 /* Non-home Butterfly rightside controls; JS adds this class only inside #rightside. */
 body:not(.nova-home-active) #home-theme-toggle {
   display:none!important;

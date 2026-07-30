@@ -1,12 +1,5 @@
 body.nova-gallery-route {
   --nova-gallery-width: 1280px;
-  --nova-gallery-bg: #08101d;
-  --nova-gallery-bg-deep: #060c16;
-  --nova-gallery-text: #eee9e6;
-  --nova-gallery-muted: rgba(220, 213, 211, .62);
-  --nova-gallery-faint: rgba(205, 198, 198, .42);
-  --nova-gallery-rose: #d1849d;
-  --nova-gallery-line: rgba(215, 204, 207, .1);
   color: var(--nova-gallery-text);
   background: var(--nova-gallery-bg);
 }
@@ -19,7 +12,7 @@ body.nova-gallery-route #web_bg {
 body.nova-gallery-route #body-wrap {
   background:
     radial-gradient(circle at 4% 42%, rgba(111, 38, 56, .055), transparent 25%),
-    radial-gradient(circle at 94% 68%, rgba(93, 78, 119, .045), transparent 28%),
+    radial-gradient(circle at 94% 68%, rgba(91, 108, 123, .04), transparent 28%),
     var(--nova-gallery-bg);
 }
 
@@ -53,21 +46,6 @@ body.nova-gallery-route #page-header.nova-gallery-nav-header::before {
 body.nova-gallery-route #page-header.nova-gallery-nav-header #nav {
   height: 60px;
   background: transparent;
-}
-
-body.nova-gallery-route #page-header .nova-gallery-nav-current {
-  position: relative;
-  color: var(--nova-gallery-rose) !important;
-}
-
-body.nova-gallery-route #page-header .nova-gallery-nav-current::after {
-  position: absolute;
-  right: 12px;
-  bottom: -18px;
-  left: 12px;
-  height: 1px;
-  content: "";
-  background: var(--nova-gallery-rose);
 }
 
 body.nova-gallery-route main#content-inner {
@@ -536,20 +514,10 @@ body.nova-gallery-route footer#footer {
   background: var(--nova-gallery-bg-deep) !important;
 }
 
-html[data-theme="light"] body.nova-gallery-route {
-  --nova-gallery-bg: #e7e4e3;
-  --nova-gallery-bg-deep: #d9d5d5;
-  --nova-gallery-text: #3d3739;
-  --nova-gallery-muted: rgba(67, 58, 61, .64);
-  --nova-gallery-faint: rgba(79, 68, 72, .45);
-  --nova-gallery-rose: #a65f76;
-  --nova-gallery-line: rgba(95, 77, 82, .13);
-}
-
 html[data-theme="light"] body.nova-gallery-route #body-wrap {
   background:
     radial-gradient(circle at 4% 42%, rgba(139, 79, 91, .055), transparent 25%),
-    radial-gradient(circle at 94% 68%, rgba(105, 91, 125, .055), transparent 28%),
+    radial-gradient(circle at 94% 68%, rgba(104, 116, 126, .05), transparent 28%),
     var(--nova-gallery-bg);
 }
 
@@ -602,10 +570,6 @@ html[data-theme="light"] body.nova-gallery-route .nova-gallery-comments #waline-
   body.nova-gallery-route #page-header.nova-gallery-nav-header,
   body.nova-gallery-route #page-header.nova-gallery-nav-header #nav {
     height: 56px;
-  }
-
-  body.nova-gallery-route #page-header .nova-gallery-nav-current::after {
-    display: none;
   }
 
   .nova-gallery-hero {

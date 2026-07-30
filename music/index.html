@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>夜里的旋律 | Fliex</title><meta name="author" content="Fliex"><meta name="copyright" content="Fliex"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta property="og:type" content="website">
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>夜里的旋律 | Fliex</title><meta name="author" content="Fliex"><meta name="copyright" content="Fliex"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#080B14"><meta property="og:type" content="website">
 <meta property="og:title" content="夜里的旋律">
 <meta property="og:url" content="https://mikejosion.github.io/music/index.html">
 <meta property="og:site_name" content="Fliex">
@@ -54,7 +54,7 @@
         document.head.appendChild(link)
       }),
       addGlobalFn: (key, fn, name = false, parent = window) => {
-        if (!false && key.startsWith('pjax')) return
+        if (!true && key.startsWith('pjax')) return
         const globalFn = parent.globalFn || {}
         globalFn[key] = globalFn[key] || {}
         globalFn[key][name || Object.keys(globalFn[key]).length] = fn
@@ -66,13 +66,13 @@
       const activateDarkMode = () => {
         document.documentElement.setAttribute('data-theme', 'dark')
         if (document.querySelector('meta[name="theme-color"]') !== null) {
-          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#080B14')
         }
       }
       const activateLightMode = () => {
         document.documentElement.setAttribute('data-theme', 'light')
         if (document.querySelector('meta[name="theme-color"]') !== null) {
-          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000000')
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#F7F4F1')
         }
       }
 
@@ -141,7 +141,25 @@
   isHighlightShrink: false,
   isToc: false,
   pageType: 'page'
-}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><link rel="stylesheet" href="/css/custom.css?v=20260730-article-detail"><link rel="stylesheet" href="/rose-galaxy/css/night-visitor.css?v=20260730-17"><meta name="generator" content="Hexo 8.1.1"><link rel="stylesheet" href="/rose-galaxy/css/music-page.css"></head><body class="nova-music-route"><div class="bg-animation" id="web_bg" style="background-image: url(/img/leetzong.png);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/logo1.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">20</div></a><a href="/categories/#nova-category-tags"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/#nova-notes"><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><span> 音乐</span></a></div><div class="menus_item"><span class="site-page group"><span> 更多</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/shuoshuo/"><span> 说说</span></a></li><li><a class="site-page child" href="/templates/"><span> 模板</span></a></li><li><a class="site-page child" href="/Gallery/"><span> 照片</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><span> 关于</span></a></div></div></div></div><div class="page type-music" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/brand/nova-rose-line.png" alt="Logo"><span class="site-name">Fliex</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search search-nav-link"><svg class="search-nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/#nova-notes"><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><span> 音乐</span></a></div><div class="menus_item"><span class="site-page group"><span> 更多</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/shuoshuo/"><span> 说说</span></a></li><li><a class="site-page child" href="/templates/"><span> 模板</span></a></li><li><a class="site-page child" href="/Gallery/"><span> 照片</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><h1 class="title-seo">夜里的旋律</h1></header><main class="layout hide-aside" id="content-inner"><main class="nova-music-page">
+}</script><link rel="stylesheet" href="/css/custom.css?v=20260730-loader-v2"><link rel="stylesheet" href="/rose-galaxy/css/night-visitor.css?v=20260730-stability"><meta name="generator" content="Hexo 8.1.1"></head><body class="nova-music-route"><!-- hexo injector body_begin start -->
+<div class="nova-page-loading" data-nova-loading="" aria-hidden="true" aria-live="polite">
+  <div class="nova-page-loading__inner">
+    <span class="nova-page-loading__mark" aria-hidden="true"></span>
+    <strong>FLIEX</strong>
+    <small>LOADING THE NIGHT...</small>
+  </div>
+</div>
+<script>
+  window.__novaLoaderDelayTimer = window.setTimeout(function () {
+    const loader = document.querySelector('[data-nova-loading]')
+    if (!loader || loader.dataset.novaLoadingState === 'leaving') return
+    window.__novaLoaderVisibleAt = Date.now()
+    loader.dataset.novaLoadingState = 'visible'
+    loader.setAttribute('aria-hidden', 'false')
+    loader.classList.add('is-visible')
+    document.body.classList.add('nova-loading-active')
+  }, 500)
+</script><!-- hexo injector body_begin end --><div class="bg-animation" id="web_bg" style="background-image: url(/img/leetzong.png);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/logo1.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">20</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">主分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/#nova-notes"><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><span> 音乐</span></a></div><div class="menus_item"><span class="site-page group"><span> 更多</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/templates/"><i class="fa-fw fas fa-code"></i><span> 模板</span></a></li><li><a class="site-page child" href="/shuoshuo/"><i class="fa-fw fas fa-comment-dots"></i><span> 说说</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><span> 关于</span></a></div></div></div></div><div class="page type-music" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/brand/nova-rose-line.png" alt="Logo"><span class="site-name">Fliex</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search search-nav-link"><svg class="search-nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/#nova-notes"><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><span> 音乐</span></a></div><div class="menus_item"><span class="site-page group"><span> 更多</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/templates/"><i class="fa-fw fas fa-code"></i><span> 模板</span></a></li><li><a class="site-page child" href="/shuoshuo/"><i class="fa-fw fas fa-comment-dots"></i><span> 说说</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav></header><main class="layout hide-aside" id="content-inner"><main class="nova-music-page">
   <section class="nova-music-hero" aria-labelledby="nova-music-title">
     <div class="nova-music-background" aria-hidden="true"></div>
     <div class="nova-music-overlay" aria-hidden="true"></div>
@@ -152,14 +170,14 @@
           <p class="nova-music-eyebrow">NOVA · MIDNIGHT PLAYLIST</p>
           <h1 id="nova-music-title">夜里的旋律</h1>
           <div class="nova-music-heading-rule" aria-hidden="true">
-            <span></span><img src="/img/brand/nova-rose-line.png" alt=""><span></span>
+            <span></span><img src="/img/brand/nova-rose-line.png" alt="" aria-hidden="true"><span></span>
           </div>
           <p>有些歌不是用来播放的，<br>是用来陪着深夜慢慢流动的。</p>
         </header>
 
         <div class="nova-music-player">
           <div class="nova-music-current">
-            <img class="nova-music-current-cover" src="/img/music1.png" alt="">
+            <img class="nova-music-current-cover" src="/img/music1.png" alt="夜色玫瑰歌单封面">
             <div>
               <h2 class="nova-music-current-title">歌单载入中</h2>
               <p class="nova-music-current-artist">网易云音乐</p>
@@ -184,15 +202,16 @@
             <span>☁ 歌曲来源 · 网易云歌单</span>
             <span class="nova-music-count">完整歌单载入中</span>
           </div>
+          <button class="nova-music-retry" type="button" hidden="">重新载入歌单</button>
         </div>
       </section>
 
       <section class="nova-music-card-stage" aria-label="当前歌曲窗口">
-        <button class="nova-music-card" type="button" data-slot="0"><img src="/img/music1.png" alt=""><span class="nova-music-card-shade"></span><span class="nova-music-card-content"><strong></strong><small></small></span></button>
-        <button class="nova-music-card" type="button" data-slot="1"><img src="/img/music2.png" alt=""><span class="nova-music-card-shade"></span><span class="nova-music-card-content"><strong></strong><small></small></span></button>
-        <button class="nova-music-card" type="button" data-slot="2"><img src="/img/music3.png" alt=""><span class="nova-music-card-shade"></span><span class="nova-music-card-content"><strong></strong><small></small><i aria-hidden="true"><b></b><b></b><b></b></i></span></button>
-        <button class="nova-music-card" type="button" data-slot="3"><img src="/img/music4.png" alt=""><span class="nova-music-card-shade"></span><span class="nova-music-card-content"><strong></strong><small></small></span></button>
-        <button class="nova-music-card" type="button" data-slot="4"><img src="/img/music5.png" alt=""><span class="nova-music-card-shade"></span><span class="nova-music-card-content"><strong></strong><small></small></span></button>
+        <button class="nova-music-card" type="button" data-slot="0"><img src="/img/music1.png" alt="夜色歌单卡片 1"><span class="nova-music-card-shade"></span><span class="nova-music-card-content"><strong></strong><small></small></span></button>
+        <button class="nova-music-card" type="button" data-slot="1"><img src="/img/music2.png" alt="夜色歌单卡片 2"><span class="nova-music-card-shade"></span><span class="nova-music-card-content"><strong></strong><small></small></span></button>
+        <button class="nova-music-card" type="button" data-slot="2"><img src="/img/music3.png" alt="夜色歌单卡片 3"><span class="nova-music-card-shade"></span><span class="nova-music-card-content"><strong></strong><small></small><i aria-hidden="true"><b></b><b></b><b></b></i></span></button>
+        <button class="nova-music-card" type="button" data-slot="3"><img src="/img/music4.png" alt="夜色歌单卡片 4"><span class="nova-music-card-shade"></span><span class="nova-music-card-content"><strong></strong><small></small></span></button>
+        <button class="nova-music-card" type="button" data-slot="4"><img src="/img/music5.png" alt="夜色歌单卡片 5"><span class="nova-music-card-shade"></span><span class="nova-music-card-content"><strong></strong><small></small></span></button>
       </section>
     </div>
 
@@ -203,7 +222,7 @@
   <section class="nova-music-notes" id="nova-music-notes">
     <div class="nova-music-notes-copy">
       <p>PLAYLIST NOTES</p>
-      <h2><img src="/img/brand/nova-rose-line.png" alt="">歌单札记</h2>
+      <h2><img src="/img/brand/nova-rose-line.png" alt="" aria-hidden="true">歌单札记</h2>
       <p>这是一份在无数个深夜里慢慢收集的歌单。<br>它们陪我走过情绪的低谷，也照亮过一些温柔的瞬间。</p>
       <p class="nova-music-notes-meta"><span class="nova-music-notes-count">完整歌单</span> · NETEASE PLAYLIST · UPDATED 2026</p>
     </div>
@@ -273,8 +292,66 @@
   } else {
     window.loadOtherComment = loadWaline
   }
-})()</script></div><script src="/rose-galaxy/js/nova-ux.js"></script><script src="/rose-galaxy/js/night-visitor.js?v=20260730-17"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+})()</script><link rel="stylesheet" href="/rose-galaxy/css/music-page.css?v=20260730-slow">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
+<script data-pjax="" src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+<script data-pjax="" src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+<script data-pjax="" src="/rose-galaxy/js/music-page.js?v=20260730-slow"></script></div><script src="/rose-galaxy/js/nova-ux.js?v=20260730-slow"></script><script src="/rose-galaxy/js/night-visitor.js?v=20260730-stability"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
 POWERMODE.shake = false;
 POWERMODE.mobile = false;
 document.body.addEventListener('input', POWERMODE);
-</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-show-text.min.js" data-mobile="false" data-text="I,MISS,LOVE,YOU" data-fontsize="15px" data-random="true" async="async"></script><script async="" data-pjax="" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="Search..." type="text"></div><hr><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div><script src="/rose-galaxy/js/music-page.js"></script></body></html>
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-show-text.min.js" data-mobile="false" data-text="I,MISS,LOVE,YOU" data-fontsize="15px" data-random="true" async="async"></script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"]):not([href="/"]):not([href="/archives/"]):not([href="/categories/"]):not([href="/tags/"]):not([href="/templates/"]):not([href="/shuoshuo/"]):not([href="/Gallery/"]):not([href="/music/"]):not([href="/about/"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      false
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async="" data-pjax="" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="Search..." type="text"></div><hr><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div></body></html>
