@@ -15,9 +15,9 @@
     <author>
       <name>Fliex</name>
     </author>
-    <category term="MySQL" scheme="https://mikejosion.github.io/tags/MySQL/index.html"/>
-    <id>https://mikejosion.github.io/2026/07/19/Go%20Mysql%20%E6%95%B0%E6%8D%AE%E5%BA%93%E9%93%BE%E6%8E%A5%E6%A8%A1%E6%9D%BF/index.html</id>
-    <link href="https://mikejosion.github.io/2026/07/19/Go%20Mysql%20%E6%95%B0%E6%8D%AE%E5%BA%93%E9%93%BE%E6%8E%A5%E6%A8%A1%E6%9D%BF/index.html"/>
+    <category term="MySQL" scheme="https://mikejosion.github.io/tags/MySQL/"/>
+    <id>https://mikejosion.github.io/2026/07/19/Go%20Mysql%20%E6%95%B0%E6%8D%AE%E5%BA%93%E9%93%BE%E6%8E%A5%E6%A8%A1%E6%9D%BF/</id>
+    <link href="https://mikejosion.github.io/2026/07/19/Go%20Mysql%20%E6%95%B0%E6%8D%AE%E5%BA%93%E9%93%BE%E6%8E%A5%E6%A8%A1%E6%9D%BF/"/>
     <published>2026-07-19T02:14:11.000Z</published>
     <summary>在 Go 项目中使用 database/sql 配合 MySQL 驱动创建数据库连接池，并整理数据库启动流程、常用操作和项目结构。</summary>
     <title>Go MySQL 数据库连接模板</title>
@@ -27,9 +27,9 @@
     <author>
       <name>Fliex</name>
     </author>
-    <category term="CRUD" scheme="https://mikejosion.github.io/tags/CRUD/index.html"/>
-    <id>https://mikejosion.github.io/2026/07/15/Go%20Gin%20MySQL%20CRUD%20%E5%BC%80%E5%8F%91%E7%AC%94%E8%AE%B0/index.html</id>
-    <link href="https://mikejosion.github.io/2026/07/15/Go%20Gin%20MySQL%20CRUD%20%E5%BC%80%E5%8F%91%E7%AC%94%E8%AE%B0/index.html"/>
+    <category term="CRUD" scheme="https://mikejosion.github.io/tags/CRUD/"/>
+    <id>https://mikejosion.github.io/2026/07/15/Go%20Gin%20MySQL%20CRUD%20%E5%BC%80%E5%8F%91%E7%AC%94%E8%AE%B0/</id>
+    <link href="https://mikejosion.github.io/2026/07/15/Go%20Gin%20MySQL%20CRUD%20%E5%BC%80%E5%8F%91%E7%AC%94%E8%AE%B0/"/>
     <published>2026-07-15T06:04:00.000Z</published>
     <summary>系统整理 Go Gin 与 MySQL 中增删改查的路由、SQL、错误处理、参数校验和通用接口写法。</summary>
     <title>Go Gin MySQL CRUD 详细笔记</title>
@@ -39,10 +39,10 @@
     <author>
       <name>Fliex</name>
     </author>
-    <category term="模板" scheme="https://mikejosion.github.io/categories/%E6%A8%A1%E6%9D%BF/index.html"/>
-    <category term="链表" scheme="https://mikejosion.github.io/tags/%E9%93%BE%E8%A1%A8/index.html"/>
-    <id>https://mikejosion.github.io/2026/03/28/%E9%93%BE%E8%A1%A8%E6%A8%A1%E6%9D%BF%E9%80%9F%E8%A7%88/index.html</id>
-    <link href="https://mikejosion.github.io/2026/03/28/%E9%93%BE%E8%A1%A8%E6%A8%A1%E6%9D%BF%E9%80%9F%E8%A7%88/index.html"/>
+    <category term="模板" scheme="https://mikejosion.github.io/categories/%E6%A8%A1%E6%9D%BF/"/>
+    <category term="链表" scheme="https://mikejosion.github.io/tags/%E9%93%BE%E8%A1%A8/"/>
+    <id>https://mikejosion.github.io/2026/03/28/%E9%93%BE%E8%A1%A8%E6%A8%A1%E6%9D%BF%E9%80%9F%E8%A7%88/</id>
+    <link href="https://mikejosion.github.io/2026/03/28/%E9%93%BE%E8%A1%A8%E6%A8%A1%E6%9D%BF%E9%80%9F%E8%A7%88/"/>
     <published>2026-03-28T09:00:00.000Z</published>
     <summary>汇总链表基础结构、反转、合并、判环、删除和双指针等常用模板。</summary>
     <title>链表模板速览</title>
@@ -52,10 +52,10 @@
     <author>
       <name>Fliex</name>
     </author>
-    <category term="模板" scheme="https://mikejosion.github.io/categories/%E6%A8%A1%E6%9D%BF/index.html"/>
-    <category term="字符串" scheme="https://mikejosion.github.io/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/index.html"/>
-    <id>https://mikejosion.github.io/2026/03/25/KMP%E7%AE%97%E6%B3%95/index.html</id>
-    <link href="https://mikejosion.github.io/2026/03/25/KMP%E7%AE%97%E6%B3%95/index.html"/>
+    <category term="模板" scheme="https://mikejosion.github.io/categories/%E6%A8%A1%E6%9D%BF/"/>
+    <category term="字符串" scheme="https://mikejosion.github.io/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/"/>
+    <id>https://mikejosion.github.io/2026/03/25/KMP%E7%AE%97%E6%B3%95/</id>
+    <link href="https://mikejosion.github.io/2026/03/25/KMP%E7%AE%97%E6%B3%95/"/>
     <published>2026-03-25T06:04:00.000Z</published>
     <summary>梳理 KMP 字符串匹配中 next 数组的含义、下标规则和构造思路。</summary>
     <title>KMP算法</title>
@@ -65,8 +65,8 @@
     <author>
       <name>Fliex</name>
     </author>
-    <id>https://mikejosion.github.io/2026/03/09/go%E8%AF%AD%E6%B3%95-%E7%AE%80%E6%B4%81/index.html</id>
-    <link href="https://mikejosion.github.io/2026/03/09/go%E8%AF%AD%E6%B3%95-%E7%AE%80%E6%B4%81/index.html"/>
+    <id>https://mikejosion.github.io/2026/03/09/go%E8%AF%AD%E6%B3%95-%E7%AE%80%E6%B4%81/</id>
+    <link href="https://mikejosion.github.io/2026/03/09/go%E8%AF%AD%E6%B3%95-%E7%AE%80%E6%B4%81/"/>
     <published>2026-03-09T13:55:11.000Z</published>
     <summary>精简整理 Go 变量、流程控制、函数、并发与 WaitGroup 等核心语法和常用模板。</summary>
     <title>go语法(简洁)</title>
@@ -76,8 +76,8 @@
     <author>
       <name>Fliex</name>
     </author>
-    <id>https://mikejosion.github.io/2026/03/08/go%E8%AF%AD%E6%B3%95%E6%80%BB%E7%BB%93/index.html</id>
-    <link href="https://mikejosion.github.io/2026/03/08/go%E8%AF%AD%E6%B3%95%E6%80%BB%E7%BB%93/index.html"/>
+    <id>https://mikejosion.github.io/2026/03/08/go%E8%AF%AD%E6%B3%95%E6%80%BB%E7%BB%93/</id>
+    <link href="https://mikejosion.github.io/2026/03/08/go%E8%AF%AD%E6%B3%95%E6%80%BB%E7%BB%93/"/>
     <published>2026-03-08T10:43:32.000Z</published>
     <summary>系统梳理 Go 的变量、常量、数据类型、结构体、切片、映射、函数、接口与类型断言。</summary>
     <title>go语法总结</title>
@@ -87,11 +87,11 @@
     <author>
       <name>Fliex</name>
     </author>
-    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/index.html"/>
-    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/index.html"/>
-    <category term="栈" scheme="https://mikejosion.github.io/tags/%E6%A0%88/index.html"/>
-    <id>https://mikejosion.github.io/2026/02/01/LeetCode-%E6%8B%AC%E5%8F%B7%E6%A0%88/index.html</id>
-    <link href="https://mikejosion.github.io/2026/02/01/LeetCode-%E6%8B%AC%E5%8F%B7%E6%A0%88/index.html"/>
+    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/"/>
+    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/"/>
+    <category term="栈" scheme="https://mikejosion.github.io/tags/%E6%A0%88/"/>
+    <id>https://mikejosion.github.io/2026/02/01/LeetCode-%E6%8B%AC%E5%8F%B7%E6%A0%88/</id>
+    <link href="https://mikejosion.github.io/2026/02/01/LeetCode-%E6%8B%AC%E5%8F%B7%E6%A0%88/"/>
     <published>2026-02-01T05:32:42.000Z</published>
     <summary>使用栈匹配左右括号，整理合法性判断、出栈条件和空栈边界。</summary>
     <title>LeetCode-括号栈</title>
@@ -101,11 +101,11 @@
     <author>
       <name>Fliex</name>
     </author>
-    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/index.html"/>
-    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/index.html"/>
-    <category term="栈&amp;队列" scheme="https://mikejosion.github.io/tags/%E6%A0%88-%E9%98%9F%E5%88%97/index.html"/>
-    <id>https://mikejosion.github.io/2026/01/16/LeetCode-BFS/index.html</id>
-    <link href="https://mikejosion.github.io/2026/01/16/LeetCode-BFS/index.html"/>
+    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/"/>
+    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/"/>
+    <category term="栈&amp;队列" scheme="https://mikejosion.github.io/tags/%E6%A0%88-%E9%98%9F%E5%88%97/"/>
+    <id>https://mikejosion.github.io/2026/01/16/LeetCode-BFS/</id>
+    <link href="https://mikejosion.github.io/2026/01/16/LeetCode-BFS/"/>
     <published>2026-01-16T05:49:48.000Z</published>
     <summary>说明 BFS 如何借助队列按层遍历，并整理层序搜索的通用初始化和处理模板。</summary>
     <title>LeetCode-BFS</title>
@@ -115,11 +115,11 @@
     <author>
       <name>Fliex</name>
     </author>
-    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/index.html"/>
-    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/index.html"/>
-    <category term="数组" scheme="https://mikejosion.github.io/tags/%E6%95%B0%E7%BB%84/index.html"/>
-    <id>https://mikejosion.github.io/2026/01/15/LeetCode-%E4%B8%AD%E5%BF%83%E6%89%A9%E6%95%A3/index.html</id>
-    <link href="https://mikejosion.github.io/2026/01/15/LeetCode-%E4%B8%AD%E5%BF%83%E6%89%A9%E6%95%A3/index.html"/>
+    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/"/>
+    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/"/>
+    <category term="数组" scheme="https://mikejosion.github.io/tags/%E6%95%B0%E7%BB%84/"/>
+    <id>https://mikejosion.github.io/2026/01/15/LeetCode-%E4%B8%AD%E5%BF%83%E6%89%A9%E6%95%A3/</id>
+    <link href="https://mikejosion.github.io/2026/01/15/LeetCode-%E4%B8%AD%E5%BF%83%E6%89%A9%E6%95%A3/"/>
     <published>2026-01-15T00:38:01.000Z</published>
     <summary>使用奇偶两类中心向两侧扩展，整理回文子串问题的中心扩散通用模板。</summary>
     <title>LeetCode-中心扩散</title>
@@ -129,11 +129,11 @@
     <author>
       <name>Fliex</name>
     </author>
-    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/index.html"/>
-    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/index.html"/>
-    <category term="链表" scheme="https://mikejosion.github.io/tags/%E9%93%BE%E8%A1%A8/index.html"/>
-    <id>https://mikejosion.github.io/2026/01/12/LeetCode-%E5%8F%8C%E6%8C%87%E9%92%88%E5%90%88%E5%B9%B6-%E5%BD%92%E5%B9%B6%E6%B3%95/index.html</id>
-    <link href="https://mikejosion.github.io/2026/01/12/LeetCode-%E5%8F%8C%E6%8C%87%E9%92%88%E5%90%88%E5%B9%B6-%E5%BD%92%E5%B9%B6%E6%B3%95/index.html"/>
+    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/"/>
+    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/"/>
+    <category term="链表" scheme="https://mikejosion.github.io/tags/%E9%93%BE%E8%A1%A8/"/>
+    <id>https://mikejosion.github.io/2026/01/12/LeetCode-%E5%8F%8C%E6%8C%87%E9%92%88%E5%90%88%E5%B9%B6-%E5%BD%92%E5%B9%B6%E6%B3%95/</id>
+    <link href="https://mikejosion.github.io/2026/01/12/LeetCode-%E5%8F%8C%E6%8C%87%E9%92%88%E5%90%88%E5%B9%B6-%E5%BD%92%E5%B9%B6%E6%B3%95/"/>
     <published>2026-01-11T16:45:53.000Z</published>
     <summary>使用哨兵节点和双指针按顺序合并两个有序链表，并说明剩余节点的处理。</summary>
     <title>LeetCode-双指针合并 (归并法)</title>
@@ -143,11 +143,11 @@
     <author>
       <name>Fliex</name>
     </author>
-    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/index.html"/>
-    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/index.html"/>
-    <category term="链表" scheme="https://mikejosion.github.io/tags/%E9%93%BE%E8%A1%A8/index.html"/>
-    <id>https://mikejosion.github.io/2026/01/11/LeetCode-%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8/index.html</id>
-    <link href="https://mikejosion.github.io/2026/01/11/LeetCode-%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8/index.html"/>
+    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/"/>
+    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/"/>
+    <category term="链表" scheme="https://mikejosion.github.io/tags/%E9%93%BE%E8%A1%A8/"/>
+    <id>https://mikejosion.github.io/2026/01/11/LeetCode-%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8/</id>
+    <link href="https://mikejosion.github.io/2026/01/11/LeetCode-%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8/"/>
     <published>2026-01-11T08:16:38.000Z</published>
     <summary>使用 prev、curr 和 next 三个指针安全改变链表指向，完成整链反转。</summary>
     <title>LeetCode-反转链表</title>
@@ -157,11 +157,11 @@
     <author>
       <name>Fliex</name>
     </author>
-    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/index.html"/>
-    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/index.html"/>
-    <category term="链表" scheme="https://mikejosion.github.io/tags/%E9%93%BE%E8%A1%A8/index.html"/>
-    <id>https://mikejosion.github.io/2026/01/10/LeetCode-%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88(%E9%93%BE%E8%A1%A8)/index.html</id>
-    <link href="https://mikejosion.github.io/2026/01/10/LeetCode-%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88(%E9%93%BE%E8%A1%A8)/index.html"/>
+    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/"/>
+    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/"/>
+    <category term="链表" scheme="https://mikejosion.github.io/tags/%E9%93%BE%E8%A1%A8/"/>
+    <id>https://mikejosion.github.io/2026/01/10/LeetCode-%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88(%E9%93%BE%E8%A1%A8)/</id>
+    <link href="https://mikejosion.github.io/2026/01/10/LeetCode-%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88(%E9%93%BE%E8%A1%A8)/"/>
     <published>2026-01-10T11:42:22.000Z</published>
     <summary>整理链表判环、寻找中点和倒数节点时的倍速与定距双指针模板。</summary>
     <title>LeetCode-快慢指针(链表)</title>
@@ -171,11 +171,11 @@
     <author>
       <name>Fliex</name>
     </author>
-    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/index.html"/>
-    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/index.html"/>
-    <category term="数组" scheme="https://mikejosion.github.io/tags/%E6%95%B0%E7%BB%84/index.html"/>
-    <id>https://mikejosion.github.io/2026/01/07/LeetCode-%E5%8D%95%E8%B0%83%E6%A0%88/index.html</id>
-    <link href="https://mikejosion.github.io/2026/01/07/LeetCode-%E5%8D%95%E8%B0%83%E6%A0%88/index.html"/>
+    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/"/>
+    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/"/>
+    <category term="数组" scheme="https://mikejosion.github.io/tags/%E6%95%B0%E7%BB%84/"/>
+    <id>https://mikejosion.github.io/2026/01/07/LeetCode-%E5%8D%95%E8%B0%83%E6%A0%88/</id>
+    <link href="https://mikejosion.github.io/2026/01/07/LeetCode-%E5%8D%95%E8%B0%83%E6%A0%88/"/>
     <published>2026-01-07T12:18:16.000Z</published>
     <summary>整理寻找左右第一个更大或更小元素时的单调栈判断与结算模板。</summary>
     <title>LeetCode-单调栈</title>
@@ -185,11 +185,11 @@
     <author>
       <name>Fliex</name>
     </author>
-    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/index.html"/>
-    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/index.html"/>
-    <category term="数组" scheme="https://mikejosion.github.io/tags/%E6%95%B0%E7%BB%84/index.html"/>
-    <id>https://mikejosion.github.io/2026/01/06/LeetCode-%E5%89%8D%E7%BC%80%E5%92%8C/index.html</id>
-    <link href="https://mikejosion.github.io/2026/01/06/LeetCode-%E5%89%8D%E7%BC%80%E5%92%8C/index.html"/>
+    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/"/>
+    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/"/>
+    <category term="数组" scheme="https://mikejosion.github.io/tags/%E6%95%B0%E7%BB%84/"/>
+    <id>https://mikejosion.github.io/2026/01/06/LeetCode-%E5%89%8D%E7%BC%80%E5%92%8C/</id>
+    <link href="https://mikejosion.github.io/2026/01/06/LeetCode-%E5%89%8D%E7%BC%80%E5%92%8C/"/>
     <published>2026-01-06T08:24:33.000Z</published>
     <summary>通过预处理前缀累计值，把连续区间求和转化为两次前缀值相减。</summary>
     <title>LeetCode-前缀和</title>
@@ -199,11 +199,11 @@
     <author>
       <name>Fliex</name>
     </author>
-    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/index.html"/>
-    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/index.html"/>
-    <category term="数组" scheme="https://mikejosion.github.io/tags/%E6%95%B0%E7%BB%84/index.html"/>
-    <id>https://mikejosion.github.io/2026/01/04/LeetCode-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/index.html</id>
-    <link href="https://mikejosion.github.io/2026/01/04/LeetCode-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/index.html"/>
+    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/"/>
+    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/"/>
+    <category term="数组" scheme="https://mikejosion.github.io/tags/%E6%95%B0%E7%BB%84/"/>
+    <id>https://mikejosion.github.io/2026/01/04/LeetCode-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/</id>
+    <link href="https://mikejosion.github.io/2026/01/04/LeetCode-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/"/>
     <published>2026-01-04T13:35:54.000Z</published>
     <summary>使用左右边界维护连续区间，整理定长与变长滑动窗口的通用写法。</summary>
     <title>LeetCode-滑动窗口</title>
@@ -213,11 +213,11 @@
     <author>
       <name>Fliex</name>
     </author>
-    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/index.html"/>
-    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/index.html"/>
-    <category term="数组" scheme="https://mikejosion.github.io/tags/%E6%95%B0%E7%BB%84/index.html"/>
-    <id>https://mikejosion.github.io/2026/01/02/LeetCode-%E5%B7%A6%E5%8F%B3%E5%8F%8C%E6%8C%87%E9%92%88/index.html</id>
-    <link href="https://mikejosion.github.io/2026/01/02/LeetCode-%E5%B7%A6%E5%8F%B3%E5%8F%8C%E6%8C%87%E9%92%88/index.html"/>
+    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/"/>
+    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/"/>
+    <category term="数组" scheme="https://mikejosion.github.io/tags/%E6%95%B0%E7%BB%84/"/>
+    <id>https://mikejosion.github.io/2026/01/02/LeetCode-%E5%B7%A6%E5%8F%B3%E5%8F%8C%E6%8C%87%E9%92%88/</id>
+    <link href="https://mikejosion.github.io/2026/01/02/LeetCode-%E5%B7%A6%E5%8F%B3%E5%8F%8C%E6%8C%87%E9%92%88/"/>
     <published>2026-01-02T12:03:04.000Z</published>
     <summary>针对有序数组和两端收缩问题，整理左右指针的移动条件与边界判断。</summary>
     <title>LeetCode-左右双指针</title>
@@ -227,11 +227,11 @@
     <author>
       <name>Fliex</name>
     </author>
-    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/index.html"/>
-    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/index.html"/>
-    <category term="数组" scheme="https://mikejosion.github.io/tags/%E6%95%B0%E7%BB%84/index.html"/>
-    <id>https://mikejosion.github.io/2026/01/01/LeetCode-%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88(%E6%95%B0%E7%BB%84)/index.html</id>
-    <link href="https://mikejosion.github.io/2026/01/01/LeetCode-%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88(%E6%95%B0%E7%BB%84)/index.html"/>
+    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/"/>
+    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/"/>
+    <category term="数组" scheme="https://mikejosion.github.io/tags/%E6%95%B0%E7%BB%84/"/>
+    <id>https://mikejosion.github.io/2026/01/01/LeetCode-%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88(%E6%95%B0%E7%BB%84)/</id>
+    <link href="https://mikejosion.github.io/2026/01/01/LeetCode-%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88(%E6%95%B0%E7%BB%84)/"/>
     <published>2026-01-01T08:05:58.000Z</published>
     <summary>使用快指针扫描、慢指针维护保留区间，原地完成数组筛选与去重。</summary>
     <title>LeetCode-快慢指针(数组)</title>
@@ -241,11 +241,11 @@
     <author>
       <name>Fliex</name>
     </author>
-    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/index.html"/>
-    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/index.html"/>
-    <category term="链表" scheme="https://mikejosion.github.io/tags/%E9%93%BE%E8%A1%A8/index.html"/>
-    <id>https://mikejosion.github.io/2025/12/25/LeetCode-%E5%8F%8C%E9%93%BE%E8%A1%A8%E6%B3%95/index.html</id>
-    <link href="https://mikejosion.github.io/2025/12/25/LeetCode-%E5%8F%8C%E9%93%BE%E8%A1%A8%E6%B3%95/index.html"/>
+    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/"/>
+    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/"/>
+    <category term="链表" scheme="https://mikejosion.github.io/tags/%E9%93%BE%E8%A1%A8/"/>
+    <id>https://mikejosion.github.io/2025/12/25/LeetCode-%E5%8F%8C%E9%93%BE%E8%A1%A8%E6%B3%95/</id>
+    <link href="https://mikejosion.github.io/2025/12/25/LeetCode-%E5%8F%8C%E9%93%BE%E8%A1%A8%E6%B3%95/"/>
     <published>2025-12-25T12:04:20.000Z</published>
     <summary>使用多条逻辑链表对节点分类、保持相对顺序并最终重新拼接。</summary>
     <title>LeetCode-双链表法</title>
@@ -255,11 +255,11 @@
     <author>
       <name>Fliex</name>
     </author>
-    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/index.html"/>
-    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/index.html"/>
-    <category term="链表" scheme="https://mikejosion.github.io/tags/%E9%93%BE%E8%A1%A8/index.html"/>
-    <id>https://mikejosion.github.io/2025/12/20/LeetCode-%E9%93%BE%E8%A1%A8%E8%BF%87%E6%BB%A4%EF%BC%88dummy-prev-curr%EF%BC%89/index.html</id>
-    <link href="https://mikejosion.github.io/2025/12/20/LeetCode-%E9%93%BE%E8%A1%A8%E8%BF%87%E6%BB%A4%EF%BC%88dummy-prev-curr%EF%BC%89/index.html"/>
+    <category term="LeetCode" scheme="https://mikejosion.github.io/categories/LeetCode/"/>
+    <category term="模板" scheme="https://mikejosion.github.io/categories/LeetCode/%E6%A8%A1%E6%9D%BF/"/>
+    <category term="链表" scheme="https://mikejosion.github.io/tags/%E9%93%BE%E8%A1%A8/"/>
+    <id>https://mikejosion.github.io/2025/12/20/LeetCode-%E9%93%BE%E8%A1%A8%E8%BF%87%E6%BB%A4%EF%BC%88dummy-prev-curr%EF%BC%89/</id>
+    <link href="https://mikejosion.github.io/2025/12/20/LeetCode-%E9%93%BE%E8%A1%A8%E8%BF%87%E6%BB%A4%EF%BC%88dummy-prev-curr%EF%BC%89/"/>
     <published>2025-12-20T01:22:26.000Z</published>
     <summary>借助 dummy、prev 和 curr 安全跳过目标节点，覆盖删除头节点等边界情况。</summary>
     <title>LeetCode-链表过滤（dummy + prev + curr）</title>
@@ -269,11 +269,11 @@
     <author>
       <name>Fliex</name>
     </author>
-    <category term="文学随笔" scheme="https://mikejosion.github.io/categories/%E6%96%87%E5%AD%A6%E9%9A%8F%E7%AC%94/index.html"/>
-    <category term="散文" scheme="https://mikejosion.github.io/tags/%E6%95%A3%E6%96%87/index.html"/>
-    <category term="郁达夫" scheme="https://mikejosion.github.io/tags/%E9%83%81%E8%BE%BE%E5%A4%AB/index.html"/>
-    <id>https://mikejosion.github.io/2025/10/18/%E6%95%85%E9%83%BD%E7%9A%84%E7%A7%8B/index.html</id>
-    <link href="https://mikejosion.github.io/2025/10/18/%E6%95%85%E9%83%BD%E7%9A%84%E7%A7%8B/index.html"/>
+    <category term="文学随笔" scheme="https://mikejosion.github.io/categories/%E6%96%87%E5%AD%A6%E9%9A%8F%E7%AC%94/"/>
+    <category term="散文" scheme="https://mikejosion.github.io/tags/%E6%95%A3%E6%96%87/"/>
+    <category term="郁达夫" scheme="https://mikejosion.github.io/tags/%E9%83%81%E8%BE%BE%E5%A4%AB/"/>
+    <id>https://mikejosion.github.io/2025/10/18/%E6%95%85%E9%83%BD%E7%9A%84%E7%A7%8B/</id>
+    <link href="https://mikejosion.github.io/2025/10/18/%E6%95%85%E9%83%BD%E7%9A%84%E7%A7%8B/"/>
     <published>2025-10-18T09:00:00.000Z</published>
     <summary>那年北国的秋天，风冷、叶黄、天高。郁达夫写下了故都的秋，也写下了一段关于孤独的诗意。</summary>
     <title>故都的秋</title>
