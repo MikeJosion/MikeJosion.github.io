@@ -1,6 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>KMP算法</title>
+    <url>/2026/03/25/KMP%E7%AE%97%E6%B3%95/</url>
+    <content><![CDATA[🧠 KMP 算法 —— next 数组求法⭐ 下标从 0 开始
+next[0] = -1
+当 i ≥ 1：设 k 为 T[0...i-1] 的最长相等前后缀长度
+k = 0 → next[i] = 0
+k &gt; 0 → next[i] = k
+
+
+
+
+
+
+⭐ 下标从 1 开始
+next[1] = 0
+当 i ≥ 2：设 k 为 T[1...i-1] 的最长相等前后缀长度
+k = 0 → next[i] = 1
+k &gt; 0 → next[i] = k + 1
+
+
+
+
+
+
+🔑 滑动距离模式串向右滑动 &#x3D; j - next[j]（或 j - nextval[j]）
+⚠️ 与下标从 0 还是从 1 开始无关
+
+
+
+💡 大白话版下标从 1 开始：
+next[1] = 0，next[2] = 1，直接背
+从第 3 个位置开始 → 看 T[1...i-1] 这段，从头数和从尾数，能对上的最长那段：
+
+对上了，长度 k → next[i] = k + 1
+对不上 → next[i] = 1
+
+下标从 0 开始：
+next[0] = -1，直接背
+从第 1 个位置开始 → 看 T[0...i-1]，一样找最长相等前后缀：
+
+找到了，长度 k → next[i] = k
+找不到 → next[i] = 0
+
+
+
+举个例子 🌰 模式串 &quot;ababaa&quot;
+
+
+
+i（从1开始）
+看 T[1…i-1]
+最长相等前后缀
+next[i]
+
+
+
+1
+—
+—
+0
+
+
+2
+&quot;a&quot;
+无
+1
+
+
+3
+&quot;ab&quot;
+无
+1
+
+
+4
+&quot;aba&quot;
+&quot;a&quot; (k&#x3D;1)
+2
+
+
+5
+&quot;abab&quot;
+&quot;ab&quot; (k&#x3D;2)
+3
+
+
+6
+&quot;ababa&quot;
+&quot;aba&quot; (k&#x3D;3)
+4
+
+
+
+🎬 视频讲解
+
+
+  
+
+
+]]></content>
+      <categories>
+        <category>模板</category>
+      </categories>
+      <tags>
+        <tag>字符串</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Go Gin MySQL CRUD 详细笔记</title>
     <url>/2026/07/15/Go%20Gin%20MySQL%20CRUD%20%E5%BC%80%E5%8F%91%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[Go Gin + MySQL CRUD 开发笔记CRUD 是后端开发中最基础、最常见的一组操作。
@@ -644,114 +752,6 @@ DELETE FROM users WHERE id = ?
 ]]></content>
       <tags>
         <tag>MySQL</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>KMP算法</title>
-    <url>/2026/03/25/KMP%E7%AE%97%E6%B3%95/</url>
-    <content><![CDATA[🧠 KMP 算法 —— next 数组求法⭐ 下标从 0 开始
-next[0] = -1
-当 i ≥ 1：设 k 为 T[0...i-1] 的最长相等前后缀长度
-k = 0 → next[i] = 0
-k &gt; 0 → next[i] = k
-
-
-
-
-
-
-⭐ 下标从 1 开始
-next[1] = 0
-当 i ≥ 2：设 k 为 T[1...i-1] 的最长相等前后缀长度
-k = 0 → next[i] = 1
-k &gt; 0 → next[i] = k + 1
-
-
-
-
-
-
-🔑 滑动距离模式串向右滑动 &#x3D; j - next[j]（或 j - nextval[j]）
-⚠️ 与下标从 0 还是从 1 开始无关
-
-
-
-💡 大白话版下标从 1 开始：
-next[1] = 0，next[2] = 1，直接背
-从第 3 个位置开始 → 看 T[1...i-1] 这段，从头数和从尾数，能对上的最长那段：
-
-对上了，长度 k → next[i] = k + 1
-对不上 → next[i] = 1
-
-下标从 0 开始：
-next[0] = -1，直接背
-从第 1 个位置开始 → 看 T[0...i-1]，一样找最长相等前后缀：
-
-找到了，长度 k → next[i] = k
-找不到 → next[i] = 0
-
-
-
-举个例子 🌰 模式串 &quot;ababaa&quot;
-
-
-
-i（从1开始）
-看 T[1…i-1]
-最长相等前后缀
-next[i]
-
-
-
-1
-—
-—
-0
-
-
-2
-&quot;a&quot;
-无
-1
-
-
-3
-&quot;ab&quot;
-无
-1
-
-
-4
-&quot;aba&quot;
-&quot;a&quot; (k&#x3D;1)
-2
-
-
-5
-&quot;abab&quot;
-&quot;ab&quot; (k&#x3D;2)
-3
-
-
-6
-&quot;ababa&quot;
-&quot;aba&quot; (k&#x3D;3)
-4
-
-
-
-🎬 视频讲解
-
-
-  
-
-
-]]></content>
-      <categories>
-        <category>模板</category>
-      </categories>
-      <tags>
-        <tag>字符串</tag>
       </tags>
   </entry>
   <entry>
