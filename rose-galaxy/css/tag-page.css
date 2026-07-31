@@ -12,7 +12,7 @@ body.nova-tag-route #page-header.nova-tag-hero #nav{z-index:4;background:transpa
 .nova-tag-scroll-hint::before,.nova-tag-scroll-hint::after{content:"";width:40px;height:1px;background:linear-gradient(90deg,transparent,rgba(220,124,155,.68))}
 .nova-tag-scroll-hint::after{transform:rotate(180deg)}
 body.nova-tag-route main.nova-tag-content{position:relative;z-index:3;display:block;width:100%;max-width:none;margin:0;padding:0 0 clamp(60px,7vw,90px)}
-body.nova-tag-route main.nova-tag-content::before{content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;background:url("/img/guidang.png") center top/cover no-repeat;opacity:.03;filter:blur(36px) saturate(.58);mask-image:linear-gradient(180deg,#000,transparent 43%);-webkit-mask-image:linear-gradient(180deg,#000,transparent 43%)}
+body.nova-tag-route main.nova-tag-content::before{content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;background:url("/img/guidang.webp") center top/cover no-repeat;opacity:.03;filter:blur(36px) saturate(.58);mask-image:linear-gradient(180deg,#000,transparent 43%);-webkit-mask-image:linear-gradient(180deg,#000,transparent 43%)}
 .nova-tag-summary{position:relative;z-index:5;display:grid;width:min(1280px,calc(100% - 64px));margin:-38px auto 0;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--nova-tag-line);border-radius:20px;background:linear-gradient(145deg,rgba(15,23,43,.9),rgba(9,16,31,.84));box-shadow:0 24px 65px rgba(0,0,0,.24);backdrop-filter:blur(20px)}
 .nova-tag-summary>div{position:relative;display:flex;min-height:88px;padding:18px 24px;justify-content:center;flex-direction:column;gap:3px}
 .nova-tag-summary>div+div::before{content:"";position:absolute;top:20px;bottom:20px;left:0;width:1px;background:var(--nova-tag-line)}

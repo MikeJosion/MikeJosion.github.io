@@ -64,7 +64,7 @@
     }, 180)
   }
 
-  searchInput.addEventListener('keydown', event => {
+  searchInput?.addEventListener('keydown', event => {
     if (event.key !== 'Enter') return
     const value = searchInput.value.trim()
     openSearch(value)
@@ -89,12 +89,12 @@
     message.classList.add('show')
     later(() => message.classList.remove('show'), 2200)
   }
-  root.querySelector('.nova-bloom-trigger').addEventListener('click', bloom)
-  root.querySelector('.nova-letter-o').addEventListener('click', bloom)
+  root.querySelector('.nova-bloom-trigger')?.addEventListener('click', bloom)
+  root.querySelector('.nova-letter-o')?.addEventListener('click', bloom)
 
   const subtitle = root.querySelector('.nova-cn-subtitle')
   const hour = new Date().getHours()
-  if (hour < 5) subtitle.textContent = '还没有睡的人，也许都在构建些什么。'
+  if (subtitle && hour < 5) subtitle.textContent = '还没有睡的人，也许都在构建些什么。'
   }
 
   window.__novaHomeBootstrap = { init, destroy }

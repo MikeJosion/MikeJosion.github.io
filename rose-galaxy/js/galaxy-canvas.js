@@ -48,8 +48,10 @@
   ];
 
   const scenes = [];
+  const FRAME_INTERVAL = 1000 / 30;
   let rafId = 0;
   let resizeTimer = 0;
+  let lastFrameTime = 0;
 
   function clamp(v, min, max) {
     return Math.max(min, Math.min(max, v));
@@ -140,16 +142,14 @@
     }
 
     motionScale() {
-      /* Do not fully stop animation here. The user wants visible motion.
-         Reduced motion only makes it calmer, not frozen. */
-      return reducedMotionQuery.matches ? 0.45 : 1;
+      return 1;
     }
 
     resize() {
       const rect = this.host.getBoundingClientRect();
       this.width = Math.max(1, Math.round(rect.width));
       this.height = Math.max(1, Math.round(rect.height));
-      this.dpr = Math.min(window.devicePixelRatio || 1, 2);
+      this.dpr = Math.min(window.devicePixelRatio || 1, isMobile() ? 1.5 : 2);
 
       this.canvas.width = Math.round(this.width * this.dpr);
       this.canvas.height = Math.round(this.height * this.dpr);
@@ -230,17 +230,19 @@
     }
 
     particleTotal() {
-      if (isMobile()) return this.mode === "hero" ? 48 : 38;
-      if (this.mode === "hero") return Math.round(random(110, 125));
-      if (this.mode === "footer") return Math.round(random(86, 104));
-      return Math.round(random(124, 144));
+      if (isMobile()) {
+        if (this.mode === "hero") return Math.round(random(30, 42));
+        if (this.mode === "footer") return Math.round(random(20, 28));
+        return Math.round(random(20, 32));
+      }
+      if (this.mode === "hero") return Math.round(random(75, 90));
+      if (this.mode === "footer") return Math.round(random(55, 65));
+      return Math.round(random(55, 75));
     }
 
     microTotal() {
-      if (isMobile()) return this.mode === "hero" ? 22 : 18;
-      if (this.mode === "hero") return 50;
-      if (this.mode === "footer") return 36;
-      return 54;
+      if (isMobile()) return Math.round(random(10, 18));
+      return Math.round(random(25, 35));
     }
 
     createParticle(index, total) {
@@ -544,8 +546,11 @@
 
     drawLinks(time) {
       const ctx = this.ctx;
-      const baseThreshold = isMobile() ? 84 : (this.mode === "hero" ? 105 : 120);
+      const baseThreshold = isMobile() ? 82 : (this.mode === "hero" ? 105 : 104);
       const mouseRadius = this.mode === "hero" ? 250 : 235;
+      const mouseRadiusSq = mouseRadius * mouseRadius;
+      const mouseActive = this.mouse.active && this.mouse.inside;
+      const maxThreshold = baseThreshold + 34;
       const linkCount = new Array(this.particles.length).fill(0);
 
       ctx.save();
@@ -562,14 +567,22 @@
           if (!shouldDrawParticle(this, b)) continue;
           const dx = a.x - b.x;
           const dy = a.y - b.y;
-          const dist = Math.hypot(dx, dy);
+          if (Math.abs(dx) > maxThreshold || Math.abs(dy) > maxThreshold) continue;
+          const distSq = dx * dx + dy * dy;
+          if (distSq > maxThreshold * maxThreshold) continue;
 
-          const nearA = Math.hypot(a.x - this.mouse.x, a.y - this.mouse.y);
-          const nearB = Math.hypot(b.x - this.mouse.x, b.y - this.mouse.y);
-          const nearMouse = this.mouse.active && this.mouse.inside && Math.min(nearA, nearB) < mouseRadius;
+          const mouseDxA = a.x - this.mouse.x;
+          const mouseDyA = a.y - this.mouse.y;
+          const mouseDxB = b.x - this.mouse.x;
+          const mouseDyB = b.y - this.mouse.y;
+          const nearASq = mouseDxA * mouseDxA + mouseDyA * mouseDyA;
+          const nearBSq = mouseDxB * mouseDxB + mouseDyB * mouseDyB;
+          const nearestMouseSq = Math.min(nearASq, nearBSq);
+          const nearMouse = mouseActive && nearestMouseSq < mouseRadiusSq;
           const threshold = nearMouse ? baseThreshold + 34 : baseThreshold;
 
-          if (dist > threshold) continue;
+          if (Math.abs(dx) > threshold || Math.abs(dy) > threshold) continue;
+          if (distSq > threshold * threshold) continue;
           if (this.mode === "hero" && (a.y < 88 || b.y < 88)) continue;
           if (this.mode === "hero" && !nearMouse && a.x < this.width * 0.43 && b.x < this.width * 0.43) continue;
 
@@ -583,8 +596,11 @@
           const maxLinks = nearMouse ? 3 : 1;
           if (linkCount[i] >= maxLinks || linkCount[j] >= maxLinks) continue;
 
+          const dist = Math.sqrt(distSq);
           const distanceAlpha = Math.pow(1 - dist / threshold, 1.18);
-          const mouseBoost = nearMouse ? Math.pow(1 - Math.min(nearA, nearB) / mouseRadius, 0.92) : 0;
+          const mouseBoost = nearMouse
+            ? Math.pow(1 - Math.sqrt(nearestMouseSq) / mouseRadius, 0.92)
+            : 0;
           const breathe = 0.72 + Math.sin(time * 0.0022 + a.phase + b.phase) * 0.28;
           let alpha = (0.028 + distanceAlpha * 0.08 + mouseBoost * 0.12) * breathe;
           alpha = clamp(alpha, nearMouse ? 0.058 : 0.020, nearMouse ? 0.20 : 0.10);
@@ -713,11 +729,15 @@
   function loop(time) {
     if (document.hidden) {
       rafId = 0;
+      lastFrameTime = 0;
       window.__novaRoseGalaxy.rafId = 0;
       return;
     }
-    for (const scene of scenes) {
-      if (scene.visible) scene.draw(time, true);
+    if (!lastFrameTime || time - lastFrameTime >= FRAME_INTERVAL) {
+      lastFrameTime = time - ((time - lastFrameTime) % FRAME_INTERVAL);
+      for (const scene of scenes) {
+        if (scene.visible) scene.draw(time, true);
+      }
     }
     rafId = window.requestAnimationFrame(loop);
     window.__novaRoseGalaxy.rafId = rafId;
@@ -731,13 +751,14 @@
     }, 120);
   }
 
-  function updateTextRectsForScroll() {
-    for (const scene of scenes) scene.updateTextRects();
-  }
-
   function restart() {
+    if (reducedMotionQuery.matches) {
+      destroy();
+      return;
+    }
     window.cancelAnimationFrame(rafId);
     rafId = 0;
+    lastFrameTime = 0;
     window.__novaRoseGalaxy.rafId = 0;
     if (!scenes.length) return;
     for (const scene of scenes) scene.resize();
@@ -746,7 +767,8 @@
   }
 
   function handleVisibility() {
-    if (!document.hidden && !rafId && scenes.length) {
+    if (!reducedMotionQuery.matches && !document.hidden && !rafId && scenes.length) {
+      lastFrameTime = 0;
       rafId = window.requestAnimationFrame(loop);
       window.__novaRoseGalaxy.rafId = rafId;
     }
@@ -757,12 +779,17 @@
     window.clearTimeout(resizeTimer);
     rafId = 0;
     resizeTimer = 0;
+    lastFrameTime = 0;
     scenes.splice(0).forEach((scene) => scene.destroy());
     window.__novaRoseGalaxy.running = false;
     window.__novaRoseGalaxy.rafId = 0;
   }
 
   function init() {
+    if (reducedMotionQuery.matches) {
+      destroy();
+      return;
+    }
     const hero = document.getElementById("hero");
     if (
       scenes.length &&
@@ -775,21 +802,27 @@
     setupScenes();
     if (!scenes.length) return;
     window.__novaRoseGalaxy.running = true;
+    lastFrameTime = 0;
     rafId = window.requestAnimationFrame(loop);
     window.__novaRoseGalaxy.rafId = rafId;
   }
 
   window.__novaRoseGalaxy = { running: false, rafId: 0, init, destroy };
   window.addEventListener("resize", resizeAll, { passive: true });
-  window.addEventListener("scroll", updateTextRectsForScroll, { passive: true });
   document.addEventListener("visibilitychange", handleVisibility);
   document.addEventListener("pjax:send", destroy);
   document.addEventListener("pjax:complete", init);
 
   if (reducedMotionQuery.addEventListener) {
-    reducedMotionQuery.addEventListener("change", restart);
+    reducedMotionQuery.addEventListener("change", () => {
+      if (reducedMotionQuery.matches) destroy();
+      else init();
+    });
   } else if (reducedMotionQuery.addListener) {
-    reducedMotionQuery.addListener(restart);
+    reducedMotionQuery.addListener(() => {
+      if (reducedMotionQuery.matches) destroy();
+      else init();
+    });
   }
 
   init();

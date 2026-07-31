@@ -1,4 +1,16 @@
 /* Nova visual authority: the only source for shared dark/light palette values. */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
 :root {
   --nova-radius-control: 8px;
   --nova-focus: #b86a83;
@@ -323,13 +335,28 @@ html[data-theme="light"] {
   outline-offset: 2px;
 }
 
+/* Intrinsic-size guards prevent brand artwork flashing at its 1254px source size. */
+#nav .site-icon {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.nova-music-rose--rule {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.nova-music-rose--notes {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
 /* Full-screen first-visit loading layer. */
 body.nova-loading-active {
   overflow: hidden;
-}
-
-body.nova-loading-active > :not(.nova-page-loading) {
-  visibility: hidden;
 }
 
 .nova-page-loading {
@@ -346,7 +373,7 @@ body.nova-loading-active > :not(.nova-page-loading) {
   background:
     radial-gradient(circle at 50% 42%,rgba(92,39,57,.1) 0%,rgba(10,16,28,.98) 36%,#050912 78%);
   transform: scale(1.01);
-  transition: opacity 560ms ease, visibility 0s linear 560ms, transform 560ms ease;
+  transition: opacity 180ms ease, visibility 0s linear 180ms, transform 180ms ease;
   pointer-events: none;
   isolation: isolate;
 }
@@ -355,15 +382,16 @@ body.nova-loading-active > :not(.nova-page-loading) {
   visibility: visible;
   opacity: 1;
   transform: scale(1);
-  transition: opacity 220ms ease, transform 220ms ease;
+  transition: opacity 160ms ease, transform 160ms ease;
   pointer-events: auto;
 }
 
 .nova-page-loading.is-leaving {
-  visibility: visible;
-  opacity: 1;
-  transform: scale(1);
-  pointer-events: auto;
+  visibility: hidden;
+  opacity: 0;
+  transform: scale(.995);
+  transition: opacity 180ms ease, visibility 0s linear 180ms, transform 180ms ease;
+  pointer-events: none;
 }
 
 .nova-page-loading__inner {
@@ -376,7 +404,7 @@ body.nova-loading-active > :not(.nova-page-loading) {
   text-align: center;
   opacity: 1;
   transform: scale(1);
-  transition: opacity 460ms ease, transform 460ms ease;
+  transition: opacity 180ms ease, transform 180ms ease;
 }
 
 .nova-page-loading.is-leaving .nova-page-loading__inner {
@@ -455,7 +483,7 @@ body.nova-loading-active > :not(.nova-page-loading) {
 
 @media (prefers-reduced-motion: reduce) {
   .nova-page-loading {
-    transition: opacity 450ms ease, visibility 0s linear 450ms;
+    transition: opacity 180ms ease, visibility 0s linear 180ms;
   }
 
   .nova-page-loading.is-visible {
@@ -1271,10 +1299,16 @@ html[data-theme="light"] #body-wrap.post #pagination .pagination-related {
 /* Navigation */
 /* Navigation search uses an inline SVG so it never depends on icon fonts. */
 #search-button .search-nav-link {
+  appearance: none;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   vertical-align: top;
+  border: 0;
+  color: inherit;
+  background: none;
+  font: inherit;
+  cursor: pointer;
 }
 
 #search-button .search-nav-link > span {
@@ -1504,4 +1538,27 @@ html[data-theme="dark"] body:not(.nova-home-active) #rightside .fliex-rightside-
   color:rgba(222,140,173,.98);
   background:linear-gradient(145deg,rgba(31,34,50,.98),rgba(35,27,41,.98))!important;
   border-color:rgba(193,123,151,.42);
+}
+
+/* Keep Butterfly's 404 layout and palette; add only a clear, history-independent exit. */
+.error-info .nova-error-home {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:112px;
+  min-height:42px;
+  margin-top:22px;
+  padding:8px 20px;
+  border:1px solid rgba(184,106,131,.5);
+  border-radius:999px;
+  color:var(--font-color);
+  background:rgba(164,119,137,.12);
+  text-decoration:none;
+  transition:background-color .2s ease,color .2s ease,border-color .2s ease;
+}
+
+.error-info .nova-error-home:hover {
+  border-color:#b86a83;
+  color:#fff;
+  background:#b86a83;
 }

@@ -60,7 +60,7 @@ body.nova-template-route main#content-inner.nova-template-shell {
   min-height: clamp(410px, 51vh, 545px);
   place-items: center;
   overflow: hidden;
-  background: url("/img/moban.png") center 48% / cover no-repeat;
+  background: url("/img/moban.webp") center 48% / cover no-repeat;
   isolation: isolate;
 }
 

@@ -74,7 +74,7 @@ body.nova-category-route main.nova-category-content::before{
   z-index:-1;
   inset:0;
   pointer-events:none;
-  background:url("/img/guidang.png") center top/cover no-repeat;
+  background:url("/img/guidang.webp") center top/cover no-repeat;
   opacity:.028;
   filter:blur(34px) saturate(.6);
   mask-image:linear-gradient(180deg,#000,transparent 44%);

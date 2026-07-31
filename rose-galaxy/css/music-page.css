@@ -20,7 +20,7 @@ body.nova-music-route footer#footer #footer-wrap{padding-block:34px}
   color:var(--nova-music-text-primary)
 }
 .nova-music-hero{position:relative;min-height:100svh;overflow:hidden;color:var(--nova-music-hero-primary)}
-.nova-music-background{position:absolute;inset:0;background:url("/img/music_back.png") center/cover no-repeat}
+.nova-music-background{position:absolute;inset:0;background:url("/img/music_back.webp") center/cover no-repeat}
 .nova-music-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,8,18,.84),rgba(8,10,24,.52) 43%,rgba(10,8,26,.18) 74%),linear-gradient(180deg,rgba(5,8,18,.06),rgba(7,10,22,.16) 72%,var(--nova-music-page-bg) 100%)}
 html[data-theme="light"] .nova-music-background{filter:brightness(1.06)}
 html[data-theme="light"] .nova-music-overlay{background:linear-gradient(90deg,rgba(9,12,24,.68) 0%,rgba(9,12,24,.44) 34%,rgba(9,12,24,.1) 72%),linear-gradient(180deg,rgba(9,12,24,.06) 0%,rgba(9,12,24,.1) 72%,rgba(30,29,48,.16) 100%)}
@@ -95,7 +95,7 @@ html[data-theme="light"] .nova-music-card[data-slot="2"]{border-color:rgba(255,2
 .nova-music-notes h2 img{width:28px;height:28px;object-fit:contain}
 .nova-music-notes-copy>p:not(:first-child):not(.nova-music-notes-meta){margin:0;color:var(--nova-music-text-secondary);font-size:15px;line-height:1.9}
 .nova-music-notes-meta{margin:24px 0 0;color:var(--nova-music-text-muted);font-size:11px;letter-spacing:.08em}
-.nova-music-notes-visual{min-height:280px;padding:38px;display:flex;align-items:center;justify-content:flex-end;border:1px solid var(--nova-music-border);border-radius:20px;background:linear-gradient(90deg,rgba(9,13,24,.92),rgba(9,13,24,.18)),url("/img/music_back.png") center 76%/cover no-repeat;box-shadow:0 18px 48px rgba(0,0,0,.18)}
+.nova-music-notes-visual{min-height:280px;padding:38px;display:flex;align-items:center;justify-content:flex-end;border:1px solid var(--nova-music-border);border-radius:20px;background:linear-gradient(90deg,rgba(9,13,24,.92),rgba(9,13,24,.18)),url("/img/music_back.webp") center 76%/cover no-repeat;box-shadow:0 18px 48px rgba(0,0,0,.18)}
 .nova-music-notes-visual span{color:rgba(210,145,132,.64);font:italic 22px/1.8 "KaiTi",serif;transform:rotate(-5deg)}
 html[data-theme="light"] .nova-music-page{background:radial-gradient(circle at 75% 10%,rgba(190,98,132,.07),transparent 34%),linear-gradient(180deg,#f2eff4 0%,#ebeaf0 100%)}
 html[data-theme="light"] .nova-music-notes h2{color:#302c37}

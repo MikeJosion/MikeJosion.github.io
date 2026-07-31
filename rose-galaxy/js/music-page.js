@@ -7,13 +7,84 @@
   }
 
   const visualImages = [
-    "/img/music1.png",
-    "/img/music2.png",
-    "/img/music3.png",
-    "/img/music4.png",
-    "/img/music5.png",
+    "/img/music1.webp",
+    "/img/music2.webp",
+    "/img/music3.webp",
+    "/img/music4.webp",
+    "/img/music5.webp",
   ];
   const visibleOffsets = [-2, -1, 0, 1, 2];
+  const loadedVisualImages = new Set();
+  const pendingVisualImages = new Map();
+
+  function previewImage(image) {
+    return image.replace(/\.webp$/i, "-preview.webp");
+  }
+
+  function preloadVisualImage(image) {
+    if (loadedVisualImages.has(image)) return Promise.resolve(image);
+    if (pendingVisualImages.has(image)) return pendingVisualImages.get(image);
+
+    const request = new Promise((resolve, reject) => {
+      const loader = new Image();
+      loader.decoding = "async";
+      loader.onload = async () => {
+        try {
+          await loader.decode?.();
+        } catch (_) {
+          // The decoded image is still usable when decode() is unsupported or interrupted.
+        }
+        loadedVisualImages.add(image);
+        pendingVisualImages.delete(image);
+        resolve(image);
+      };
+      loader.onerror = () => {
+        pendingVisualImages.delete(image);
+        reject(new Error(`Nova music: failed to preload ${image}`));
+      };
+      loader.src = image;
+    });
+
+    pendingVisualImages.set(image, request);
+    return request;
+  }
+
+  function assignCardImage(image, source, isCurrent, shouldPreload) {
+    const currentSource = image.getAttribute("src") || "";
+    image.dataset.src = source;
+    image.width = 640;
+    image.height = 960;
+    image.decoding = "async";
+
+    if (currentSource === source) {
+      image.loading = isCurrent ? "eager" : "lazy";
+      if (!isCurrent) image.removeAttribute("fetchpriority");
+      if (image.complete && image.naturalWidth) loadedVisualImages.add(source);
+      else image.addEventListener("load", () => loadedVisualImages.add(source), { once: true });
+      return;
+    }
+
+    image.loading = isCurrent ? "eager" : "lazy";
+    image.removeAttribute("fetchpriority");
+    image.src = loadedVisualImages.has(source) ? source : previewImage(source);
+
+    if (!isCurrent && !shouldPreload) return;
+    preloadVisualImage(source)
+      .then(loadedSource => {
+        if (image.dataset.src === loadedSource) image.src = loadedSource;
+      })
+      .catch(error => console.warn(error.message));
+  }
+
+  function warmCardImage(image) {
+    const source = image?.dataset.src;
+    if (!source || loadedVisualImages.has(source)) return;
+    preloadVisualImage(source)
+      .then(loadedSource => {
+        if (image.dataset.src === loadedSource) image.src = loadedSource;
+      })
+      .catch(error => console.warn(error.message));
+  }
 
   function normalizeIndex(index, length) {
     return length ? ((index % length) + length) % length : 0;
@@ -84,7 +155,11 @@
       const artist = songArtist(song);
       els.title.textContent = name;
       els.artist.textContent = artist;
-      els.cover.src = songCover(song, state.currentIndex);
+      const cover = songCover(song, state.currentIndex);
+      const hasSquarePlaylistCover = Boolean(song?.cover || song?.pic);
+      els.cover.src = cover;
+      els.cover.width = 640;
+      els.cover.height = hasSquarePlaylistCover ? 640 : 960;
       els.cover.alt = `${name} - ${artist}`;
       els.count.textContent = `共 ${state.songs.length} 首 · 当前第 ${state.currentIndex + 1} 首`;
       if (els.notesCount) els.notesCount.textContent = `${state.songs.length} TRACKS`;
@@ -105,7 +180,7 @@
         card.setAttribute("aria-label", slot === 2 ? `${name}，播放或暂停` : `播放 ${name} - ${artist}`);
         card.toggleAttribute("aria-current", slot === 2);
         const img = card.querySelector("img");
-        img.src = image;
+        assignCardImage(img, image, slot === 2, slot === 3);
         img.alt = `${name} - ${artist}`;
         card.querySelector("strong").textContent = slot === 2 ? name : "";
         card.querySelector("small").textContent = slot === 2 ? artist : "";
@@ -175,6 +250,9 @@
       on(els.toggle, "click", togglePlayback);
       on(els.progress, "input", event => seekTo(Number(event.target.value) / 1000));
       els.cards.forEach((card, slot) => {
+        const warm = () => warmCardImage(card.querySelector("img"));
+        on(card, "pointerenter", warm);
+        on(card, "focusin", warm);
         on(card, "click", () => {
           if (slot === 2) togglePlayback();
           else playSongAt(Number(card.dataset.songIndex));

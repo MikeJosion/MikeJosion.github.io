@@ -57,7 +57,8 @@
     quoteUnlocked: false,
     quoteHovered: false,
     observer: null,
-    globalEventsBound: false
+    globalEventsBound: false,
+    domCreated: false
   }
 
   const scriptUrl = document.currentScript && document.currentScript.src
@@ -79,8 +80,8 @@
         <button class="prince-egg__character" type="button"
           aria-label="\u9690\u85cf\u7684\u5c0f\u738b\u5b50\u5f69\u86cb">
           <span class="prince-egg__image-stage" aria-hidden="true">
-            <img class="prince-egg__peek" src="${assetUrl('caidan-peek.png')}" alt="" draggable="false">
-            <img class="prince-egg__standing" src="${assetUrl('caidan.png')}" alt="" draggable="false">
+            <img class="prince-egg__peek" src="${assetUrl('caidan-peek.webp')}" width="320" height="480" loading="lazy" decoding="async" alt="" draggable="false">
+            <img class="prince-egg__standing" src="${assetUrl('caidan.webp')}" width="320" height="480" loading="lazy" decoding="async" alt="" draggable="false">
           </span>
         </button>`
       document.body.appendChild(root)
@@ -109,6 +110,11 @@
       document.body.appendChild(popover)
     }
 
+    root.querySelectorAll('img').forEach(image => {
+      image.loading = 'lazy'
+      image.decoding = 'async'
+    })
+    state.domCreated = true
     bindElementEvents(root, popover)
     return { root, popover }
   }
@@ -386,13 +392,23 @@
   function updateVisibility() {
     window.cancelAnimationFrame(state.frame)
     state.frame = window.requestAnimationFrame(() => {
-      const { root, popover } = createDom()
-      const eligible = isHomePage() &&
+      const routeEligible = isHomePage() &&
         window.innerWidth >= 768 &&
-        window.scrollY > window.innerHeight * .8 &&
-        !hasBlockingModal()
+        window.scrollY > window.innerHeight * .8
 
-      if (!eligible) {
+      if (!routeEligible) {
+        const root = document.querySelector('[data-prince-egg]')
+        const popover = document.querySelector('[data-prince-quote-popover]')
+        if (root) {
+          cancelReturnToPeek()
+          forceCloseQuotePopover(root, popover)
+          setState(root, 'hidden')
+        }
+        return
+      }
+
+      const { root, popover } = createDom()
+      if (hasBlockingModal()) {
         cancelReturnToPeek()
         forceCloseQuotePopover(root, popover)
         setState(root, 'hidden')
@@ -423,19 +439,26 @@
   }
 
   function observeModals() {
-    if (state.observer || !document.body) return
+    state.observer?.disconnect()
     state.observer = new MutationObserver(updateVisibility)
-    state.observer.observe(document.body, {
+    const modalRoots = [
+      document.getElementById('search-mask'),
+      document.getElementById('local-search'),
+      document.querySelector('.medium-zoom-overlay'),
+      document.querySelector('.fancybox__container'),
+      document.querySelector('.pswp')
+    ].filter(Boolean)
+    modalRoots.forEach(element => state.observer.observe(element, {
       attributes: true,
-      childList: true,
-      subtree: true,
-      attributeFilter: ['class', 'hidden']
-    })
+      attributeFilter: ['class', 'hidden', 'style']
+    }))
+    if (document.body) {
+      state.observer.observe(document.body, { childList: true })
+    }
   }
 
   function init() {
     if (!document.body) return
-    createDom()
     bindGlobalEvents()
     observeModals()
     updateVisibility()

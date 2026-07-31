@@ -86,7 +86,7 @@ body.nova-gallery-route #article-container {
   position: relative;
   min-height: clamp(500px, 61vh, 650px);
   isolation: isolate;
-  background: url("/img/guidang.png") center 48% / cover no-repeat;
+  background: url("/img/guidang.webp") center 48% / cover no-repeat;
 }
 
 .nova-gallery-hero::before {

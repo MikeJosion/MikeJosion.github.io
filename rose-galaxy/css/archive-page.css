@@ -46,7 +46,7 @@ body.nova-archive-route #content-inner.nova-archive-main{
 body.nova-archive-route #body-wrap{
   background:radial-gradient(circle at 82% 8%,rgba(112,137,158,.08),transparent 28%),radial-gradient(circle at 12% 38%,rgba(199,96,130,.065),transparent 30%),linear-gradient(180deg,var(--nova-archive-bg),var(--nova-archive-section-bg) 48%,var(--nova-archive-bg))
 }
-body.nova-archive-route #content-inner.nova-archive-main::before{content:"";position:absolute;z-index:0;inset:-20px calc(50% - 50vw) 0;pointer-events:none;background:url("/img/guidang.png") center top/cover no-repeat;opacity:.035;filter:blur(30px) saturate(.72);mask-image:linear-gradient(180deg,rgba(0,0,0,.72),transparent 54%);-webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.72),transparent 54%)}
+body.nova-archive-route #content-inner.nova-archive-main::before{content:"";position:absolute;z-index:0;inset:-20px calc(50% - 50vw) 0;pointer-events:none;background:url("/img/guidang.webp") center top/cover no-repeat;opacity:.035;filter:blur(30px) saturate(.72);mask-image:linear-gradient(180deg,rgba(0,0,0,.72),transparent 54%);-webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.72),transparent 54%)}
 .nova-archive-main-card,.nova-archive-sidebar{position:relative;z-index:2}
 .nova-archive-main-card,.nova-archive-sidebar,.nova-archive-profile-card,.nova-archive-stats-card{box-sizing:border-box;margin-bottom:0!important}
 .nova-archive-timeline{

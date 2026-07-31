@@ -4,9 +4,9 @@
   if (window.__novaUxReady) return
   window.__novaUxReady = true
 
-  const INITIAL_MIN_DURATION = 650
-  const INITIAL_MAX_DURATION = 4000
-  const EXIT_DURATION = 620
+  const INITIAL_MIN_DURATION = 150
+  const INITIAL_MAX_DURATION = 2000
+  const EXIT_DURATION = 180
   const ROUTE_CLASSES = [
     'nova-home-active',
     'nova-music-route',
@@ -28,7 +28,9 @@
   let searchObserver = null
 
   function getLoader() {
-    let loader = document.querySelector('[data-nova-loading]')
+    const loaders = Array.from(document.querySelectorAll('[data-nova-loading]'))
+    let loader = loaders.shift()
+    loaders.forEach(item => item.remove())
     if (loader) return loader
 
     loader = document.createElement('div')
@@ -278,13 +280,18 @@
 
   function syncNavigationSemantics() {
     const desktopMenu = document.getElementById('menus')
+    const desktopMenuItems = desktopMenu?.querySelector('.menus_items')
     const mobileMenu = document.getElementById('sidebar-menus')
     const isMobile = window.matchMedia('(max-width: 768px)').matches
     const mobileMenuOpen = Boolean(isMobile && mobileMenu?.classList.contains('open'))
 
     if (desktopMenu) {
-      desktopMenu.inert = isMobile
-      desktopMenu.setAttribute('aria-hidden', String(isMobile))
+      desktopMenu.inert = false
+      desktopMenu.removeAttribute('aria-hidden')
+    }
+    if (desktopMenuItems) {
+      desktopMenuItems.inert = isMobile
+      desktopMenuItems.setAttribute('aria-hidden', String(isMobile))
     }
     if (mobileMenu) {
       mobileMenu.inert = !mobileMenuOpen
@@ -329,6 +336,7 @@
   document.addEventListener('pjax:complete', initStatsFallback)
   document.addEventListener('pjax:complete', syncNavigationSemantics)
   document.addEventListener('pjax:complete', syncRouteState)
+  window.addEventListener('pageshow', finishInitialLoading)
   window.addEventListener('pageshow', scheduleInitialFinish, { once: true })
   window.addEventListener('resize', syncNavigationSemantics)
   initInitialLoading()
