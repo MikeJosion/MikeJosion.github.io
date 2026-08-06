@@ -2124,6 +2124,12 @@ var unknown interface&#123;&#125;unknown = &quot;hello&quot;unknown = 100unknown
 💡 通过通信来共享系统内存。
 
 🌈 解决主死全僵的问题 (sync.WaitGroup)放弃 time.Sleep 等协程。靠精准算术下发任务数。
+
+并发 与 并行 ：并发：一个人同时处理多个任务，但不一定同时进行(任务之间不断切换，看起来像同时进行)。并行：多个任务在同一时刻真正同时执行。
+
+
+CSP :核心思想:不要通过共享内存通信，而要通过通信共享内存
+
 Goroutine 笔记总结
 1. 什么是 goroutine
 goroutine 是 Go 的轻量级并发任务。
@@ -2842,5 +2848,50 @@ func CheckInt(x interface&#123;&#125;) bool &#123;    // 尝试将接口 x 断�
 安全第一：始终使用 v, ok := x.(T) 这种形式来保证代码的健壮性。
 
 ]]></content>
+  </entry>
+  <entry>
+    <title>Go 并发小反思：Goroutine、Channel 和 Select</title>
+    <url>/2026/08/06/Go-Goroutine-Channel-Select/</url>
+    <content><![CDATA[Go 并发小反思：Goroutine、Channel 和 SelectGoroutine：负责并发执行main 本身也是一个 Goroutine。多个 Goroutine 同时运行时，谁先执行由 Go 调度器决定，顺序并不固定。
+所以，Goroutine 解决的是“同时做事”的问题，但它本身不能保证执行顺序。如果程序对先后顺序有要求，就需要使用 Channel 等方式进行同步。
+Channel：负责传递数据和同步Channel 可以理解成一条管道。数据进入 Channel 后，会按照先进先出（FIFO）的顺序被取出。
+需要注意：如果多个 Goroutine 同时发送数据，谁先发送成功仍然不确定。FIFO 保证的是数据进入 Channel 之后的取出顺序。
+func main() &#123;    ch := make(chan int) // 无缓冲 Channel    go func() &#123;        ch &lt;- 100    &#125;()    result := &lt;-ch    fmt.Println(result)&#125;
+
+无缓冲 Channel 没有存储空间，发送和接收必须同时准备好，类似“当面交接”。
+在上面的代码中，ch &lt;- 100 会等待 &lt;-ch 接收；main 也会等到拿到数据后再继续执行，因此两个 Goroutine 不需要靠“抢”来决定打印时机。
+有缓冲 Channel有缓冲 Channel 更像一个真正的队列：
+ch := make(chan int, 3)
+
+这里表示管道最多可以暂存 3 个值：
+
+缓存没满时，发送方可以直接放入数据。
+缓存满后，发送方会阻塞，直到有人取出数据。
+缓存为空时，接收方会阻塞，直到有人放入数据。
+
+Select：同时等待多个 Channelselect 监听的不是 Goroutine 本身，而是多个 Channel 的读写操作是否已经准备好。
+select &#123;case value := &lt;-ch1:    fmt.Println(&quot;收到：&quot;, value)case ch2 &lt;- 100:    fmt.Println(&quot;发送成功&quot;)default:    fmt.Println(&quot;暂时没有 Channel 就绪&quot;)&#125;
+
+这里的“就绪”指：
+
+case value := &lt;-ch1：ch1 中已经有数据可以读取。
+case ch2 &lt;- 100：ch2 可以接收数据，例如缓存未满，或者无缓冲 Channel 的另一端正在等待接收。
+
+select 的执行规则：
+
+只有一个 case 就绪：执行这个 case。
+多个 case 同时就绪：随机选择一个执行。
+没有 case 就绪：阻塞等待。
+存在 default：没有 case 就绪时立即执行 default，不会阻塞。
+
+一句话复盘Goroutine 负责并发做事，执行顺序不确定；Channel 负责在 Goroutine 之间传递数据和同步；select 负责从多个已经就绪的 Channel 操作中选择一个执行。
+]]></content>
+      <categories>
+        <category>Go</category>
+      </categories>
+      <tags>
+        <tag>Go</tag>
+        <tag>并发</tag>
+      </tags>
   </entry>
 </search>

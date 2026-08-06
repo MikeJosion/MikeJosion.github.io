@@ -10,7 +10,21 @@
   <rights>All rights reserved 2026, Fliex</rights>
   <subtitle>记录 Go 后端学习、数据结构与算法、LeetCode 练习及个人技术成长过程的博客。</subtitle>
   <title>Fliex</title>
-  <updated>2026-07-19T02:14:11.000Z</updated>
+  <updated>2026-08-05T16:00:00.000Z</updated>
+  <entry>
+    <author>
+      <name>Fliex</name>
+    </author>
+    <category term="Go" scheme="https://mikejosion.github.io/categories/Go/"/>
+    <category term="Go" scheme="https://mikejosion.github.io/tags/Go/"/>
+    <category term="并发" scheme="https://mikejosion.github.io/tags/%E5%B9%B6%E5%8F%91/"/>
+    <id>https://mikejosion.github.io/2026/08/06/Go-Goroutine-Channel-Select/</id>
+    <link href="https://mikejosion.github.io/2026/08/06/Go-Goroutine-Channel-Select/"/>
+    <published>2026-08-05T16:00:00.000Z</published>
+    <summary>通俗梳理 Goroutine、Channel 和 Select 之间的关系，以及无缓冲与有缓冲 Channel 的区别。</summary>
+    <title>Go 并发小反思：Goroutine、Channel 和 Select</title>
+    <updated>2026-08-05T16:00:00.000Z</updated>
+  </entry>
   <entry>
     <author>
       <name>Fliex</name>
@@ -264,19 +278,5 @@
     <summary>借助 dummy、prev 和 curr 安全跳过目标节点，覆盖删除头节点等边界情况。</summary>
     <title>LeetCode-链表过滤（dummy + prev + curr）</title>
     <updated>2025-12-20T01:22:26.000Z</updated>
-  </entry>
-  <entry>
-    <author>
-      <name>Fliex</name>
-    </author>
-    <category term="文学随笔" scheme="https://mikejosion.github.io/categories/%E6%96%87%E5%AD%A6%E9%9A%8F%E7%AC%94/"/>
-    <category term="散文" scheme="https://mikejosion.github.io/tags/%E6%95%A3%E6%96%87/"/>
-    <category term="郁达夫" scheme="https://mikejosion.github.io/tags/%E9%83%81%E8%BE%BE%E5%A4%AB/"/>
-    <id>https://mikejosion.github.io/2025/10/18/%E6%95%85%E9%83%BD%E7%9A%84%E7%A7%8B/</id>
-    <link href="https://mikejosion.github.io/2025/10/18/%E6%95%85%E9%83%BD%E7%9A%84%E7%A7%8B/"/>
-    <published>2025-10-18T09:00:00.000Z</published>
-    <summary>那年北国的秋天，风冷、叶黄、天高。郁达夫写下了故都的秋，也写下了一段关于孤独的诗意。</summary>
-    <title>故都的秋</title>
-    <updated>2025-10-18T09:00:00.000Z</updated>
   </entry>
 </feed>
