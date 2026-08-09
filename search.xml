@@ -3217,4 +3217,254 @@ Java 会先判断左边，如果 fast 已经是 null，就不会去执行右边�
         <tag>链表</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Go 基础：测试函数</title>
+    <url>/2026/08/09/Go%E5%9F%BA%E7%A1%80-%E6%B5%8B%E8%AF%95%E5%87%BD%E6%95%B0/</url>
+    <content><![CDATA[先理解测试在做什么Go 使用标准库 testing 编写自动化测试。测试不是为了证明代码永远正确，而是用一组确定的输入，检查代码能否得到预期结果。
+核心流程
+准备数据 → 执行代码 → 检查结果 → PASS / FAIL
+
+
+开始前先记住下面四点：
+
+
+
+关键词
+含义
+
+
+
+_test.go
+测试文件
+
+
+TestXxx
+测试函数
+
+
+*testing.T
+当前测试的控制对象
+
+
+go test
+编译并执行测试
+
+
+一、测试文件与测试函数测试文件必须以 _test.go 结尾，通常和被测试代码放在同一个包中：
+account.goaccount_test.go
+
+运行 go test 时，Go 会自动编译并执行这些测试文件；正常构建程序时，它们不会被编译进最终程序。
+例如，被测试函数写在 account.go：
+package accountfunc Add(a, b int) int &#123;	return a + b&#125;
+
+对应测试写在 account_test.go：
+package accountimport &quot;testing&quot;func TestAdd(t *testing.T) &#123;	got := Add(1, 2)	want := 3	if got != want &#123;		t.Errorf(&quot;Add(1, 2) = %d; want %d&quot;, got, want)	&#125;&#125;
+
+测试代码中常用 got 表示实际结果，want 表示预期结果。命名统一后，失败信息会更容易阅读。
+测试函数的规则标准测试函数格式：
+func TestXxx(t *testing.T) &#123;	// test code&#125;
+
+
+
+
+项目
+要求
+
+
+
+函数名
+以 Test 开头，后面的名称不能以小写字母开头
+
+
+参数
+t *testing.T
+
+
+返回值
+没有返回值
+
+
+文件名
+以 _test.go 结尾
+
+
+例如：
+func TestCreateAccount(t *testing.T) &#123;	// 正确&#125;
+
+测试函数不通过 return 返回测试结果，而是通过 testing.T 标记成功或失败。
+二、testing.T 是什么t *testing.T 代表当前测试，负责记录日志、标记失败和控制测试流程。
+常用方法：
+
+
+
+方法
+作用
+
+
+
+t.Log() &#x2F; t.Logf()
+记录测试日志
+
+
+t.Error() &#x2F; t.Errorf()
+标记失败，但继续执行当前测试
+
+
+t.Fatal() &#x2F; t.Fatalf()
+标记失败，并立即结束当前测试
+
+
+t.Helper()
+标记当前函数是测试辅助函数
+
+
+t.Run()
+创建并运行子测试
+
+
+Error 和 Fatal 的区别可以继续检查后面的结果时，使用 Error：
+if got != want &#123;	t.Errorf(&quot;got %d; want %d&quot;, got, want)&#125;
+
+如果错误发生后，后续代码已经没有执行意义，就使用 Fatal：
+account, err := CreateAccount()if err != nil &#123;	t.Fatal(err)&#125;// 只有创建成功后，继续检查 account 才有意义
+
+选择原则： 后续检查仍有意义时用 Error；前置条件已经失败、继续执行可能产生误导时用 Fatal。
+
+
+三、断言：比较实际值与预期值只使用标准库时，断言本质上就是普通的 if 判断：
+if got != want &#123;	t.Errorf(&quot;got %d; want %d&quot;, got, want)&#125;
+
+项目中也可以使用第三方库 testify/require 简化判断：
+go get github.com/stretchr/testify
+
+示例：
+import &quot;github.com/stretchr/testify/require&quot;func TestCreateAccount(t *testing.T) &#123;	account, err := CreateAccount(&quot;Nova&quot;)	require.NoError(t, err)	require.Equal(t, &quot;Nova&quot;, account.Name)	require.NotEmpty(t, account.ID)&#125;
+
+常用断言：
+
+
+
+断言
+检查内容
+
+
+
+require.NoError(t, err)
+没有错误
+
+
+require.Equal(t, want, got)
+预期值与实际值相等
+
+
+require.NotEqual(t, want, got)
+两个值不相等
+
+
+require.NotEmpty(t, value)
+值不为空
+
+
+require.True(t, condition)
+条件为 true
+
+
+require 不是 Go 标准库。它来自 testify，并且断言失败后会立即结束当前测试，效果更接近 t.Fatal()。
+
+
+四、测试辅助函数测试函数本身没有返回值，但普通的辅助函数可以返回数据。
+func createTestAccount(t *testing.T) Account &#123;	t.Helper()	account, err := CreateAccount(&quot;Nova&quot;)	if err != nil &#123;		t.Fatal(err)	&#125;	return account&#125;
+
+然后在测试中复用：
+func TestCreateAccount(t *testing.T) &#123;	account := createTestAccount(t)	if account.ID == 0 &#123;		t.Error(&quot;account ID should not be zero&quot;)	&#125;&#125;
+
+辅助函数开头调用 t.Helper() 后，测试失败时，Go 会尽量把错误位置指向调用它的测试代码，而不是辅助函数内部，定位问题更方便。
+
+
+五、表驱动测试：一次覆盖多组输入同一个函数需要测试多组输入时，不必重复写多个测试函数。Go 中常用“表驱动测试”：
+func TestAdd(t *testing.T) &#123;	tests := []struct &#123;		name string		a    int		b    int		want int	&#125;&#123;		&#123;name: &quot;positive&quot;, a: 1, b: 2, want: 3&#125;,		&#123;name: &quot;zero&quot;, a: 0, b: 0, want: 0&#125;,		&#123;name: &quot;negative&quot;, a: -1, b: -2, want: -3&#125;,	&#125;	for _, tt := range tests &#123;		t.Run(tt.name, func(t *testing.T) &#123;			got := Add(tt.a, tt.b)			if got != tt.want &#123;				t.Errorf(&quot;Add(%d, %d) = %d; want %d&quot;, tt.a, tt.b, got, tt.want)			&#125;		&#125;)	&#125;&#125;
+
+表驱动测试的三个重点：
+
+测试数据集中放在切片中。
+t.Run() 为每组数据创建一个子测试。
+新增场景时，只需要增加一组测试数据。
+
+六、运行测试
+
+
+命令
+用途
+
+
+
+go test
+测试当前包
+
+
+go test -v
+显示详细测试过程
+
+
+go test ./...
+测试当前模块的所有包
+
+
+go test -run TestAdd -v
+只运行名称匹配的测试
+
+
+go test -cover ./...
+查看测试覆盖率
+
+
+执行结束后，PASS 表示测试通过；FAIL 表示至少有一个测试失败。
+七、快速复盘xxx_test.go      ↓TestXxx(t *testing.T)      ↓准备输入 → 调用函数 → 比较 got 和 want      ↓PASS / FAIL
+
+
+
+
+关键词
+速记
+
+
+
+t.Error
+标记失败，继续执行
+
+
+t.Fatal
+标记失败，立即结束当前测试
+
+
+t.Helper
+标记测试辅助函数
+
+
+t.Run
+运行子测试
+
+
+require.Equal
+使用第三方库比较结果
+
+
+一句话理解： Go 测试就是准备输入、调用代码，再用 testing.T 检查实际结果是否符合预期。
+
+
+参考资料
+Go 标准库：testing
+Go 官方教程：Add a test
+testify
+
+]]></content>
+      <categories>
+        <category>Go</category>
+      </categories>
+      <tags>
+        <tag>Go</tag>
+        <tag>基础</tag>
+        <tag>测试</tag>
+      </tags>
+  </entry>
 </search>
