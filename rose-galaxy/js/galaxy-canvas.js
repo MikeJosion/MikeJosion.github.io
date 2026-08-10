@@ -46,6 +46,18 @@
     { r: 151, g: 137, b: 173 },
     { r: 184, g: 153, b: 164 },
   ];
+  const DARK_GLOW_COLORS = [
+    { r: 242, g: 232, b: 233 },
+    { r: 224, g: 193, b: 206 },
+    { r: 211, g: 214, b: 229 },
+    { r: 196, g: 176, b: 205 },
+  ];
+  const LIGHT_GLOW_COLORS = [
+    { r: 248, g: 243, b: 236 },
+    { r: 232, g: 202, b: 205 },
+    { r: 229, g: 205, b: 177 },
+    { r: 202, g: 194, b: 188 },
+  ];
 
   const scenes = [];
   const FRAME_INTERVAL = 1000 / 30;
@@ -184,7 +196,7 @@
     textFactor(x, y) {
       for (const r of this.textRects) {
         if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) {
-          if (this.mode === "hero") return isLightTheme() ? 0.24 : 0.50;
+          if (this.mode === "hero") return isLightTheme() ? 0.08 : 0.14;
           return 0.62;
         }
       }
@@ -231,21 +243,74 @@
 
     particleTotal() {
       if (isMobile()) {
-        if (this.mode === "hero") return Math.round(random(30, 42));
+        if (this.mode === "hero") return Math.round(random(44, 52));
         if (this.mode === "footer") return Math.round(random(20, 28));
         return Math.round(random(20, 32));
       }
-      if (this.mode === "hero") return Math.round(random(75, 90));
+      if (this.mode === "hero") return Math.round(random(74, 88));
       if (this.mode === "footer") return Math.round(random(55, 65));
       return Math.round(random(55, 75));
     }
 
     microTotal() {
+      if (this.mode === "hero") return 0;
       if (isMobile()) return Math.round(random(10, 18));
       return Math.round(random(25, 35));
     }
 
+    pickHeroPosition() {
+      const roll = Math.random();
+      if (roll < 0.43) {
+        return { x: random(this.width * 0.42, this.width * 0.98), y: random(this.height * 0.07, this.height * 0.42) };
+      }
+      if (roll < 0.72) {
+        return { x: random(this.width * 0.3, this.width * 0.96), y: random(this.height * 0.18, this.height * 0.61) };
+      }
+      if (roll < 0.92) {
+        return { x: random(this.width * 0.49, this.width * 0.97), y: random(this.height * 0.43, this.height * 0.86) };
+      }
+      return { x: random(this.width * 0.08, this.width * 0.42), y: random(this.height * 0.07, this.height * 0.3) };
+    }
+
+    createHeroParticle(index, total) {
+      const depth = random(0.42, 1);
+      const kindRoll = Math.random();
+      const kind = kindRoll < 0.055 ? "petal" : (kindRoll < 0.2 ? "haze" : "dust");
+      const position = this.pickHeroPosition();
+      const x = position.x;
+      const y = position.y;
+
+      return {
+        kind,
+        baseX: x,
+        baseY: y,
+        x,
+        y,
+        prevX: x,
+        prevY: y,
+        depth,
+        size: kind === "petal" ? random(3.2, 5) * depth : (kind === "haze" ? random(1.8, 3.4) : random(0.9, 2)) * depth,
+        alpha: kind === "petal" ? random(0.22, 0.38) : (kind === "haze" ? random(0.18, 0.34) : random(0.34, 0.65)),
+        phase: (index / total) * Math.PI * 2 + random(-Math.PI, Math.PI),
+        verticalSpeed: random(-0.016, 0.024) * depth,
+        sway: random(12, 48) * depth,
+        swaySpeed: random(0.00024, 0.00062),
+        breeze: random(-0.008, 0.012),
+        twinkle: random(0.00125, 0.0034),
+        halo: kind === "haze" ? random(8, 14) : random(5, 8.5),
+        colorIndex: index % DARK_GLOW_COLORS.length,
+        themeSeed: Math.random(),
+        linkable: kind !== "petal" && Math.random() < 0.42,
+        linkSeed: Math.random(),
+        focus: 0,
+        attractX: 0,
+        attractY: 0,
+      };
+    }
+
     createParticle(index, total) {
+      if (this.mode === "hero") return this.createHeroParticle(index, total);
+
       const clustered = Math.random() < (this.mode === "hero" ? 0.84 : 0.80);
       let baseX;
       let baseY;
@@ -382,7 +447,67 @@
       }
     }
 
-    updateParticle(p, time) {
+    resetHeroParticle(p) {
+      const position = this.pickHeroPosition();
+      p.baseX = position.x;
+      p.baseY = position.y;
+      p.x = p.baseX;
+      p.y = p.baseY;
+      p.prevX = p.x;
+      p.prevY = p.y;
+      p.attractX = 0;
+      p.attractY = 0;
+      p.focus = 0;
+    }
+
+    updateHeroParticle(p, time, dt) {
+      const light = isLightTheme();
+      const themeMotion = light ? 0.34 : 1;
+      p.prevX = p.x;
+      p.prevY = p.y;
+      p.baseY += p.verticalSpeed * dt * this.motionScale() * themeMotion;
+      p.baseX += p.breeze * dt * this.motionScale() * themeMotion;
+
+      const naturalX = p.baseX + Math.sin(time * p.swaySpeed + p.phase) * p.sway * themeMotion;
+      const naturalY = p.baseY + Math.cos(time * p.swaySpeed * 0.72 + p.phase) * p.sway * 0.16 * themeMotion;
+      let targetAttractX = 0;
+      let targetAttractY = 0;
+      let targetFocus = 0;
+
+      if (this.mouse.active && this.mouse.inside && finePointerQuery.matches && !isMobile()) {
+        const dx = this.mouse.x - naturalX;
+        const dy = this.mouse.y - naturalY;
+        const dist = Math.hypot(dx, dy) || 1;
+        const radius = 230;
+        if (dist < radius) {
+          const influence = Math.pow(1 - dist / radius, 1.35);
+          const interaction = light ? 0.035 : 0.1;
+          targetAttractX = dx * influence * interaction;
+          targetAttractY = dy * influence * interaction;
+          targetFocus = influence * (light ? 0.3 : 1);
+        }
+      }
+
+      p.attractX += (targetAttractX - p.attractX) * 0.075;
+      p.attractY += (targetAttractY - p.attractY) * 0.075;
+      p.focus += (targetFocus - p.focus) * 0.1;
+      p.x = naturalX + p.attractX;
+      p.y = naturalY + p.attractY;
+
+      if ((p.verticalSpeed >= 0 && p.baseY > this.height + 28) || (p.verticalSpeed < 0 && p.baseY < -28)) {
+        this.resetHeroParticle(p);
+        return;
+      }
+      if (p.baseX < -50) p.baseX = this.width + 30;
+      if (p.baseX > this.width + 50) p.baseX = -30;
+    }
+
+    updateParticle(p, time, dt) {
+      if (p.kind === "dust" || p.kind === "haze" || p.kind === "petal") {
+        this.updateHeroParticle(p, time, dt);
+        return;
+      }
+
       const natural = this.driftTarget(p, time);
       let targetX = natural.x;
       let targetY = natural.y;
@@ -654,13 +779,140 @@
       ctx.restore();
     }
 
+    heroParticleVisible(p) {
+      return !isLightTheme() || p.themeSeed < 0.62;
+    }
+
+    drawHeroConstellation(time) {
+      const light = isLightTheme();
+      const ctx = this.ctx;
+      const candidates = this.particles.filter((p) => p.linkable && this.heroParticleVisible(p));
+      const linkCount = new Map();
+      const mouseActive = this.mouse.active && this.mouse.inside && finePointerQuery.matches;
+
+      ctx.save();
+      ctx.globalCompositeOperation = light ? "source-over" : "screen";
+      ctx.lineCap = "round";
+
+      for (let i = 0; i < candidates.length; i += 1) {
+        const a = candidates[i];
+        for (let j = i + 1; j < candidates.length; j += 1) {
+          const b = candidates[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist > 145) continue;
+
+          const mouseDist = Math.min(
+            Math.hypot(a.x - this.mouse.x, a.y - this.mouse.y),
+            Math.hypot(b.x - this.mouse.x, b.y - this.mouse.y),
+          );
+          const nearMouse = mouseActive && mouseDist < 230;
+          if (!nearMouse && Math.abs(a.linkSeed - b.linkSeed) > 0.21) continue;
+          if (!nearMouse && a.x < this.width * 0.43 && b.x < this.width * 0.43) continue;
+
+          const maxLinks = nearMouse && !light ? 2 : 1;
+          if ((linkCount.get(a) || 0) >= maxLinks || (linkCount.get(b) || 0) >= maxLinks) continue;
+
+          const breathe = 0.64 + Math.sin(time * 0.0012 + a.phase + b.phase) * 0.24;
+          const proximity = 1 - dist / 145;
+          const mouseBoost = nearMouse ? (1 - mouseDist / 230) * 0.12 : 0;
+          const factor = Math.min(this.textFactor(a.x, a.y), this.textFactor(b.x, b.y));
+          let alpha = clamp((0.045 + proximity * 0.12 + mouseBoost) * breathe * factor, 0.028, 0.22);
+          if (light) alpha *= 0.18;
+          if (alpha < (light ? 0.005 : 0.024)) continue;
+
+          const colors = light ? LIGHT_LINK_COLORS : LINK_COLORS;
+          const color = colors[(i + j) % colors.length];
+          const gradient = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+          gradient.addColorStop(0, rgba(color, alpha * 0.45));
+          gradient.addColorStop(0.5, rgba(color, alpha));
+          gradient.addColorStop(1, rgba(color, alpha * 0.45));
+          ctx.strokeStyle = gradient;
+          ctx.lineWidth = light ? 0.46 : (nearMouse ? 0.94 : 0.74);
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+          linkCount.set(a, (linkCount.get(a) || 0) + 1);
+          linkCount.set(b, (linkCount.get(b) || 0) + 1);
+        }
+      }
+      ctx.restore();
+    }
+
+    drawHeroParticles(time) {
+      const ctx = this.ctx;
+      const light = isLightTheme();
+      const glowColors = light ? LIGHT_GLOW_COLORS : DARK_GLOW_COLORS;
+      ctx.save();
+      ctx.globalCompositeOperation = light ? "source-over" : "screen";
+
+      for (const p of this.particles) {
+        if (!this.heroParticleVisible(p)) continue;
+        const factor = this.textFactor(p.x, p.y);
+        const color = glowColors[p.colorIndex % glowColors.length];
+        const wave = 0.5 + Math.sin(time * p.twinkle + p.phase) * 0.5;
+        const pulse = light ? 0.62 + wave * 0.3 : 0.48 + wave * 0.52;
+        const focusBoost = p.focus * (light ? 0.16 : 0.42);
+        const alpha = clamp((p.alpha * pulse + focusBoost) * factor, 0.024, light ? 0.38 : 0.76);
+
+        if (p.kind === "petal") {
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(Math.sin(time * 0.00022 + p.phase) * 0.7);
+          ctx.strokeStyle = rgba(color, alpha * (light ? 0.42 : 0.62));
+          ctx.fillStyle = rgba(color, alpha * (light ? 0.06 : 0.12));
+          ctx.lineWidth = Math.max(0.45, p.size * 0.14);
+          ctx.beginPath();
+          ctx.moveTo(0, p.size);
+          ctx.bezierCurveTo(-p.size * 0.72, p.size * 0.28, -p.size * 0.7, -p.size * 0.58, -p.size * 0.2, -p.size * 0.78);
+          ctx.quadraticCurveTo(0, -p.size * 0.45, p.size * 0.2, -p.size * 0.78);
+          ctx.bezierCurveTo(p.size * 0.7, -p.size * 0.58, p.size * 0.72, p.size * 0.28, 0, p.size);
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+          continue;
+        }
+
+        const radius = p.size * p.halo;
+        const halo = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, radius);
+        const hazeScale = p.kind === "haze" ? 0.62 : 1;
+        halo.addColorStop(0, rgba(color, alpha * 0.68 * hazeScale));
+        halo.addColorStop(0.22, rgba(color, alpha * 0.2 * hazeScale));
+        halo.addColorStop(1, rgba(color, 0));
+        ctx.fillStyle = halo;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = rgba(color, alpha * (p.kind === "haze" ? 0.22 : 0.82));
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * (p.kind === "haze" ? 0.3 : 0.46), 0, Math.PI * 2);
+        ctx.fill();
+
+        if (!light && p.linkable && wave > 0.87) {
+          const ray = p.size * (1.8 + wave * 1.5);
+          ctx.strokeStyle = rgba(color, alpha * 0.38);
+          ctx.lineWidth = Math.max(0.35, p.size * 0.24);
+          ctx.beginPath();
+          ctx.moveTo(p.x - ray, p.y);
+          ctx.lineTo(p.x + ray, p.y);
+          ctx.moveTo(p.x, p.y - ray);
+          ctx.lineTo(p.x, p.y + ray);
+          ctx.stroke();
+        }
+      }
+      ctx.restore();
+    }
+
     update(time) {
       const rawDt = time - this.lastTime;
       const dt = clamp(rawDt, 12, 34);
       this.lastTime = time;
 
       this.updateMicroParticles(time, dt);
-      for (const p of this.particles) this.updateParticle(p, time);
+      for (const p of this.particles) this.updateParticle(p, time, dt);
     }
 
     draw(time, shouldUpdate) {
@@ -668,6 +920,11 @@
       if (shouldUpdate) this.update(time);
 
       ctx.clearRect(0, 0, this.width, this.height);
+      if (this.mode === "hero") {
+        this.drawHeroConstellation(time);
+        this.drawHeroParticles(time);
+        return;
+      }
       this.drawNebula(time);
       this.drawMicroParticles(time);
       this.drawTrails();

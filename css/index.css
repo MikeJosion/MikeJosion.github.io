@@ -5617,6 +5617,83 @@ figure.highlight pre .javascript .function {
 .medium-zoom-overlay {
   z-index: 99999 !important;
 }
+.mermaid-wrap {
+  position: relative;
+  margin: 0 0 20px;
+  background: var(--card-bg);
+  text-align: center;
+}
+.mermaid-wrap .mermaid-open-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: box;
+  display: flex;
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  -o-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  -o-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  padding: 0;
+  width: 34px;
+  height: 25px;
+  border: none;
+  border-radius: 20%;
+  background: #d3d3d3;
+  -webkit-box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  color: #fff;
+  font-size: 0;
+  line-height: 1;
+  cursor: pointer;
+  -webkit-transition: background 0.2s ease, -webkit-transform 0.2s ease;
+  -moz-transition: background 0.2s ease, -moz-transform 0.2s ease;
+  -o-transition: background 0.2s ease, -o-transform 0.2s ease;
+  -ms-transition: background 0.2s ease, -ms-transform 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.mermaid-wrap .mermaid-open-btn i {
+  font-size: 16px;
+  line-height: 1;
+}
+.mermaid-wrap .mermaid-open-btn:hover,
+.mermaid-wrap .mermaid-open-btn:focus-visible {
+  outline: none;
+  background: #c0c0c0;
+  -webkit-transform: translateY(-1px);
+  -moz-transform: translateY(-1px);
+  -o-transform: translateY(-1px);
+  -ms-transform: translateY(-1px);
+  transform: translateY(-1px);
+}
+.mermaid-wrap > svg {
+  max-width: 100%;
+  height: 100%;
+  cursor: grab;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: none;
+}
+.mermaid-wrap > svg:active {
+  cursor: grabbing;
+}
+pre > code.mermaid {
+  display: none;
+}
 .utterances,
 .fb-comments iframe {
   width: 100% !important;

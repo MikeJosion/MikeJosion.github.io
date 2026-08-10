@@ -560,7 +560,7 @@ html[data-theme="dark"] body.nova-home-active .nova-particle-softener{
   background:linear-gradient(90deg,rgba(4,7,14,.26),rgba(4,7,14,.08) 35%,transparent 44%);
 }
 html[data-theme="dark"] body.nova-home-active .nova-particle-layer .hero-galaxy-canvas{
-  opacity:.52!important;
+  opacity:1!important;
 }
 html[data-theme="dark"] body.nova-home-active .nova-hero .hero-copy.nova-hero-copy{
   width:min(510px,40vw);
@@ -730,8 +730,8 @@ html[data-theme="light"] body.nova-home-active .nova-homepage{
   font-family:"Inter","Noto Sans SC","Source Han Sans SC","Microsoft YaHei",sans-serif;
 }
 html[data-theme="light"] body.nova-home-active .nova-hero{
-  height:94svh;
-  min-height:680px;
+  height:100svh;
+  min-height:720px;
 }
 html[data-theme="light"] body.nova-home-active .nova-hero-mist{
   background:none;
@@ -747,9 +747,9 @@ html[data-theme="light"] body.nova-home-active .nova-hero .nova-kicker{
   letter-spacing:.21em;
 }
 html[data-theme="light"] body.nova-home-active .nova-hero .hero-copy.nova-hero-copy{
-  width:min(500px,40vw);
-  max-width:500px;
-  transform:translateY(clamp(-112px,-9.5vh,-86px));
+  width:min(510px,40vw);
+  max-width:510px;
+  transform:translateY(clamp(-52px,-4.8vh,-34px));
 }
 html[data-theme="light"] body.nova-home-active .nova-hero .hero-title{
   margin-bottom:30px;
@@ -778,9 +778,9 @@ html[data-theme="light"] body.nova-home-active .nova-hero .nova-latest-signal{
   display:flex;
   align-items:center;
   gap:8px;
-  max-width:500px;
-  margin-top:30px;
-  padding-top:12px;
+  max-width:510px;
+  margin-top:36px;
+  padding-top:14px;
   border-top-color:rgba(78,67,86,.14);
   font-family:"Inter","Noto Sans SC","Source Han Sans SC",sans-serif;
   font-size:12px;
@@ -814,7 +814,8 @@ html[data-theme="light"] body.nova-home-active .nova-hero .nova-latest-signal st
   content:"\00b7";
 }
 html[data-theme="light"] body.nova-home-active .nova-particle-layer .hero-galaxy-canvas{
-  opacity:.36!important;
+  opacity:.88!important;
+  mix-blend-mode:normal;
 }
 html[data-theme="light"] body.nova-home-active #nav{
   color:#403a48;
@@ -933,7 +934,7 @@ html[data-theme="dark"] body.nova-home-active .nova-observatory > .nova-now {
 html[data-theme="light"] body.nova-home-active .nova-observatory > .nova-now {
   position:relative;
   z-index:4;
-  margin-top:-72px;
+  margin-top:-60px;
   border-color:rgba(79,65,84,.12);
   background:rgba(239,236,242,.9);
   box-shadow:0 20px 46px rgba(54,44,61,.13),inset 0 1px rgba(255,255,255,.46);
@@ -1077,7 +1078,7 @@ html[data-theme="dark"] .home-theme-toggle__icon--moon {
 
 /* Light-theme Hero clarity: keep the image clean and confine haze to copy. */
 html[data-theme="light"] body.nova-home-active .nova-hero-bg {
-  background-image:url("/img/background03.webp");
+  background-image:url("/img/background03.png");
   background-position:center 46%;
   background-size:cover;
   filter:none;
@@ -1420,14 +1421,14 @@ html[data-theme="light"] body.nova-home-active .nova-hero .nova-actions a:last-c
     font-size:clamp(51px,6.65vw,73px);
   }
   html[data-theme="light"] body.nova-home-active .nova-observatory > .nova-now{
-    margin-top:-54px;
+    margin-top:-48px;
   }
 }
 
 @media(max-width:768px){
   html[data-theme="light"] body.nova-home-active .nova-hero{
     height:auto;
-    min-height:92svh;
+    min-height:100svh;
   }
   html[data-theme="light"] body.nova-home-active .nova-hero::before{
     background:linear-gradient(180deg,transparent 0%,transparent calc(100% - 52px),rgba(221,216,223,.3) 100%);
@@ -1460,7 +1461,7 @@ html[data-theme="light"] body.nova-home-active .nova-hero .nova-actions a:last-c
     letter-spacing:.18em;
   }
   html[data-theme="light"] body.nova-home-active .nova-observatory > .nova-now{
-    margin-top:-28px;
+    margin-top:-26px;
   }
 }
 
