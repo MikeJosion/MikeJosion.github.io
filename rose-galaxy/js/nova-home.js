@@ -34,6 +34,36 @@
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches
   const searchInput = document.querySelector('#nova-archive-search')
 
+  const englishSubtitle = root.querySelector('.nova-en-subtitle[data-typewriter-text]')
+  const fullEnglishSubtitle = englishSubtitle?.dataset.typewriterText?.trim() || ''
+  if (englishSubtitle && fullEnglishSubtitle) {
+    englishSubtitle.setAttribute('aria-label', fullEnglishSubtitle)
+    if (reduceMotion) {
+      englishSubtitle.textContent = fullEnglishSubtitle
+      englishSubtitle.classList.add('is-complete')
+    } else {
+      const characters = Array.from(fullEnglishSubtitle)
+      let characterIndex = 0
+      englishSubtitle.textContent = ''
+      englishSubtitle.classList.add('is-typing')
+
+      const typeNextCharacter = () => {
+        characterIndex += 1
+        englishSubtitle.textContent = characters.slice(0, characterIndex).join('')
+        if (characterIndex < characters.length) {
+          const current = characters[characterIndex - 1]
+          const pause = current === ',' ? 145 : (current === '.' ? 220 : 48 + Math.random() * 42)
+          later(typeNextCharacter, pause)
+          return
+        }
+        englishSubtitle.classList.remove('is-typing')
+        englishSubtitle.classList.add('is-complete')
+      }
+
+      later(typeNextCharacter, 1050)
+    }
+  }
+
   reveal = new IntersectionObserver(entries => {
     entries.forEach(entry => entry.isIntersecting && entry.target.classList.add('is-visible'))
   }, { threshold: .12 })

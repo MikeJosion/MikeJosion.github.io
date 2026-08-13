@@ -125,10 +125,10 @@
   z-index: 9500;
   top: 0;
   left: 0;
-  width: clamp(300px, 22vw, 340px);
+  width: clamp(320px, 25vw, 390px);
   max-width: calc(100vw - 40px);
   height: auto;
-  padding: 18px 20px 16px;
+  padding: 20px 22px 18px;
   border: 1px solid rgba(195, 132, 158, .28);
   border-radius: 15px;
   color: inherit;
@@ -205,32 +205,34 @@
   margin: 0;
   color: rgba(247, 242, 246, .96);
   font-family: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", serif;
-  font-size: clamp(17px, 1.15vw, 20px);
-  font-weight: 500;
-  line-height: 1.75;
-  letter-spacing: .04em;
+  font-size: clamp(17px, 1.12vw, 20px);
+  font-weight: 600;
+  line-height: 1.68;
+  letter-spacing: .035em;
   text-align: left;
   white-space: pre-line;
   text-shadow: 0 1px 3px rgba(0, 0, 0, .35);
 }
 
 .prince-quote-popover__en {
-  margin: 11px 0 0;
-  color: rgba(207, 179, 194, .64);
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: 12px;
-  line-height: 1.58;
-  letter-spacing: .02em;
+  margin: 13px 0 0;
+  color: rgba(222, 213, 223, .46);
+  font-family: "JetBrains Mono", "Fira Code", "SFMono-Regular", Consolas, "Liberation Mono", "Inter", sans-serif;
+  font-size: 11px;
+  font-style: italic;
+  line-height: 1.68;
+  letter-spacing: .012em;
   text-align: left;
 }
 
 .prince-quote-popover__source {
-  margin: 12px 0 0;
+  margin: 14px 0 0;
   color: rgba(214, 142, 171, .8);
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: 12px;
-  font-style: italic;
-  letter-spacing: .07em;
+  font-family: "Inter", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  font-size: 10.5px;
+  font-style: normal;
+  line-height: 1.5;
+  letter-spacing: .035em;
   text-align: right;
 }
 
@@ -272,7 +274,7 @@
 }
 
 [data-theme="light"] .prince-quote-popover__en {
-  color: rgba(133, 107, 121, .78);
+  color: rgba(72, 65, 76, .46);
 }
 
 [data-theme="light"] .prince-quote-popover__source {

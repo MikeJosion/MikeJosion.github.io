@@ -349,6 +349,17 @@
   background-size:cover;
   background-repeat:no-repeat;
 }
+.nova-hero-bg::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:url("/img/background03.png") center 46%/cover no-repeat;
+  opacity:0;
+  transition:opacity .55s ease;
+}
+html[data-theme="light"] body.nova-home-active .nova-hero-bg::after{opacity:1}
+html[data-theme="dark"] body.nova-home-active .nova-hero-bg::after{opacity:0}
 .nova-hero::before{content:"";position:absolute;
   z-index:1;
   inset:0;
@@ -814,8 +825,8 @@ html[data-theme="light"] body.nova-home-active .nova-hero .nova-latest-signal st
   content:"\00b7";
 }
 html[data-theme="light"] body.nova-home-active .nova-particle-layer .hero-galaxy-canvas{
-  opacity:.88!important;
-  mix-blend-mode:normal;
+  display:none!important;
+  opacity:0!important;
 }
 html[data-theme="light"] body.nova-home-active #nav{
   color:#403a48;
@@ -876,15 +887,20 @@ html[data-theme="light"] body.nova-home-active .nova-observatory{
   z-index:3;
   padding-top:0;
   background:
-    radial-gradient(circle at 17% 4%,rgba(174,107,128,.09),transparent 27%),
-    radial-gradient(circle at 78% 2%,rgba(112,123,134,.07),transparent 25%),
-    linear-gradient(180deg,#ddd8df 0%,#e9e5e8 145px,#f1edef 370px,#f2eff0 100%);
+    radial-gradient(circle at 17% 4%,rgba(174,107,128,.07),transparent 27%),
+    radial-gradient(circle at 78% 2%,rgba(112,123,134,.055),transparent 25%),
+    linear-gradient(180deg,rgba(221,216,223,.34) 0%,rgba(233,229,232,.78) 165px,#f1edef 390px,#f2eff0 100%);
 }
 html[data-theme="light"] body.nova-home-active .nova-now .nova-status-panel{
-  background:rgba(112,124,136,.035);
+  border-left-color:rgba(92,79,99,.1);
+  background:linear-gradient(145deg,rgba(239,237,243,.18),rgba(215,214,224,.16));
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
 }
 html[data-theme="light"] body.nova-home-active .nova-status-cards article{
-  background:rgba(224,220,229,.58);
+  border-color:rgba(91,78,98,.1);
+  background:rgba(247,244,248,.34);
+  box-shadow:inset 0 1px rgba(255,255,255,.42),0 8px 22px rgba(68,57,74,.045);
 }
 html[data-theme="light"] body.nova-home-active .nova-status-cards i{
   color:#a66f82;
@@ -918,27 +934,43 @@ html[data-theme="dark"] body.nova-home-active .nova-observatory {
   z-index:3;
   padding-top:0;
   background:
-    radial-gradient(ellipse at 50% 0%,rgba(137,83,111,.075),transparent 44%),
-    linear-gradient(180deg,#080c16 0%,#0a101c 210px,#0c1220 100%);
+    radial-gradient(ellipse at 50% 0%,rgba(137,83,111,.09),transparent 42%),
+    linear-gradient(180deg,rgba(8,12,22,.36) 0%,rgba(9,14,25,.9) 150px,#0a101c 280px,#0c1220 100%);
 }
 
 html[data-theme="dark"] body.nova-home-active .nova-observatory > .nova-now {
   position:relative;
   z-index:4;
   margin-top:-60px;
-  border-color:rgba(224,215,224,.12);
-  background:linear-gradient(145deg,rgba(18,24,40,.97),rgba(13,19,33,.95));
-  box-shadow:0 26px 68px rgba(0,0,0,.3),inset 0 1px rgba(255,255,255,.035);
+  border-color:rgba(225,215,225,.15);
+  background:linear-gradient(145deg,rgba(17,22,33,.68),rgba(12,17,27,.58));
+  -webkit-backdrop-filter:blur(18px) saturate(1.08);
+  backdrop-filter:blur(18px) saturate(1.08);
+  box-shadow:0 28px 72px rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.055),inset 0 -1px rgba(255,255,255,.018);
 }
 
 html[data-theme="light"] body.nova-home-active .nova-observatory > .nova-now {
   position:relative;
   z-index:4;
   margin-top:-60px;
-  border-color:rgba(79,65,84,.12);
-  background:rgba(239,236,242,.9);
-  box-shadow:0 20px 46px rgba(54,44,61,.13),inset 0 1px rgba(255,255,255,.46);
+  border-color:rgba(89,72,92,.16);
+  background:linear-gradient(145deg,rgba(250,247,250,.48),rgba(226,223,232,.38));
+  -webkit-backdrop-filter:blur(22px) saturate(1.08);
+  backdrop-filter:blur(22px) saturate(1.08);
+  box-shadow:0 24px 58px rgba(54,44,61,.14),inset 0 1px rgba(255,255,255,.7),inset 0 -1px rgba(91,73,96,.035);
   width:min(1360px,calc(100% + 40px));
+}
+
+.nova-home-active .nova-observatory > .nova-now::before{
+  content:"";
+  position:absolute;
+  z-index:3;
+  top:0;
+  right:22px;
+  left:22px;
+  height:1px;
+  pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(239,220,228,.22) 34%,rgba(205,218,233,.16) 68%,transparent);
 }
 
 /* Butterfly rightside controls: scoped styling, with a two-button homepage mode. */
@@ -1078,7 +1110,7 @@ html[data-theme="dark"] .home-theme-toggle__icon--moon {
 
 /* Light-theme Hero clarity: keep the image clean and confine haze to copy. */
 html[data-theme="light"] body.nova-home-active .nova-hero-bg {
-  background-image:url("/img/background03.png");
+  background-image:url("/img/background02.webp");
   background-position:center 46%;
   background-size:cover;
   filter:none;
@@ -1089,20 +1121,17 @@ html[data-theme="light"] body.nova-home-active .nova-hero-bg {
 }
 
 html[data-theme="light"] body.nova-home-active .nova-particle-softener {
-  background:none;
+  background:
+    linear-gradient(90deg,rgba(249,245,247,.26) 0%,rgba(249,245,247,.13) 25%,rgba(249,245,247,.035) 42%,transparent 57%),
+    linear-gradient(0deg,rgba(247,241,244,.18) 0%,rgba(247,241,244,.06) 20%,transparent 43%);
   -webkit-backdrop-filter:none;
   backdrop-filter:none;
 }
 
 html[data-theme="light"] body.nova-home-active .nova-hero::before {
-  background:linear-gradient(
-    90deg,
-    rgba(247,243,246,.68) 0%,
-    rgba(247,243,246,.46) 18%,
-    rgba(247,243,246,.2) 34%,
-    rgba(247,243,246,.06) 45%,
-    transparent 58%
-  );
+  background:
+    linear-gradient(90deg,rgba(248,244,247,.74) 0%,rgba(248,244,247,.52) 17%,rgba(248,244,247,.25) 32%,rgba(248,244,247,.07) 45%,transparent 58%),
+    linear-gradient(0deg,rgba(246,240,244,.24) 0%,rgba(246,240,244,.1) 22%,transparent 48%);
 }
 
 html[data-theme="light"] body.nova-home-active .nova-hero::after {
@@ -1142,7 +1171,8 @@ html[data-theme="light"] body.nova-home-active .nova-hero .nova-cn-subtitle {
   font-size:16px;
   font-weight:500;
   line-height:1.65;
-  color:rgba(43,45,55,.92);
+  color:rgba(61,51,62,.96);
+  text-shadow:0 1px 2px rgba(255,252,253,.55),0 0 12px rgba(250,246,248,.22);
 }
 
 html[data-theme="light"] body.nova-home-active .nova-hero .nova-en-subtitle {
@@ -1150,7 +1180,8 @@ html[data-theme="light"] body.nova-home-active .nova-hero .nova-en-subtitle {
   font-size:14px;
   font-weight:400;
   line-height:1.5;
-  color:rgba(66,68,80,.78);
+  color:rgba(66,70,80,.88);
+  text-shadow:0 1px 2px rgba(255,252,253,.5);
 }
 
 html[data-theme="light"] body.nova-home-active .nova-hero .hero-title-nova,
@@ -1165,7 +1196,16 @@ html[data-theme="light"] body.nova-home-active .nova-hero .nova-latest-signal {
 
 html[data-theme="light"] body.nova-home-active .nova-hero .nova-latest-signal,
 html[data-theme="light"] body.nova-home-active .nova-hero .nova-latest-signal time {
-  color:rgba(61,62,73,.78);
+  color:rgba(69,64,73,.88);
+}
+
+html[data-theme="light"] body.nova-home-active .nova-hero .nova-latest-signal{
+  border-top-color:rgba(89,69,82,.2);
+  text-shadow:0 1px 2px rgba(255,252,253,.5);
+}
+
+html[data-theme="light"] body.nova-home-active .nova-hero .nova-latest-signal strong{
+  color:rgba(58,49,59,.96);
 }
 
 html[data-theme="light"] body.nova-home-active .nova-hero .nova-actions a:first-child {
@@ -1183,17 +1223,123 @@ html[data-theme="light"] body.nova-home-active .nova-hero .nova-actions a:first-
 
 html[data-theme="light"] body.nova-home-active .nova-hero .nova-actions a:last-child {
   color:rgba(55,54,64,.92);
-  background:rgba(250,247,249,.74);
-  border-color:rgba(99,91,104,.28);
-  -webkit-backdrop-filter:none;
-  backdrop-filter:none;
+  background:rgba(255,255,255,.28);
+  border-color:rgba(255,255,255,.56);
+  -webkit-backdrop-filter:blur(9px) saturate(1.04);
+  backdrop-filter:blur(9px) saturate(1.04);
+  box-shadow:inset 0 1px rgba(255,255,255,.5),0 4px 14px rgba(69,58,73,.045);
+}
+
+.nova-home-active .nova-hero-bg,
+.nova-home-active .nova-hero::before,
+.nova-home-active .nova-hero::after,
+.nova-home-active .nova-particle-softener,
+.nova-home-active .nova-hero .nova-kicker,
+.nova-home-active .nova-hero .hero-title-nova,
+.nova-home-active .nova-hero .hero-title-fliex,
+.nova-home-active .nova-hero .nova-cn-subtitle,
+.nova-home-active .nova-hero .nova-en-subtitle,
+.nova-home-active .nova-hero .nova-latest-signal,
+.nova-home-active .nova-hero .nova-latest-signal span,
+.nova-home-active .nova-hero .nova-latest-signal strong,
+.nova-home-active .nova-hero .nova-latest-signal time,
+.nova-home-active .nova-hero .nova-actions a{
+  transition:color .38s ease,background-color .38s ease,border-color .38s ease,box-shadow .38s ease,opacity .38s ease,filter .38s ease;
+}
+
+/* Hero entrance, typewriter and restrained breathing buttons. */
+.nova-homepage[data-ready="true"] .nova-hero .hero-title{
+  animation:nova-title-arrive 1.35s cubic-bezier(.22,.72,.22,1) .18s both;
+  will-change:opacity,transform,filter;
+}
+.nova-hero .nova-en-subtitle{
+  min-height:1.6em;
+}
+.nova-hero .nova-en-subtitle.is-typing::after{
+  content:"";
+  display:inline-block;
+  width:1px;
+  height:.9em;
+  margin-left:4px;
+  vertical-align:-.08em;
+  background:currentColor;
+  opacity:.72;
+  animation:nova-type-caret .82s steps(1,end) infinite;
+}
+.nova-hero .nova-actions a{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  transition:transform .38s cubic-bezier(.22,.7,.25,1),border-color .38s ease,background-color .38s ease,box-shadow .5s ease,color .38s ease;
+}
+.nova-hero .nova-actions a::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:-45%;
+  pointer-events:none;
+  background:radial-gradient(circle at 50% 50%,rgba(255,226,235,.22),transparent 58%);
+  opacity:0;
+  transform:scale(.72);
+  transition:opacity .45s ease,transform .55s cubic-bezier(.22,.7,.25,1);
+}
+.nova-hero .nova-actions a:hover,
+.nova-hero .nova-actions a:focus-visible{
+  transform:translateY(-2px);
+}
+.nova-hero .nova-actions a:hover::before,
+.nova-hero .nova-actions a:focus-visible::before{
+  opacity:1;
+  transform:scale(1);
+}
+html[data-theme="dark"] body.nova-home-active .nova-hero .nova-actions a:first-child:hover,
+html[data-theme="dark"] body.nova-home-active .nova-hero .nova-actions a:first-child:focus-visible{
+  background:#a45d76;
+  box-shadow:0 8px 24px rgba(171,89,118,.22),0 0 0 1px rgba(232,174,193,.12),inset 0 1px rgba(255,255,255,.08);
+}
+html[data-theme="dark"] body.nova-home-active .nova-hero .nova-actions a:last-child:hover,
+html[data-theme="dark"] body.nova-home-active .nova-hero .nova-actions a:last-child:focus-visible{
+  background:rgba(32,39,54,.58);
+  box-shadow:0 8px 22px rgba(6,8,15,.24),0 0 18px rgba(181,191,213,.08);
+}
+html[data-theme="light"] body.nova-home-active .nova-hero .nova-actions a:first-child:hover,
+html[data-theme="light"] body.nova-home-active .nova-hero .nova-actions a:first-child:focus-visible{
+  background:rgba(178,82,119,.98);
+  box-shadow:0 9px 23px rgba(122,72,94,.17),0 0 0 1px rgba(151,76,106,.08);
+}
+html[data-theme="light"] body.nova-home-active .nova-hero .nova-actions a:last-child:hover,
+html[data-theme="light"] body.nova-home-active .nova-hero .nova-actions a:last-child:focus-visible{
+  border-color:rgba(255,255,255,.7);
+  background:rgba(255,255,255,.38);
+  box-shadow:0 8px 20px rgba(0,0,0,.06),inset 0 1px rgba(255,255,255,.58);
+}
+.nova-hero .nova-actions a:focus-visible{
+  outline:2px solid rgba(221,152,177,.55);
+  outline-offset:3px;
+}
+.nova-hero .nova-latest-signal strong{
+  transition:color .3s ease;
+}
+.nova-hero .nova-latest-signal:hover strong,
+.nova-hero .nova-latest-signal:focus-visible strong{
+  color:var(--rose);
+}
+
+@keyframes nova-title-arrive{
+  0%{opacity:0;filter:blur(5px);transform:translateY(14px)}
+  58%{opacity:1;filter:blur(0)}
+  100%{opacity:1;filter:blur(0);transform:translateY(0)}
+}
+@keyframes nova-type-caret{
+  0%,46%{opacity:.72}
+  47%,100%{opacity:0}
 }
 
 @media(max-width:900px){.nova-track-card{display:none}.nova-featured-grid{height:auto;grid-template-rows:320px 210px 210px}.nova-note-card--lead{grid-row:auto}.nova-now{grid-template-columns:1fr}.nova-status-panel{border-top:1px solid var(--line);border-left:0}.nova-archive-links{grid-template-columns:1fr 1fr}.nova-fragment-grid{grid-template-columns:1fr}}
 
 @media(max-width:650px){.nova-hero{min-height:640px}.nova-latest-signal{left:22px;right:22px;max-width:none}.nova-latest-signal time{display:none}.nova-observatory{padding-inline:14px}.nova-latest-grid{grid-template-columns:1fr}.nova-section-heading>a{display:none}.nova-year-lines{display:none}.nova-footer{align-items:flex-start;gap:24px;flex-wrap:wrap}.nova-hero-copy{left:22px;right:22px;top:44%}}
 
-@media(prefers-reduced-motion:reduce){.nova-homepage *{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.nova-particle-layer .hero-galaxy-canvas{display:none}.nova-reveal{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.nova-homepage *{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.nova-particle-layer .hero-galaxy-canvas{display:none}.nova-reveal{opacity:1;transform:none}.nova-homepage .nova-hero .hero-title{opacity:1;filter:none;transform:none;will-change:auto}.nova-hero .nova-en-subtitle::after{content:none!important}}
 
 @media(max-width:650px){.nova-home-active #rightside{right:8px}.nova-footer nav{gap:14px;flex-wrap:wrap}}
 

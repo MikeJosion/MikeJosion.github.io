@@ -7,32 +7,32 @@
     return
   }
 
-  // Quote content: keep the Chinese text and specified line breaks unchanged.
+  // Five independent entries are selected randomly without immediate repetition.
   const princeQuotes = [
     {
-      en: "It was the time you gave to your rose that made her precious beyond all others.",
-      zh: "你为你的玫瑰花费的时间，才使她变得重要",
-      source: "— The Little Prince"
+      zh: "完美并非无以复加，而是无处可减。",
+      en: "Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away.",
+      source: "— Antoine de Saint-Exupéry"
     },
     {
-      en: "He was once like ten thousand other foxes; then he became my friend, and suddenly, he was the only one.",
-      zh: "他本和万只狐狸一样，因我成朋友，便独一无二",
-      source: "— The Little Prince"
+      zh: "我不能创造的东西，我就无法真正理解。",
+      en: "What I cannot create, I do not understand.",
+      source: "— Richard Feynman（理查德·费曼）"
     },
     {
-      en: "Flowers often conceal what lies within, and I was still too young to know how to care for her.",
-      zh: "花总是表里不一,而我太年轻了\n不知道该怎样爱护她",
-      source: "— The Little Prince"
+      zh: "万物皆不急就，却无所不成。",
+      en: "Nature does not hurry, yet everything is accomplished.",
+      source: "— Lao Tzu（老子）"
     },
     {
-      en: "Perhaps the stars shine so that everyone may one day find the star that belongs to them.",
-      zh: "星星发亮是为了让每一个人，有一天都能找到属于自己的星星。",
-      source: "— The Little Prince"
+      zh: "“简单是可靠性的先决条件。”",
+      en: "Simplicity is prerequisite for reliability.",
+      source: "— Edsger W. Dijkstra（艾兹格·迪杰斯特拉）"
     },
     {
-      en: "There may be five thousand flowers in the world that look exactly like you, yet only you are the one and only rose.",
-      zh: "也许世界上有五千朵和你一摸一样的花\n但只有你是独一无二的玫瑰",
-      source: "— The Little Prince"
+      zh: "不要再去争论一个好人应该是什么样，去成为他。",
+      en: "Waste no more time arguing what a good man should be. Be one.",
+      source: "— Marcus Aurelius（马可·奥勒留）"
     }
   ]
 

@@ -151,6 +151,7 @@
       this.observer?.disconnect();
       this.host.removeEventListener("pointermove", this.onPointerMove);
       this.host.removeEventListener("pointerleave", this.onPointerLeave);
+      this.ctx.clearRect(0, 0, this.width, this.height);
     }
 
     motionScale() {
@@ -243,11 +244,11 @@
 
     particleTotal() {
       if (isMobile()) {
-        if (this.mode === "hero") return Math.round(random(44, 52));
+        if (this.mode === "hero") return Math.round(random(40, 48));
         if (this.mode === "footer") return Math.round(random(20, 28));
         return Math.round(random(20, 32));
       }
-      if (this.mode === "hero") return Math.round(random(74, 88));
+      if (this.mode === "hero") return Math.round(random(68, 80));
       if (this.mode === "footer") return Math.round(random(55, 65));
       return Math.round(random(55, 75));
     }
@@ -292,10 +293,11 @@
         size: kind === "petal" ? random(3.2, 5) * depth : (kind === "haze" ? random(1.8, 3.4) : random(0.9, 2)) * depth,
         alpha: kind === "petal" ? random(0.22, 0.38) : (kind === "haze" ? random(0.18, 0.34) : random(0.34, 0.65)),
         phase: (index / total) * Math.PI * 2 + random(-Math.PI, Math.PI),
-        verticalSpeed: random(-0.016, 0.024) * depth,
-        sway: random(12, 48) * depth,
-        swaySpeed: random(0.00024, 0.00062),
-        breeze: random(-0.008, 0.012),
+        verticalSpeed: random(-0.012, 0.018) * depth,
+        lightFallSpeed: random(0.008, 0.018) * depth,
+        sway: random(10, 38) * depth,
+        swaySpeed: random(0.00019, 0.00046),
+        breeze: random(-0.006, 0.009),
         twinkle: random(0.00125, 0.0034),
         halo: kind === "haze" ? random(8, 14) : random(5, 8.5),
         colorIndex: index % DARK_GLOW_COLORS.length,
@@ -462,10 +464,11 @@
 
     updateHeroParticle(p, time, dt) {
       const light = isLightTheme();
-      const themeMotion = light ? 0.34 : 1;
+      const themeMotion = light ? 0.26 : 0.72;
       p.prevX = p.x;
       p.prevY = p.y;
-      p.baseY += p.verticalSpeed * dt * this.motionScale() * themeMotion;
+      const verticalSpeed = light ? p.lightFallSpeed : p.verticalSpeed;
+      p.baseY += verticalSpeed * dt * this.motionScale() * themeMotion;
       p.baseX += p.breeze * dt * this.motionScale() * themeMotion;
 
       const naturalX = p.baseX + Math.sin(time * p.swaySpeed + p.phase) * p.sway * themeMotion;
@@ -494,7 +497,7 @@
       p.x = naturalX + p.attractX;
       p.y = naturalY + p.attractY;
 
-      if ((p.verticalSpeed >= 0 && p.baseY > this.height + 28) || (p.verticalSpeed < 0 && p.baseY < -28)) {
+      if ((verticalSpeed >= 0 && p.baseY > this.height + 28) || (verticalSpeed < 0 && p.baseY < -28)) {
         this.resetHeroParticle(p);
         return;
       }
@@ -851,18 +854,22 @@
       for (const p of this.particles) {
         if (!this.heroParticleVisible(p)) continue;
         const factor = this.textFactor(p.x, p.y);
-        const color = glowColors[p.colorIndex % glowColors.length];
+        const lightPetal = light && (p.kind === "petal" || p.themeSeed < 0.14);
+        const color = lightPetal
+          ? { r: 218, g: 171, b: 180 }
+          : glowColors[p.colorIndex % glowColors.length];
         const wave = 0.5 + Math.sin(time * p.twinkle + p.phase) * 0.5;
         const pulse = light ? 0.62 + wave * 0.3 : 0.48 + wave * 0.52;
         const focusBoost = p.focus * (light ? 0.16 : 0.42);
         const alpha = clamp((p.alpha * pulse + focusBoost) * factor, 0.024, light ? 0.38 : 0.76);
 
-        if (p.kind === "petal") {
+        if (p.kind === "petal" || lightPetal) {
           ctx.save();
           ctx.translate(p.x, p.y);
-          ctx.rotate(Math.sin(time * 0.00022 + p.phase) * 0.7);
-          ctx.strokeStyle = rgba(color, alpha * (light ? 0.42 : 0.62));
-          ctx.fillStyle = rgba(color, alpha * (light ? 0.06 : 0.12));
+          const breezeTilt = Math.sin(time * p.swaySpeed + p.phase) * (light ? 0.9 : 0.7);
+          ctx.rotate(breezeTilt);
+          ctx.strokeStyle = rgba(color, alpha * (light ? 0.3 : 0.62));
+          ctx.fillStyle = rgba(color, alpha * (light ? 0.13 : 0.12));
           ctx.lineWidth = Math.max(0.45, p.size * 0.14);
           ctx.beginPath();
           ctx.moveTo(0, p.size);
@@ -1024,7 +1031,7 @@
   }
 
   function handleVisibility() {
-    if (!reducedMotionQuery.matches && !document.hidden && !rafId && scenes.length) {
+    if (!reducedMotionQuery.matches && !isLightTheme() && !document.hidden && !rafId && scenes.length) {
       lastFrameTime = 0;
       rafId = window.requestAnimationFrame(loop);
       window.__novaRoseGalaxy.rafId = rafId;
@@ -1043,7 +1050,7 @@
   }
 
   function init() {
-    if (reducedMotionQuery.matches) {
+    if (reducedMotionQuery.matches || isLightTheme()) {
       destroy();
       return;
     }
@@ -1064,7 +1071,18 @@
     window.__novaRoseGalaxy.rafId = rafId;
   }
 
-  window.__novaRoseGalaxy = { running: false, rafId: 0, init, destroy };
+  const syncTheme = () => {
+    if (!window.document?.documentElement) return;
+    if (isLightTheme()) destroy();
+    else init();
+  };
+
+  const themeObserver = new MutationObserver((records) => {
+    if (records.some((record) => record.attributeName === "data-theme")) syncTheme();
+  });
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  window.__novaRoseGalaxy = { running: false, rafId: 0, init, destroy, syncTheme };
   window.addEventListener("resize", resizeAll, { passive: true });
   document.addEventListener("visibilitychange", handleVisibility);
   document.addEventListener("pjax:send", destroy);
