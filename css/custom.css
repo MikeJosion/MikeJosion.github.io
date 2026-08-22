@@ -1003,6 +1003,22 @@ html[data-theme="light"] #local-search .local-search-hit-item:hover {
   color: var(--code-text);
   background: var(--code-bg);
 }
+#body-wrap.post #article-container .highlight table {
+  display: table;
+  width: 100%;
+  table-layout: auto;
+}
+#body-wrap.post #article-container .highlight .gutter {
+  width: 1%;
+  white-space: nowrap;
+}
+#body-wrap.post #article-container .highlight .code { width: auto; }
+#body-wrap.post #article-container .highlight pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
 #body-wrap.post #article-container .highlight .gutter,
 #body-wrap.post #article-container .highlight .gutter pre {
   color: #707a89;
@@ -1098,7 +1114,7 @@ html[data-theme="light"] #local-search .local-search-hit-item:hover {
 #body-wrap.post #article-container .note p:last-child,
 #body-wrap.post #article-container blockquote p:last-child { margin-bottom: 0; }
 
-#body-wrap.post #article-container table {
+#body-wrap.post #article-container .table-wrap table {
   display: table;
   width: 100%;
   color: var(--text-secondary);
@@ -1107,12 +1123,12 @@ html[data-theme="light"] #local-search .local-search-hit-item:hover {
   max-width: 100%;
   overflow-x: auto;
 }
-#body-wrap.post #article-container th {
+#body-wrap.post #article-container .table-wrap th {
   color: var(--text-primary);
   background: var(--surface-secondary);
 }
-#body-wrap.post #article-container th,
-#body-wrap.post #article-container td { border-color: var(--border-default); }
+#body-wrap.post #article-container .table-wrap th,
+#body-wrap.post #article-container .table-wrap td { border-color: var(--border-default); }
 
 /* Post utilities, navigation, recommendations and comments. */
 #body-wrap.post .post-copyright {
@@ -1287,7 +1303,7 @@ html[data-theme="light"] #body-wrap.post #pagination .pagination-related {
   #body-wrap.post .relatedPosts-list { grid-template-columns: 1fr; }
   #body-wrap.post #pagination .pagination-related { min-height: 136px; }
   #body-wrap.post .relatedPosts-list .pagination-related { aspect-ratio: 16 / 9; }
-  #body-wrap.post #article-container table { min-width: 560px; }
+  #body-wrap.post #article-container .table-wrap table { min-width: 560px; }
   #body-wrap.post #rightside { bottom: 18px; }
 }
 

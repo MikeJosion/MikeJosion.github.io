@@ -31,13 +31,6 @@
         document.body.dataset.novaPowerModeReady = 'true'
       }
     )
-
-    appendScript('click-show-text', `${CDN_ROOT}click-show-text.min.js`, {
-      'data-mobile': 'false',
-      'data-text': 'I,MISS,LOVE,YOU',
-      'data-fontsize': '15px',
-      'data-random': 'true'
-    })
   }
 
   if ('requestIdleCallback' in window) {

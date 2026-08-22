@@ -3468,4 +3468,62 @@ LinkList sortList(LinkList head) &#123;    if (head == NULL || head-&gt;next == 
         <tag>链表</tag>
       </tags>
   </entry>
+  <entry>
+    <title>编程术语</title>
+    <url>//programming-terms/</url>
+    <content><![CDATA[Day 1｜IP、端口、DNS、TCP、HTTP今天认识的 5 个术语，可以组成一条完整的网络请求链：
+
+域名 → DNS → IP → 端口 → TCP → HTTP → Gin 服务
+
+一、IP Address（IP 地址）正式解释：
+IP 地址用于标识网络中的主机或网络接口。
+通俗理解：
+IP 地址负责告诉请求：“应该去找哪台机器？”
+例如，127.0.0.1 表示当前这台计算机，也就是本机。
+二、Port（端口）正式解释：
+端口是传输层协议用来区分一台主机上不同网络服务的编号。
+通俗理解：
+IP 负责找到哪台机器，端口负责找到这台机器上的哪个程序。
+项目例子：
+r.Run(&quot;:8080&quot;) 表示 Gin 服务监听 8080 端口，等待客户端连接。
+三、DNS（域名系统）正式解释：
+DNS 是一个分布式命名系统，最常见的作用是把域名解析为 IP 地址。
+通俗理解：
+人更容易记住域名，但计算机通信需要找到对应的 IP 地址。因此，DNS 就像网络中的通讯录：api.example.com → 203.0.113.10。
+四、TCP（传输控制协议）正式解释：
+TCP 是一种面向连接、可靠并且保证数据顺序的传输层协议。
+通俗理解：
+找到 IP 和端口以后，客户端还需要和服务器建立连接。TCP 负责尽量保证数据能够送达，并且顺序正确。
+HTTP&#x2F;1.1 和 HTTP&#x2F;2 通常运行在 TCP 之上。
+五、HTTP（超文本传输协议）正式解释：
+HTTP 是一种应用层协议，用来规定客户端和服务器之间请求与响应的格式及通信方式。
+通俗理解：
+HTTP 规定了客户端应该怎样提问，服务器应该怎样回答。
+例如，客户端发送：
+GET /users HTTP/1.1Host: api.example.com
+
+服务器返回：
+HTTP/1.1 200 OKContent-Type: application/json&#123;&quot;users&quot;:[]&#125;
+
+在 Gin 项目中，r.GET(&quot;/users&quot;, getUsers) 就是在处理一个 HTTP 请求。
+把今天的 5 个术语串起来假设浏览器访问 http://api.example.com:8080/users，背后的过程可以简单理解为：
+
+DNS 将 api.example.com 解析为服务器 IP。
+客户端找到服务器的 8080 端口。
+客户端与服务器建立 TCP 连接。
+客户端发送 HTTP 请求。
+请求进入 Gin Handler，处理完成后返回 HTTP 响应。
+
+一句话复习：
+
+DNS 找地址，IP 找机器，端口找服务，TCP 建立连接，HTTP 传递请求与响应。
+
+]]></content>
+      <categories>
+        <category>编程术语</category>
+      </categories>
+      <tags>
+        <tag>编程术语</tag>
+      </tags>
+  </entry>
 </search>

@@ -53,11 +53,12 @@
     { r: 196, g: 176, b: 205 },
   ];
   const LIGHT_GLOW_COLORS = [
-    { r: 248, g: 243, b: 236 },
-    { r: 232, g: 202, b: 205 },
-    { r: 229, g: 205, b: 177 },
-    { r: 202, g: 194, b: 188 },
+    { r: 174, g: 157, b: 164 },
+    { r: 190, g: 163, b: 171 },
+    { r: 162, g: 153, b: 161 },
+    { r: 199, g: 181, b: 184 },
   ];
+  const LIGHT_PETAL_COLOR = { r: 218, g: 171, b: 180 };
 
   const scenes = [];
   const FRAME_INTERVAL = 1000 / 30;
@@ -243,12 +244,17 @@
     }
 
     particleTotal() {
+      if (this.mode === "hero") {
+        const lightScale = isLightTheme() ? 0.68 : 1;
+        const range = isMobile()
+          ? [24, 30]
+          : (window.innerWidth < 1100 ? [34, 40] : [48, 56]);
+        return Math.round(random(range[0], range[1]) * lightScale);
+      }
       if (isMobile()) {
-        if (this.mode === "hero") return Math.round(random(40, 48));
         if (this.mode === "footer") return Math.round(random(20, 28));
         return Math.round(random(20, 32));
       }
-      if (this.mode === "hero") return Math.round(random(68, 80));
       if (this.mode === "footer") return Math.round(random(55, 65));
       return Math.round(random(55, 75));
     }
@@ -276,7 +282,11 @@
     createHeroParticle(index, total) {
       const depth = random(0.42, 1);
       const kindRoll = Math.random();
-      const kind = kindRoll < 0.055 ? "petal" : (kindRoll < 0.2 ? "haze" : "dust");
+      const kind = kindRoll < 0.02 ? "petal" : (kindRoll < 0.08 ? "glint" : "dust");
+      const motionRoll = Math.random();
+      const motionFactor = motionRoll < 0.7
+        ? random(0.34, 0.48)
+        : (motionRoll < 0.95 ? random(0.52, 0.7) : random(0.78, 0.92));
       const position = this.pickHeroPosition();
       const x = position.x;
       const y = position.y;
@@ -290,20 +300,19 @@
         prevX: x,
         prevY: y,
         depth,
-        size: kind === "petal" ? random(3.2, 5) * depth : (kind === "haze" ? random(1.8, 3.4) : random(0.9, 2)) * depth,
-        alpha: kind === "petal" ? random(0.22, 0.38) : (kind === "haze" ? random(0.18, 0.34) : random(0.34, 0.65)),
+        size: kind === "petal" ? random(1.8, 3) * depth : (kind === "glint" ? random(1.15, 1.8) : random(0.55, 1.25)) * depth,
+        alpha: kind === "petal" ? random(0.11, 0.2) : (kind === "glint" ? random(0.2, 0.34) : random(0.12, 0.28)),
         phase: (index / total) * Math.PI * 2 + random(-Math.PI, Math.PI),
-        verticalSpeed: random(-0.012, 0.018) * depth,
-        lightFallSpeed: random(0.008, 0.018) * depth,
-        sway: random(10, 38) * depth,
-        swaySpeed: random(0.00019, 0.00046),
-        breeze: random(-0.006, 0.009),
-        twinkle: random(0.00125, 0.0034),
-        halo: kind === "haze" ? random(8, 14) : random(5, 8.5),
+        verticalSpeed: random(-0.004, 0.007) * depth * motionFactor,
+        lightFallSpeed: random(0.003, 0.006) * depth * motionFactor,
+        sway: random(5, 18) * depth * motionFactor,
+        swaySpeed: random(0.0001, 0.00025),
+        breeze: random(-0.0025, 0.0035) * motionFactor,
+        twinkle: random(0.00055, 0.00135),
+        halo: kind === "glint" ? random(3.2, 4.8) : 0,
+        tilt: random(-0.18, 0.18),
         colorIndex: index % DARK_GLOW_COLORS.length,
         themeSeed: Math.random(),
-        linkable: kind !== "petal" && Math.random() < 0.42,
-        linkSeed: Math.random(),
         focus: 0,
         attractX: 0,
         attractY: 0,
@@ -464,7 +473,7 @@
 
     updateHeroParticle(p, time, dt) {
       const light = isLightTheme();
-      const themeMotion = light ? 0.26 : 0.72;
+      const themeMotion = light ? 0.22 : 0.5;
       p.prevX = p.x;
       p.prevY = p.y;
       const verticalSpeed = light ? p.lightFallSpeed : p.verticalSpeed;
@@ -481,19 +490,19 @@
         const dx = this.mouse.x - naturalX;
         const dy = this.mouse.y - naturalY;
         const dist = Math.hypot(dx, dy) || 1;
-        const radius = 230;
+        const radius = 120;
         if (dist < radius) {
-          const influence = Math.pow(1 - dist / radius, 1.35);
-          const interaction = light ? 0.035 : 0.1;
+          const influence = Math.pow(1 - dist / radius, 1.6);
+          const interaction = light ? 0.012 : 0.028;
           targetAttractX = dx * influence * interaction;
           targetAttractY = dy * influence * interaction;
-          targetFocus = influence * (light ? 0.3 : 1);
+          targetFocus = influence * (light ? 0.1 : 0.22);
         }
       }
 
-      p.attractX += (targetAttractX - p.attractX) * 0.075;
-      p.attractY += (targetAttractY - p.attractY) * 0.075;
-      p.focus += (targetFocus - p.focus) * 0.1;
+      p.attractX += (targetAttractX - p.attractX) * 0.035;
+      p.attractY += (targetAttractY - p.attractY) * 0.035;
+      p.focus += (targetFocus - p.focus) * 0.045;
       p.x = naturalX + p.attractX;
       p.y = naturalY + p.attractY;
 
@@ -506,7 +515,7 @@
     }
 
     updateParticle(p, time, dt) {
-      if (p.kind === "dust" || p.kind === "haze" || p.kind === "petal") {
+      if (p.kind === "dust" || p.kind === "glint" || p.kind === "petal") {
         this.updateHeroParticle(p, time, dt);
         return;
       }
@@ -568,6 +577,12 @@
 
     triggerScatter() {
       if (!finePointerQuery.matches || isMobile()) return;
+
+      if (this.mode === "hero") {
+        this.mouse.active = false;
+        this.mouse.idle = true;
+        return;
+      }
 
       const mx = this.mouse.x;
       const my = this.mouse.y;
@@ -783,65 +798,7 @@
     }
 
     heroParticleVisible(p) {
-      return !isLightTheme() || p.themeSeed < 0.62;
-    }
-
-    drawHeroConstellation(time) {
-      const light = isLightTheme();
-      const ctx = this.ctx;
-      const candidates = this.particles.filter((p) => p.linkable && this.heroParticleVisible(p));
-      const linkCount = new Map();
-      const mouseActive = this.mouse.active && this.mouse.inside && finePointerQuery.matches;
-
-      ctx.save();
-      ctx.globalCompositeOperation = light ? "source-over" : "screen";
-      ctx.lineCap = "round";
-
-      for (let i = 0; i < candidates.length; i += 1) {
-        const a = candidates[i];
-        for (let j = i + 1; j < candidates.length; j += 1) {
-          const b = candidates[j];
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-          const dist = Math.hypot(dx, dy);
-          if (dist > 145) continue;
-
-          const mouseDist = Math.min(
-            Math.hypot(a.x - this.mouse.x, a.y - this.mouse.y),
-            Math.hypot(b.x - this.mouse.x, b.y - this.mouse.y),
-          );
-          const nearMouse = mouseActive && mouseDist < 230;
-          if (!nearMouse && Math.abs(a.linkSeed - b.linkSeed) > 0.21) continue;
-          if (!nearMouse && a.x < this.width * 0.43 && b.x < this.width * 0.43) continue;
-
-          const maxLinks = nearMouse && !light ? 2 : 1;
-          if ((linkCount.get(a) || 0) >= maxLinks || (linkCount.get(b) || 0) >= maxLinks) continue;
-
-          const breathe = 0.64 + Math.sin(time * 0.0012 + a.phase + b.phase) * 0.24;
-          const proximity = 1 - dist / 145;
-          const mouseBoost = nearMouse ? (1 - mouseDist / 230) * 0.12 : 0;
-          const factor = Math.min(this.textFactor(a.x, a.y), this.textFactor(b.x, b.y));
-          let alpha = clamp((0.045 + proximity * 0.12 + mouseBoost) * breathe * factor, 0.028, 0.22);
-          if (light) alpha *= 0.18;
-          if (alpha < (light ? 0.005 : 0.024)) continue;
-
-          const colors = light ? LIGHT_LINK_COLORS : LINK_COLORS;
-          const color = colors[(i + j) % colors.length];
-          const gradient = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
-          gradient.addColorStop(0, rgba(color, alpha * 0.45));
-          gradient.addColorStop(0.5, rgba(color, alpha));
-          gradient.addColorStop(1, rgba(color, alpha * 0.45));
-          ctx.strokeStyle = gradient;
-          ctx.lineWidth = light ? 0.46 : (nearMouse ? 0.94 : 0.74);
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.stroke();
-          linkCount.set(a, (linkCount.get(a) || 0) + 1);
-          linkCount.set(b, (linkCount.get(b) || 0) + 1);
-        }
-      }
-      ctx.restore();
+      return !isLightTheme() || p.themeSeed < 0.68;
     }
 
     drawHeroParticles(time) {
@@ -854,22 +811,21 @@
       for (const p of this.particles) {
         if (!this.heroParticleVisible(p)) continue;
         const factor = this.textFactor(p.x, p.y);
-        const lightPetal = light && (p.kind === "petal" || p.themeSeed < 0.14);
-        const color = lightPetal
-          ? { r: 218, g: 171, b: 180 }
+        const color = light && p.kind === "petal"
+          ? LIGHT_PETAL_COLOR
           : glowColors[p.colorIndex % glowColors.length];
-        const wave = 0.5 + Math.sin(time * p.twinkle + p.phase) * 0.5;
-        const pulse = light ? 0.62 + wave * 0.3 : 0.48 + wave * 0.52;
-        const focusBoost = p.focus * (light ? 0.16 : 0.42);
-        const alpha = clamp((p.alpha * pulse + focusBoost) * factor, 0.024, light ? 0.38 : 0.76);
+        const pulse = p.kind === "glint"
+          ? 0.86 + Math.sin(time * p.twinkle + p.phase) * 0.06
+          : 0.9;
+        const focusBoost = p.focus * (light ? 0.04 : 0.08);
+        const alpha = clamp((p.alpha * pulse + focusBoost) * factor, 0.008, light ? 0.16 : 0.34);
 
-        if (p.kind === "petal" || lightPetal) {
+        if (p.kind === "petal") {
           ctx.save();
           ctx.translate(p.x, p.y);
-          const breezeTilt = Math.sin(time * p.swaySpeed + p.phase) * (light ? 0.9 : 0.7);
-          ctx.rotate(breezeTilt);
-          ctx.strokeStyle = rgba(color, alpha * (light ? 0.3 : 0.62));
-          ctx.fillStyle = rgba(color, alpha * (light ? 0.13 : 0.12));
+          ctx.rotate(p.tilt);
+          ctx.strokeStyle = rgba(color, alpha * (light ? 0.24 : 0.42));
+          ctx.fillStyle = rgba(color, alpha * (light ? 0.08 : 0.1));
           ctx.lineWidth = Math.max(0.45, p.size * 0.14);
           ctx.beginPath();
           ctx.moveTo(0, p.size);
@@ -882,33 +838,22 @@
           continue;
         }
 
-        const radius = p.size * p.halo;
-        const halo = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, radius);
-        const hazeScale = p.kind === "haze" ? 0.62 : 1;
-        halo.addColorStop(0, rgba(color, alpha * 0.68 * hazeScale));
-        halo.addColorStop(0.22, rgba(color, alpha * 0.2 * hazeScale));
-        halo.addColorStop(1, rgba(color, 0));
-        ctx.fillStyle = halo;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = rgba(color, alpha * (p.kind === "haze" ? 0.22 : 0.82));
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * (p.kind === "haze" ? 0.3 : 0.46), 0, Math.PI * 2);
-        ctx.fill();
-
-        if (!light && p.linkable && wave > 0.87) {
-          const ray = p.size * (1.8 + wave * 1.5);
-          ctx.strokeStyle = rgba(color, alpha * 0.38);
-          ctx.lineWidth = Math.max(0.35, p.size * 0.24);
+        if (p.kind === "glint") {
+          const radius = p.size * p.halo;
+          const halo = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, radius);
+          halo.addColorStop(0, rgba(color, alpha * 0.28));
+          halo.addColorStop(0.28, rgba(color, alpha * 0.08));
+          halo.addColorStop(1, rgba(color, 0));
+          ctx.fillStyle = halo;
           ctx.beginPath();
-          ctx.moveTo(p.x - ray, p.y);
-          ctx.lineTo(p.x + ray, p.y);
-          ctx.moveTo(p.x, p.y - ray);
-          ctx.lineTo(p.x, p.y + ray);
-          ctx.stroke();
+          ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+          ctx.fill();
         }
+
+        ctx.fillStyle = rgba(color, alpha * (p.kind === "glint" ? 0.72 : 0.62));
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * (p.kind === "glint" ? 0.42 : 0.36), 0, Math.PI * 2);
+        ctx.fill();
       }
       ctx.restore();
     }
@@ -928,7 +873,6 @@
 
       ctx.clearRect(0, 0, this.width, this.height);
       if (this.mode === "hero") {
-        this.drawHeroConstellation(time);
         this.drawHeroParticles(time);
         return;
       }
@@ -1031,7 +975,7 @@
   }
 
   function handleVisibility() {
-    if (!reducedMotionQuery.matches && !isLightTheme() && !document.hidden && !rafId && scenes.length) {
+    if (!reducedMotionQuery.matches && !document.hidden && !rafId && scenes.length) {
       lastFrameTime = 0;
       rafId = window.requestAnimationFrame(loop);
       window.__novaRoseGalaxy.rafId = rafId;
@@ -1050,7 +994,7 @@
   }
 
   function init() {
-    if (reducedMotionQuery.matches || isLightTheme()) {
+    if (reducedMotionQuery.matches) {
       destroy();
       return;
     }
@@ -1073,8 +1017,8 @@
 
   const syncTheme = () => {
     if (!window.document?.documentElement) return;
-    if (isLightTheme()) destroy();
-    else init();
+    destroy();
+    init();
   };
 
   const themeObserver = new MutationObserver((records) => {
