@@ -3475,6 +3475,14 @@ LinkList sortList(LinkList head) &#123;    if (head == NULL || head-&gt;next == 
 
 域名 → DNS → IP → 端口 → TCP → HTTP → Gin 服务
 
+假设浏览器访问 http://api.example.com:8080/users，背后的过程可以简单理解为：
+
+DNS 将 api.example.com 解析为服务器 IP 127.0.0.1。
+客户端找到服务器的 8080 端口。
+客户端与服务器建立 TCP 连接。(如果是https还要建立TLS加密通道)
+客户端发送 HTTP 请求。
+请求进入 Gin Handler，处理完成后返回 HTTP 响应。
+
 一、IP Address（IP 地址）正式解释：
 IP 地址用于标识网络中的主机或网络接口。
 通俗理解：
@@ -3506,18 +3514,156 @@ GET /users HTTP/1.1Host: api.example.com
 HTTP/1.1 200 OKContent-Type: application/json&#123;&quot;users&quot;:[]&#125;
 
 在 Gin 项目中，r.GET(&quot;/users&quot;, getUsers) 就是在处理一个 HTTP 请求。
-把今天的 5 个术语串起来假设浏览器访问 http://api.example.com:8080/users，背后的过程可以简单理解为：
+Day 2｜URL、HTTP Method、HTTP Header、HTTP Body、HTTP Status Code今天认识的 5 个术语，可以组成一次完整的 HTTP 请求与响应：
 
-DNS 将 api.example.com 解析为服务器 IP。
-客户端找到服务器的 8080 端口。
-客户端与服务器建立 TCP 连接。
-客户端发送 HTTP 请求。
-请求进入 Gin Handler，处理完成后返回 HTTP 响应。
+URL 表示访问哪个资源 → Method 表示希望执行什么操作 → Header 携带认证方式、数据格式等附加信息 → Body 携带主要业务数据 → Status Code 表示服务器最终的处理结果
 
-一句话复习：
+一、URL（统一资源定位符）正式解释：
+URL 用于描述网络资源的位置，以及访问这个资源所使用的方式。
+通俗理解：
+在互联网上找到特定网页、图片或数据的具体“网络地址” ,当前页面的 URL &#x3D; 你当前在浏览器地址栏里看到的那一整串网址
+https://api.example.com:443/courses?page=2
 
-DNS 找地址，IP 找机器，端口找服务，TCP 建立连接，HTTP 传递请求与响应。
 
+
+组成部分
+示例
+作用
+
+
+
+Scheme
+https
+使用什么协议访问
+
+
+Host
+api.example.com
+访问哪台主机
+
+
+Port
+443
+访问主机上的哪个端口
+
+
+Path
+/courses
+访问哪个资源路径
+
+
+Query
+page=2
+补充请求参数
+
+
+二、HTTP Method（HTTP 请求方法）正式解释：
+HTTP Method 用来表示客户端希望对目标资源执行的操作。
+通俗理解：
+增删改查(只是改有部分修改和全部之分)
+后端最常见的方法：
+
+
+
+Method
+常见语义
+
+
+
+GET
+查询资源
+
+
+POST
+创建资源
+
+
+PUT
+整体更新资源
+
+
+PATCH
+部分更新资源
+
+
+DELETE
+删除资源
+
+
+三、HTTP Header（HTTP 头字段）正式解释：
+HTTP Header 用来携带请求或响应的附加信息和元数据。
+通俗理解：
+请求头（Request Header）—— 客户端发给服务器，带上自己的身份和具体要求响应头（Response Header）—— 服务器回给客户端，带上处理结果的状态和后续指示 (比如怎么缓存、存什么 Cookie)
+常见 Header：
+Authorization: Bearer eyJ...Content-Type: application/jsonAccept: application/json
+
+
+Authorization 常用于传递登录凭证。
+Content-Type 说明消息体使用什么格式。
+Accept 说明客户端希望接收什么格式的数据。
+
+可以先记住：Header 保存附加信息，主要业务数据通常放在 Body 中。
+四、HTTP Body（HTTP 消息体）正式解释：
+HTTP Body 用来携带请求或响应中的主要数据内容。
+通俗理解：
+在网页&#x2F;App 界面上“亲眼看到的、亲手输入的、或者要下载的具体内容”。
+例如，注册用户时发送 JSON 数据：
+POST /users HTTP/1.1Content-Type: application/json&#123;  &quot;username&quot;: &quot;fliex&quot;,  &quot;password&quot;: &quot;123456&quot;&#125;
+
+项目例子：
+var req RegisterRequestif err := c.ShouldBindJSON(&amp;req); err != nil &#123;	// 返回 400 Bad Request&#125;
+
+ShouldBindJSON 处理的核心过程是：
+
+HTTP Body → 解析 JSON → 写入 Go struct
+
+五、HTTP Status Code（HTTP 状态码）正式解释：
+HTTP Status Code 是服务器在响应中返回的三位数字，用来表示请求的处理结果。
+通俗理解：
+状态码用于告诉客户端请求的处理结果。
+后端开发中常见的状态码：
+
+
+
+状态码
+含义
+
+
+
+200 OK
+请求成功
+
+
+201 Created
+资源创建成功
+
+
+400 Bad Request
+请求内容存在问题
+
+
+401 Unauthorized
+尚未完成身份认证
+
+
+403 Forbidden
+已认证，但没有操作权限
+
+
+404 Not Found
+请求的资源不存在
+
+
+409 Conflict
+当前请求与资源状态发生冲突
+
+
+500 Internal Server Error
+服务器内部发生错误
+
+
+项目例子：
+c.JSON(http.StatusNotFound, gin.H&#123;	&quot;message&quot;: &quot;course not found&quot;,&#125;)
 ]]></content>
       <categories>
         <category>编程术语</category>
