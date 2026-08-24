@@ -911,10 +911,29 @@ html[data-theme="light"] #local-search .local-search-hit-item:hover {
 }
 
 #body-wrap.post #aside-content .sticky_layout { position: static; }
-#body-wrap.post #card-toc {
-  position: sticky;
-  top: 82px;
+#body-wrap.post #card-toc { position: static; }
+
+@media (min-width: 961px) {
+  #body-wrap.post #aside-content {
+    display: flex;
+    align-self: stretch;
+    flex-direction: column;
+  }
+
+  #body-wrap.post #aside-content .sticky_layout {
+    position: relative;
+    flex: 1 0 auto;
+    min-height: 0;
+  }
+
+  #body-wrap.post #card-toc {
+    position: sticky;
+    top: 82px;
+    z-index: 2;
+  }
 }
+
+body.read-mode #body-wrap.post #aside-content { display: none; }
 
 #body-wrap.post #card-toc .toc-content {
   max-height: calc(100vh - 110px);

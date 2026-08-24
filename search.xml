@@ -3471,7 +3471,7 @@ LinkList sortList(LinkList head) &#123;    if (head == NULL || head-&gt;next == 
   <entry>
     <title>编程术语</title>
     <url>//programming-terms/</url>
-    <content><![CDATA[Day 1｜IP、端口、DNS、TCP、HTTP今天认识的 5 个术语，可以组成一条完整的网络请求链：
+    <content><![CDATA[Day 1｜HTTP 与网络基础今天认识的 5 个术语，可以组成一条完整的网络请求链：
 
 域名 → DNS → IP → 端口 → TCP → HTTP → Gin 服务
 
@@ -3514,7 +3514,7 @@ GET /users HTTP/1.1Host: api.example.com
 HTTP/1.1 200 OKContent-Type: application/json&#123;&quot;users&quot;:[]&#125;
 
 在 Gin 项目中，r.GET(&quot;/users&quot;, getUsers) 就是在处理一个 HTTP 请求。
-Day 2｜URL、HTTP Method、HTTP Header、HTTP Body、HTTP Status Code今天认识的 5 个术语，可以组成一次完整的 HTTP 请求与响应：
+Day 2｜HTTP 请求结构今天认识的 5 个术语，可以组成一次完整的 HTTP 请求与响应：
 
 URL 表示访问哪个资源 → Method 表示希望执行什么操作 → Header 携带认证方式、数据格式等附加信息 → Body 携带主要业务数据 → Status Code 表示服务器最终的处理结果
 
@@ -3665,7 +3665,7 @@ HTTP Status Code 是服务器在响应中返回的三位数字，用来表示请
 项目例子：
 c.JSON(http.StatusNotFound, gin.H&#123;	&quot;message&quot;: &quot;course not found&quot;,&#125;)
 
-Day 3｜Query Parameter、Path Parameter、Cookie、Session、JWT
+Day 3｜请求参数与身份状态
 Query Parameter → Path Parameter → Cookie → Session → JWT
 
 今天的 5 个术语，可以放进下面这张关系图中：
