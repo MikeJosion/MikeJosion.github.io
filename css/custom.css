@@ -914,8 +914,8 @@ html[data-theme="light"] #local-search .local-search-hit-item:hover {
 #body-wrap.post #card-toc { position: static; }
 
 @media (min-width: 961px) {
-  #body-wrap.post #aside-content {
-    display: flex;
+  body:not(.read-mode) #body-wrap.post #aside-content {
+    display: flex !important;
     align-self: stretch;
     flex-direction: column;
   }
@@ -933,7 +933,9 @@ html[data-theme="light"] #local-search .local-search-hit-item:hover {
   }
 }
 
-body.read-mode #body-wrap.post #aside-content { display: none; }
+/* 文章页普通模式始终保留侧栏；只有阅读模式可以隐藏。 */
+body.read-mode #body-wrap.post #aside-content { display: none !important; }
+body:has(#body-wrap.post) #rightside #hide-aside-btn { display: none !important; }
 
 #body-wrap.post #card-toc .toc-content {
   max-height: calc(100vh - 110px);
