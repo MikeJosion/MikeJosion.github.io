@@ -3664,6 +3664,90 @@ HTTP Status Code 是服务器在响应中返回的三位数字，用来表示请
 
 项目例子：
 c.JSON(http.StatusNotFound, gin.H&#123;	&quot;message&quot;: &quot;course not found&quot;,&#125;)
+
+Day 3｜Query Parameter、Path Parameter、Cookie、Session、JWT
+Query Parameter → Path Parameter → Cookie → Session → JWT
+
+今天的 5 个术语，可以放进下面这张关系图中：
+HTTP 请求│├─ 请求参数│  ├─ Path Parameter  → 找到具体资源│  └─ Query Parameter → 控制查询方式│└─ 身份与会话状态   ├─ Cookie + Session   └─ JWT
+
+一、Query Parameter（查询参数）正式解释：
+Query Parameter 是 URL 查询字符串中的键值参数，通常位于 ? 之后，用于向服务器补充筛选、排序、分页等请求条件。
+通俗理解：
+? 后面的每一个字(或直到锚点 # 出现之前)，都是用 &amp; 串起来的“键值对数据”，全部属于查询参数
+项目例子：
+例如：https://api.example.com/courses?page=2&amp;sort=price#reviews
+
+page=2 和 sort=price 是 Query Parameter，使用 &amp; 连接。
+#reviews 是 Fragment（片段标识符），用于定位页面中的某个位置，不属于 Query Parameter。
+浏览器向服务器发送请求时，通常只会发送 # 前面的内容，不会把 #reviews 发送给后端。
+
+二、Path Parameter（路径参数）正式解释：
+Path Parameter 是嵌入 URL 路径中的动态参数，通常用于标识某个具体资源或路由层级。
+通俗理解：
+用来精准定位“具体是哪一个东西”
+项目例子：
+例如，请求编号为 1001 的课程：
+GET /courses/1001
+
+
+:id 表示路由中的 Path Parameter。
+请求 /courses/1001 时，c.Param(&quot;id&quot;) 得到的值是 1001。
+/courses/1002 会匹配同一条路由，但读取到的 id 是 1002。
+
+
+Tips：Path Parameter 和 Query Parameter 的区别
+
+Path Parameter 通常用来定位一个具体资源。例如，/users/10086 表示访问 ID 为 10086 的用户，参数是路由结构的一部分；如果请求缺少这个 ID，/users/:id 通常无法匹配，并返回 404 Not Found。
+Query Parameter 通常用来筛选、排序或分页。例如，/users?id=10086 表示先访问用户集合，再筛选出 id=10086 的用户；如果省略查询参数，请求 /users 通常会执行默认行为，例如返回用户列表。
+
+简单记忆：Path 确定“访问哪个资源”，Query 补充“用什么条件查询”。
+
+三、Cookie正式解释：
+Cookie 是由服务器设置或客户端创建、保存在用户代理中的小段数据；在满足域名、路径、有效期和安全策略等条件时，会随 HTTP 请求发送给服务器。
+通俗理解：
+Cookie 就是网站发给你浏览器的一张“限时电子通行证”,保证我这段时间内所有操作都跟我这个身份关联
+四、Session（会话）正式解释：
+Session 是在多次请求之间保存和识别用户状态的一种会话机制。服务器通常保存会话数据，并通过 Session ID 将请求与对应的会话关联起来。
+通俗理解：
+Session 是服务器为这张“电子通行证”在后台建的一份“私人档案袋”（或储物柜），用来真正存放你这段时间内的所有详细数据和操作记录
+
+Tips：Cookie 和 Session 的核心区别
+
+
+
+
+对比维度
+Cookie
+Session
+
+
+
+存放位置
+保存在用户的浏览器中（客户端）
+会话数据通常保存在服务器中（服务端）
+
+
+安全性
+用户可以查看或修改，后端不能直接信任其内容
+核心数据不直接暴露给用户，但仍需保护 Session ID 和服务端存储
+
+
+存放内容
+少量数据，例如 Session ID、偏好设置
+与会话相关的用户状态或业务数据
+
+
+存储容量
+较小，单个 Cookie 通常约为 4 KB，具体限制因浏览器而异
+取决于服务器的存储方式和项目配置
+
+
+简单记忆：Cookie 通常保存“通行证编号”，Session 保存这个编号对应的“后台档案”。
+五、JWT（JSON Web Token）正式解释：
+JWT 是一种紧凑、URL 安全的令牌格式，用于在不同系统之间传递声明信息。JWT 通常由 Header、Payload 和 Signature 三部分组成，可通过签名验证内容是否被篡改，但默认不会加密 Payload。
+通俗理解：
+JWT 的本质就是一块‘带防伪印的加密令牌（Token）’。用户的核心身份和权限信息都直接写在令牌上,密码、银行卡等核心隐私不写在上面（JWT 的内容是透明可读的，只防篡改、不防偷看），服务器后台不保留任何档案；只要验证令牌上的防伪印属实且未过期，服务器就能直接确认身份并放行
 ]]></content>
       <categories>
         <category>编程术语</category>
