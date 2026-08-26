@@ -3827,6 +3827,46 @@ WebSocket（全双工）
 握手完成后使用较轻量的数据帧传输，但实际开销取决于帧长度、掩码和扩展。
 
 
+Day 5｜数据库基础结构Table（表）│├─ Row（行）             → 保存一条数据├─ Primary Key（主键）   → 唯一标识一行├─ Foreign Key（外键）   → 关联另一张表└─ Constraint（约束）    → 限制数据必须符合规则
+
+一、Table（表）正式解释：
+Table 是关系型数据库中用于组织和存储同一类数据的结构，由列和行组成。每一列定义数据的字段，每一行保存一条具体记录。
+通俗理解：
+Table 就是把现实中某一类事物抽象出的“全部属性模版”及其“所有具体数据”给打包封装在一起的容器
+二、Row（行）正式解释：
+Row 是表中的一条数据记录，由该表各列对应的值组成。
+通俗理解：
+在“结构”上必须是完整的一行数据（表有几列，这一行就必须对应几列），但在“内容”上允许某些非必填项留白（NULL）
+三、Primary Key（主键）正式解释：
+Primary Key 是用于唯一标识表中每一行数据的列或列组合。主键值不能重复，也不能为 NULL。
+通俗理解：
+唯一标识(身份证号码)
+四、Foreign Key（外键）正式解释：
+Foreign Key 是表中的一个列或列组合，用来引用另一张表中的主键或唯一键，从而建立表之间的关联并维护引用完整性。
+通俗理解：
+单子上不抄对方容易变的详细信息（如住址），只留一个对方的“唯一编号”（外键）；发货时顺着编号一查，永远能拿到他最新的实时数据
+项目例子：
+如果每门课程都属于一名教师，可以让 teacher_id 引用 users 表的主键：
+teacher_id BIGINT NOT NULL,CONSTRAINT fk_courses_teacher    FOREIGN KEY (teacher_id) REFERENCES users(id)
+
+这样，课程中的 teacher_id 必须对应 users 表中真实存在的用户。
+
+Tips：主键和外键的区别
+主键负责唯一标识“自己表中的这一行”，外键负责指向“另一张表中的某一行”。主键不能重复，外键可以重复，例如同一名教师可以拥有多门课程。
+
+五、Constraint（约束）正式解释：
+Constraint 是数据库为表中数据规定的校验规则，用于阻止不符合要求的数据被写入，从而保证数据的正确性和一致性。
+通俗理解：
+限制条件，比如不能为空、不能重复、必须满足指定条件等等。
+项目例子：
+email VARCHAR(255) NOT NULL UNIQUE,price DECIMAL(10, 2) NOT NULL CHECK (price &gt;= 0)
+
+
+NOT NULL：值不能为空。
+UNIQUE：值不能重复。
+CHECK：值必须满足指定条件。
+PRIMARY KEY 和 FOREIGN KEY 也属于约束。
+
 ]]></content>
       <categories>
         <category>编程术语</category>
