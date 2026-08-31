@@ -3867,6 +3867,34 @@ UNIQUE：值不能重复。
 CHECK：值必须满足指定条件。
 PRIMARY KEY 和 FOREIGN KEY 也属于约束。
 
+Day 6｜数据库字段与唯一性Schema（模式）└─ Table（表）   ├─ Data Type（数据类型） → 规定列能存什么数据   ├─ NULL（空值）          → 表示值缺失或未知   ├─ Unique Index（唯一索引）→ 保证索引值不重复   └─ Composite Key（复合键） → 使用多个列共同标识数据
+
+一、Schema（模式）正式解释：
+Schema 是数据库中用于组织表、视图、索引等对象的逻辑命名空间，可以帮助划分和管理不同业务的数据结构。
+通俗理解：
+数据库中的建表规划图,但是还没有写如任何数据,只有建几个表格,表格保留哪些字段,每个字段都有什么数据类型,字段是否为空,字段是否唯一,字段是否为索引等等
+
+PostgreSQL 可以在一个数据库中创建多个 Schema；在 MySQL 中，Schema 基本可以理解为 Database 的同义词。
+
+二、Data Type（数据类型）正式解释：
+Data Type 用来规定一列能够保存的数据形式、取值范围以及可以执行的操作。
+三、NULL（空值）正式解释：
+NULL 表示某个字段的值缺失、未知或暂时不适用。它不等于数字 0、空字符串 &#39;&#39;，也不等于另一个 NULL。
+
+Tips：判断 NULL
+判断 NULL 要使用 IS NULL 或 IS NOT NULL，不能使用 = NULL 或 != NULL。
+
+四、Unique Index（唯一索引）正式解释：
+Unique Index 是不允许索引键值重复的索引，既可以加快查询，也可以由数据库保证指定列或列组合的唯一性。
+五、Composite Key（复合键）正式解释：
+Composite Key 是由两个或多个列共同组成的键。只有把这些列组合起来，才能唯一标识一行数据。
+通俗理解：
+选课系统（学生ID + 课程ID）把 (学生ID + 课程ID) 捆绑在一起，就能唯一确定“某位同学选了某门具体课程”的这一条选课记录，还能顺便防止同一个学生把同一门课重复选两次
+项目例子：
+在选课关系表中，同一个用户不能重复选择同一门课程：
+CREATE TABLE enrollments (    user_id BIGINT NOT NULL,    course_id BIGINT NOT NULL,    PRIMARY KEY (user_id, course_id));
+
+这里单独使用 user_id 或 course_id 都会重复，但二者组合后可以唯一标识一条选课记录。
 ]]></content>
       <categories>
         <category>编程术语</category>
